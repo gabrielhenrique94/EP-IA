@@ -5,6 +5,13 @@ import java.util.List;
 
 import core.neural_network.interfaces.Classifier;
 
+/**
+ * @author Bruno Murozaki
+ * @author Clayton Lima
+ * @author Gabriel Henrique
+ * @author Thiago Bonfiglio
+ * */
+
 public class MLP implements Classifier{
 
 	@Override

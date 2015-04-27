@@ -6,6 +6,13 @@ import java.util.Scanner;
 
 import exceptions.WrongCompareSolutionsInstance;
 
+/**
+ * @author Bruno Murozaki
+ * @author Clayton Lima
+ * @author Gabriel Henrique
+ * @author Thiago Bonfiglio
+ * */
+
 public class CompareSolutions {
 
 	private static final String DEFAULT_TEST_FILE_NAME = "test/optdigits.tes";

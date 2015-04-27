@@ -3,6 +3,15 @@ package core.neural_network.interfaces;
 import java.io.File;
 import java.util.List;
 
+/**
+ * @author Bruno Murozaki
+ * @author Clayton Lima
+ * @author Gabriel Henrique
+ * @author Thiago Bonfiglio
+ * 
+ * Interface básica da implementação de classificadores.
+ * */
+
 public interface Classifier {
 
 	public void training(List<double[]> tra, List<double[]> tes);

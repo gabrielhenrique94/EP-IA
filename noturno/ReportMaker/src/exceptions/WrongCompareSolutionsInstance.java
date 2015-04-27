@@ -2,6 +2,12 @@ package exceptions;
 
 public class WrongCompareSolutionsInstance extends Exception{
 
+	/**
+	 * @author Bruno Murozaki
+	 * @author Clayton Lima
+	 * @author Gabriel Henrique
+	 * @author Thiago Bonfiglio
+	 * */
 	
 	@Override
 	public String getMessage() {

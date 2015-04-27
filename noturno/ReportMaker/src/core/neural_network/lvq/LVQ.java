@@ -9,8 +9,15 @@ import core.neural_network.interfaces.Classifier;
 import core.neural_network.interfaces.Decaimento_portugues;
 import core.neural_network.interfaces.Metrics;
 
-public class LVQ implements Classifier, Decaimento_portugues, Metrics {
+/**
+ * @author Bruno Murozaki
+ * @author Clayton Lima
+ * @author Gabriel Henrique
+ * @author Thiago Bonfiglio
+ * */
 
+public class LVQ implements Classifier, Decaimento_portugues, Metrics {
+	
 	private List<double[]> trainingList;
 	private List<double[]> validationList;
 	private List<double[]> testList;

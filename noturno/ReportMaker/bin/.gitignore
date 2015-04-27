@@ -1,2 +1,4 @@
-/core/
-/main/
+/core
+/main
+/exceptions
+/compare
