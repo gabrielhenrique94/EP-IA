@@ -4,14 +4,22 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 
-import org.omg.CORBA.INTERNAL;
-
 public class NormalizarDados {
-	// Ainda estou ignorando o ultimo elemnto que é a classe, pq preciso pensar em como passar ele  e não da tempo agora
-	public static ArrayList<int[][]> extrairMatrizes(String arquivo) {
+	private ArrayList<int[][]> matrizesTreinamento;
+	private ArrayList<Integer> classesTreinamento;
+	private ArrayList<int[][]> matrizesTeste;
+	private ArrayList<Integer> classesTeste;
+	
+	public NormalizarDados(String arquivoTreinamento, String arquivoTeste) {
+		this.setMatrizesTreinamento(extrairMatrizes(arquivoTreinamento));
+		this.setClassesTreinamento(extrairClasses(arquivoTreinamento));
+		this.setMatrizesTeste(extrairMatrizes(arquivoTeste));
+		this.setClassesTeste(extrairClasses(arquivoTeste));
+	}
+	
+	public ArrayList<int[][]> extrairMatrizes(String arquivo) {
 		
 		ArrayList<int[][]> matrizes = new ArrayList<int[][]>();
-		ArrayList<Integer> classes = new ArrayList<Integer>(); // ainda não retorno ele, precisa mudar para retornar
 		
 		try {
 		      FileReader arq = new FileReader(arquivo);
@@ -21,7 +29,6 @@ public class NormalizarDados {
 		      while (linha != null) {
 		    	  int[][] matriz = new int[8][8];
 		    	  String[] valores = linha.split(",");
-		    	  int classe = Integer.parseInt(valores[63]);
 		    	  
 		    	  int contador = 0;
 		    	  for (int i = 0; i <= 7; i++) {
@@ -32,14 +39,72 @@ public class NormalizarDados {
 		    	  }
 		    	  
 		    	  matrizes.add(matriz);
-		    	  classes.add(classe);
 		    	  
 		    	  linha = lerArq.readLine();
 		      }
+		      lerArq.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return matrizes;
 	}
+	
+	public ArrayList<Integer> extrairClasses(String arquivo) {
+			
+		ArrayList<Integer> classes = new ArrayList<Integer>(); 
+		
+		try {
+		      FileReader arq = new FileReader(arquivo);
+		      BufferedReader lerArq = new BufferedReader(arq);
+	
+		      String linha = lerArq.readLine(); 
+		      while (linha != null) {
+		    	  String[] valores = linha.split(",");
+		    	  int classe = Integer.parseInt(valores[valores.length - 1]);
+	
+		    	  classes.add(classe);
+		    	  
+		    	  linha = lerArq.readLine();
+		      }
+		      lerArq.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return classes;
+	}
+
+	public ArrayList<int[][]> getMatrizesTreinamento() {
+		return matrizesTreinamento;
+	}
+
+	public void setMatrizesTreinamento(ArrayList<int[][]> matrizesTreinamento) {
+		this.matrizesTreinamento = matrizesTreinamento;
+	}
+
+	public ArrayList<Integer> getClassesTreinamento() {
+		return classesTreinamento;
+	}
+
+	public void setClassesTreinamento(ArrayList<Integer> classesTreinamento) {
+		this.classesTreinamento = classesTreinamento;
+	}
+
+	public ArrayList<int[][]> getMatrizesTeste() {
+		return matrizesTeste;
+	}
+
+	public void setMatrizesTeste(ArrayList<int[][]> matrizesTeste) {
+		this.matrizesTeste = matrizesTeste;
+	}
+
+	public ArrayList<Integer> getClassesTeste() {
+		return classesTeste;
+	}
+
+	public void setClassesTeste(ArrayList<Integer> classesTeste) {
+		this.classesTeste = classesTeste;
+	}
+	
+	
 
 }

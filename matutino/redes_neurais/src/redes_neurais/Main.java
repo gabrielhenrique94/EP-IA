@@ -1,19 +1,18 @@
 package redes_neurais;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 public class Main {
 	
 	
 	public static void main(String[] args) {
+		//PRECISA ALTERAR PARA VIR PELOS ARGS DEPOIS
 		
-		/* Nome do arquivo do conjunto de dados de treino */
-		String	dados_treino = args[0];
-		ArrayList<int[][]> matrizes = NormalizarDados.extrairMatrizes(dados_treino); //preciso arrumar isso. só para não deixar sem conexão por enquanto. Talvez transformar em um construct a outra classe e fazer todas chamadas de lá.
+		/* Nome do arquivo do conjunto de dados de treinamento */
+		String	arquivoTreinamento = "src/dados/optdigits_tes.txt";
 		
-		/* Nome do arquivo do conjunto de dados de validacao */
-		//String	dados_validacao = args[1];
+		
+		/* Nome do arquivo do conjunto de dados de teste */
+		String	arquivoTeste = "src/dados/optdigits_tra.txt";
+		
 		
 		/* Nome do arquivo do conjunto de dados de teste */
 		//String	dados_teste = args[2];
@@ -35,8 +34,18 @@ public class Main {
 		}*/
 		
 		/* Nome do arquivo que sera gerado com os dados da saida*/
-		String saida = args[7]; 
+		//String saida = args[7]; 
 		
+		NormalizarDados dados_normalizados = new NormalizarDados(arquivoTreinamento, arquivoTeste);
+		
+		// SÓ TESTANDO SE MONTOU GRACINHA
+		int[][] teste = dados_normalizados.getMatrizesTreinamento().get(0);
+		for (int i = 0; i < 8; i++) {
+			for(int j = 0;j < 8; j++) {
+				System.out.print(teste[i][j] + " ");
+			}
+			System.out.print("\n");
+		}
 	}
 
 }
