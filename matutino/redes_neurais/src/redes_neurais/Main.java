@@ -39,12 +39,9 @@ public class Main {
 		NormalizarDados dados_normalizados = new NormalizarDados(arquivoTreinamento, arquivoTeste);
 		
 		// SÓ TESTANDO SE MONTOU GRACINHA
-		int[][] teste = dados_normalizados.getMatrizesTreinamento().get(0);
-		for (int i = 0; i < 8; i++) {
-			for(int j = 0;j < 8; j++) {
-				System.out.print(teste[i][j] + " ");
-			}
-			System.out.print("\n");
+		int[] teste = dados_normalizados.getMatrizesTreinamento().get(0);
+		for (int i = 0; i < teste.length; i++) {
+			System.out.print(teste[i] + " ");
 		}
 	}
 
