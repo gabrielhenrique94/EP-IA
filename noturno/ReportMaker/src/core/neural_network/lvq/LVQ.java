@@ -8,6 +8,7 @@ import core.io.ReadInputFiles;
 import core.neural_network.interfaces.Classifier;
 import core.neural_network.interfaces.Decaimento_portugues;
 import core.neural_network.interfaces.Metrics;
+import static core.neural_network.lvq.vector.*;
 
 /**
  * @author Bruno Murozaki
@@ -88,7 +89,7 @@ public class LVQ implements Classifier, Decaimento_portugues, Metrics {
 			sum += Math.pow(neu1[i] - neu2[i], 2);
 		return Math.sqrt(sum);
 	}
-
+	
 	@Override
 	public void training(List<double[]> tra, List<double[]> tes) {
 		trainingList = new ArrayList<double[]>();
@@ -134,27 +135,6 @@ public class LVQ implements Classifier, Decaimento_portugues, Metrics {
 		}
 	}
 
-	private static double[] subVector(double[] v1, double[] v2){
-		double[] res = new double[v1.length];
-		for(int i = 0 ; i < res.length;i++)
-			res[i] = v1[i] - v2[i];
-		return res;
-	}
-	
-	private static double[] sumVector(double[] v1, double[] v2){
-		double[] res = new double[v1.length];
-		for(int i = 0 ; i < res.length;i++)
-			res[i] = v1[i] + v2[i];
-		return res;
-	}
-	
-	private static double[] multiplyByConstant(double[] vector, double cons){
-		double res[] = new double[vector.length];
-		for(int i = 0; i < res.length; i++)
-			res[i] = vector[i] * cons;
-		return res;
-	}
-	
 	private boolean willStop(int countEpoca) {
 		int max = 1000;
 
