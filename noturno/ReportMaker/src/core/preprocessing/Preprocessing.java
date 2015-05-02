@@ -12,12 +12,13 @@ import org.ini4j.Wini;
 import org.w3c.dom.ls.LSInput;
 
 import core.io.ReadInputFiles;
+import core.neural_network.objects.Entry;
 
 public class Preprocessing {
-	/*Verificar as colunas iguais de todos os dados e se for maior que uma taxa(95%, neste exemplo) o atributo não 
-	influencia tanto a resposta final e será eliminado dos dados.
-	Realizando o pré-processamento antes da normalização, verificaremos cada atributo de cada dado para a sua possível eliminação.
-	Não normalizar a última coluna.*/
+	/*Verificar as colunas iguais de todos os dados e se for maior que uma taxa(95%, neste exemplo) o atributo nï¿½o 
+	influencia tanto a resposta final e serï¿½ eliminado dos dados.
+	Realizando o prï¿½-processamento antes da normalizaï¿½ï¿½o, verificaremos cada atributo de cada dado para a sua possï¿½vel eliminaï¿½ï¿½o.
+	Nï¿½o normalizar a ï¿½ltima coluna.*/
 	
 	public static Wini configIni;
 	public static String pathTrainingFile;
@@ -34,6 +35,17 @@ public class Preprocessing {
 		int[] test = cleanAtributes();
 		
 	}
+	
+	public static void normalize(List<Entry> entries){
+		for(Entry entry: entries){
+			double[] attr = entry.getAttr();
+			for(int i = 0; i < attr.length; i++){
+				attr[i] = attr[i]/16.0;
+			}
+			entry.setAttr(attr);
+		}
+	}
+ 	
 	
 	/**
 	 * @return result

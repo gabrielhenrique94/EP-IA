@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import core.neural_network.interfaces.Classifier;
+import core.neural_network.objects.Entry;
 
 /**
  * @author Bruno Murozaki
@@ -15,13 +16,13 @@ import core.neural_network.interfaces.Classifier;
 public class MLP implements Classifier{
 
 	@Override
-	public void training(List<double[]> tra, List<double[]> tes) {
+	public void training(List<Entry> tra, List<Entry> tes) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public int classification(double[] tra) {
+	public int classification(Entry entry) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -38,5 +39,6 @@ public class MLP implements Classifier{
 		
 	}
 
+	
 	
 }

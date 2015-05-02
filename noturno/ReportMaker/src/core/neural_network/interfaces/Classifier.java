@@ -1,7 +1,8 @@
 package core.neural_network.interfaces;
-
 import java.io.File;
 import java.util.List;
+
+import core.neural_network.objects.Entry;
 
 /**
  * @author Bruno Murozaki
@@ -9,13 +10,34 @@ import java.util.List;
  * @author Gabriel Henrique
  * @author Thiago Bonfiglio
  * 
- * Interface básica da implementação de classificadores.
+ * Interface bï¿½sica da implementaï¿½ï¿½o de classificadores.
  * */
 
 public interface Classifier {
-
-	public void training(List<double[]> tra, List<double[]> tes);
-	public int classification(double[] tra);
+	/**
+	 * Treina o classificador de acordo  com as entradas de treinamento e teste
+	 * @param tra entradas de treinamento
+	 * @param tes entradas de teste
+	 */
+	public void training(List<Entry> tra, List<Entry> tes);
+	
+	/**
+	 * Classifica o vetor, caso a rede esteja treinada.
+	 * Ignora a classe da entrada 
+	 * @param entry entrada a ser classificada
+	 * @return inteiro que representa a classe da Entrada
+	 * @throws InvalidStateException se a rede nÃ£o estiver treinada
+	 */
+	public int classification(Entry entry);
+	/**
+	 * salva o classificador em um arquivo
+	 * @param output arquivo onde serÃ¡ salvo
+	 */
 	public void saveNetwork(File output);
+	/**
+	 * Carrega o classificador de um arquivo.
+	 * O arquivo deve seguir o padrÃ£o salvo pelo mÃ©todo save.
+	 * @param input Arquivo de onde serÃ¡ lido
+	 */
 	public void loadNetwork(File input);
 }

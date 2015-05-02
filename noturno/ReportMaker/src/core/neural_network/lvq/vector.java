@@ -21,5 +21,21 @@ public class vector {
 			res[i] = vector[i] * cons;
 		return res;
 	}
+
+	public static void printV(double[] v){
+		System.out.print("[");
+		for(int i = 0; i < v.length-1; i++)
+			System.out.print(String.valueOf(v[i])+", ");
+		System.out.print(v[v.length - 1]+"]\n");
+	}
 	
+	public static double distance(double[] neu1, double[] neu2) {
+		if(neu1.length != neu2.length){
+			System.out.printf("Deu ruim por motivos de: %d != %d", neu1.length, neu2.length);
+		}
+		double sum = 0;
+		for(int i = 0 ; i < neu1.length; i++ )
+			sum += Math.pow(neu1[i] - neu2[i], 2);
+		return Math.sqrt(sum);
+	}
 }
