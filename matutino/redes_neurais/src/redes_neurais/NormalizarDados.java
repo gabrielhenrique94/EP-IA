@@ -3,16 +3,15 @@ package redes_neurais;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class NormalizarDados {
-	private ArrayList<int[]> matrizesTreinamento;
+	private ArrayList<double[]> matrizesTreinamento;
 	private ArrayList<Integer> classesTreinamento;
 	private ArrayList<int[]> matrizesTeste;
 	private ArrayList<Integer> classesTeste;
+	private int[] valoresNormalizacaoColuna;
 	
 	/**
 	 * Construtor pega os arquivos já normalizados nos arquivos default
@@ -31,7 +30,7 @@ public class NormalizarDados {
 	 * 
 	 */
 	public NormalizarDados(String arquivoTreinamento, String arquivoTeste) {
-		this.setMatrizesTreinamento(removerColunas(extrairMatrizes(arquivoTreinamento), 0.95)); // Alterar a taxa depois
+		this.setMatrizesTreinamento(normalizaColunas(removerColunas(extrairMatrizes(arquivoTreinamento), 0.95))); // Alterar a taxa depois
 		this.setClassesTreinamento(extrairClasses(arquivoTreinamento));
 		this.setMatrizesTeste(extrairMatrizes(arquivoTeste));
 		this.setClassesTeste(extrairClasses(arquivoTeste));
@@ -45,7 +44,6 @@ public class NormalizarDados {
 	 * @return
 	 */
 	public ArrayList<int[]> removerColunas(ArrayList<int[]> matrizes, double taxaRemocaoColuna) {
-		System.out.println("remover Colunas");
 		int[][] contadorColuna = new int[64][17];
 		
 		// Monta a matriz de 64 linhas (entradas) por 17 colunas (valores de 0-16) para verificar quantos elementos de cada valor possui em cada coluna
@@ -74,14 +72,12 @@ public class NormalizarDados {
 			
 		}
 		
-		
+		System.out.println(numRemocao + " colunas removidas");
 		// Recria matrizes sem colunas desnecessarias
 		if (numRemocao > 0) {
-			System.out.println("recria");
 			ArrayList<int[]> novasMatrizes = new ArrayList<>();
 			
 			for (int i = 0; i < matrizes.size(); i++) {
-				System.out.println("Refazendo matriz " + i);
 				int[] velhaMatriz = matrizes.get(i);
 				int[] novaMatriz = new int[64 - numRemocao];
 				int posicaoNovaMatriz = 0;
@@ -105,7 +101,57 @@ public class NormalizarDados {
 		return matrizes;
 	}
 	
+	/**
+	 * Retorna a matriz normalizada por coluna, por meio da divisão dos elementos da coluna, pelo elemento de maior valor
+	 * da mesma. E seta o array de valoresNormalizacaoColuna, que tem escopo global da classe, com os elementos usados para 
+	 * normalização de cada coluna
+	 * @param matrizes
+	 * @return
+	 */
+	public ArrayList<double[]> normalizaColunas(ArrayList<int[]> matrizes) {
+		int numColunas = matrizes.get(0).length;
+		int[] valoresMaximos = new int[numColunas];
+
+		// Encontrar os valores maximos que serão usados para normalização por coluna
+		for (int i = 0; i < matrizes.size(); i++) {
+			int[] matriz = matrizes.get(i);
+			for (int j = 0; j < numColunas; j++) {
+				if (valoresMaximos[j] < matriz[j]) {
+					valoresMaximos[j] = matriz[j];
+				}
+			}
+		}
+		
+		//APAGAR DEPOIS
+		System.out.print("Array Pesos por coluna: ");
+		
+		for (int i = 0; i < valoresMaximos.length; i++) {
+			System.out.print(valoresMaximos[i] + " ");
+		}
+		
+		// Seta o array de pesos maximos por coluna
+		setValoresNormalizacaoColuna(valoresMaximos);
+		
+		// Normaliza todas as matrizes por coluna
+		ArrayList<double[]> matrizesNormalizadas = new ArrayList<double[]>();
+		for (int i = 0; i < matrizes.size(); i++) {
+			int[] matriz = matrizes.get(i);
+			double[] matrizNormalizada = new double[matriz.length];
+			for (int j = 0; j < numColunas; j++) {
+				matrizNormalizada[j] = matriz[j]/valoresMaximos[j];
+			}
+			matrizesNormalizadas.add(matrizNormalizada);
+		}
+		
+		
+		return matrizesNormalizadas;
+	}
 	
+	/**
+	 * Extrai as matrizes presentes nos arquivos dce teste e treinamento.
+	 * @param arquivo
+	 * @return
+	 */
 	public ArrayList<int[]> extrairMatrizes(String arquivo) {
 		
 		ArrayList<int[]> matrizes = new ArrayList<int[]>();
@@ -136,6 +182,11 @@ public class NormalizarDados {
 		return matrizes;
 	}
 	
+	/**
+	 * Pega as classes de cada um dos conjuntos de matrizes dos arquivos de teste e treinamento
+	 * @param arquivo
+	 * @return
+	 */
 	public ArrayList<Integer> extrairClasses(String arquivo) {
 			
 		ArrayList<Integer> classes = new ArrayList<Integer>(); 
@@ -159,37 +210,85 @@ public class NormalizarDados {
 		}
 		return classes;
 	}
-
-	public ArrayList<int[]> getMatrizesTreinamento() {
+	
+	/**
+	 * Retorna as matrizes de treinamento
+	 * @return
+	 */
+	public ArrayList<double[]> getMatrizesTreinamento() {
 		return matrizesTreinamento;
 	}
-
-	public void setMatrizesTreinamento(ArrayList<int[]> arrayList) {
+	
+	/**
+	 * Seta as matrizes de treinamento para um valor específico
+	 * @param arrayList
+	 */
+	public void setMatrizesTreinamento(ArrayList<double[]> arrayList) {
 		this.matrizesTreinamento = arrayList;
 	}
 
+	/**
+	 * Retorna as classes das matrizes de treinamento
+	 * @return
+	 */
 	public ArrayList<Integer> getClassesTreinamento() {
 		return classesTreinamento;
 	}
 
+	/**
+	 * Seta as classes das matrizes de treinamento para um valor específico
+	 * @param classesTreinamento
+	 */
 	public void setClassesTreinamento(ArrayList<Integer> classesTreinamento) {
 		this.classesTreinamento = classesTreinamento;
 	}
 
+	/**
+	 * Retorna as matrizes de teste
+	 * @return
+	 */
 	public ArrayList<int[]> getMatrizesTeste() {
 		return matrizesTeste;
 	}
 
+	/**
+	 * Seta as matrizes de teste para um valor específico
+	 * @param matrizesTeste
+	 */
 	public void setMatrizesTeste(ArrayList<int[]> matrizesTeste) {
 		this.matrizesTeste = matrizesTeste;
 	}
 
+	/**
+	 * Retorna as classes das matrizes de teste
+	 * @return
+	 */
 	public ArrayList<Integer> getClassesTeste() {
 		return classesTeste;
 	}
 
+	/**
+	 * Seta as classes das matrizes de teste para um valor específico
+	 * @param classesTeste
+	 */
 	public void setClassesTeste(ArrayList<Integer> classesTeste) {
 		this.classesTeste = classesTeste;
+	}
+
+	/**
+	 * Pega o array que tem os valores usados para normalização de cada coluna
+	 * @return
+	 */
+	public int[] getValoresNormalizacaoColuna() {
+		return valoresNormalizacaoColuna;
+	}
+
+	/**
+	 * 
+	 * @param valoresNormalizacaoColuna
+	 */
+	public void setValoresNormalizacaoColuna(int[] valoresNormalizacaoColuna) {
+		this.valoresNormalizacaoColuna = valoresNormalizacaoColuna;
 	}
 	
 	
