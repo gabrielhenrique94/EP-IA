@@ -14,8 +14,9 @@ public class NormalizarDados {
 	private ArrayList<Integer> classesTreinamento;
 	private ArrayList<double[]> matrizesTeste;
 	private ArrayList<Integer> classesTeste;
-	private int[] valoresNormalizacaoColunaTreinamento;
-	private int[] valoresNormalizacaoColunaTeste;
+	private int[] valoresNormalizacaoColuna;
+	private Map<Integer, Boolean> colunasRemovidas;
+	private int numColunasRemovidas;
 	
 	/**
 	 * Construtor pega os arquivos já normalizados nos arquivos default
@@ -36,13 +37,17 @@ public class NormalizarDados {
 	 * @param taxaRemocao
 	 */
 	public NormalizarDados(String arquivoTreinamento, String arquivoTeste, double taxaRemocao) {
-		this.setMatrizesTreinamento(normalizaColunas(removerColunas(extrairMatrizes(arquivoTreinamento), taxaRemocao), "treinamento")); // Alterar a taxa depois
+		ArrayList<int[]> matrizesTreinamento = extrairMatrizes(arquivoTreinamento);
+		verificarColunasRemocao(matrizesTreinamento, taxaRemocao);
+		matrizesTreinamento = recriaMatrizSemColunas(matrizesTreinamento);
+		encontraValoresNormalizacao(matrizesTreinamento);
+		this.setMatrizesTreinamento(normalizaColunas(matrizesTreinamento)); 
 		this.setClassesTreinamento(extrairClasses(arquivoTreinamento));
-		this.setMatrizesTeste(normalizaColunas(removerColunas(extrairMatrizes(arquivoTeste), taxaRemocao), "teste"));
+		this.setMatrizesTeste(normalizaColunas(recriaMatrizSemColunas(extrairMatrizes(arquivoTeste))));
 		this.setClassesTeste(extrairClasses(arquivoTeste));
 		
-		criarArquivoNormalizado(arquivoDadosNormalizados + "Treinamento.txt", matrizesTreinamento, classesTreinamento, valoresNormalizacaoColunaTreinamento);
-		criarArquivoNormalizado(arquivoDadosNormalizados+ "Teste.txt", matrizesTeste, classesTeste, valoresNormalizacaoColunaTeste);
+		//criarArquivoNormalizado(arquivoDadosNormalizados + "Treinamento.txt", matrizesTreinamento, classesTreinamento, valoresNormalizacaoColunaTreinamento);
+		//criarArquivoNormalizado(arquivoDadosNormalizados+ "Teste.txt", matrizesTeste, classesTeste, valoresNormalizacaoColunaTeste);
 	}
 	
 	/**
@@ -85,12 +90,11 @@ public class NormalizarDados {
 	}
 	
 	/**
-	 * Remove as colunas das matrizes que não tem representação significativa para as analises
+	 * Verifica e seta em um mapa as colunas das matrizes que não tem representação significativa para as analises
 	 * @param matrizes
 	 * @param taxaRemocaoColuna
-	 * @return
 	 */
-	public ArrayList<int[]> removerColunas(ArrayList<int[]> matrizes, double taxaRemocaoColuna) {
+	public void verificarColunasRemocao(ArrayList<int[]> matrizes, double taxaRemocaoColuna) {
 		int[][] contadorColuna = new int[64][17];
 		
 		// Monta a matriz de 64 linhas (entradas) por 17 colunas (valores de 0-16) para verificar quantos elementos de cada valor possui em cada coluna
@@ -119,19 +123,31 @@ public class NormalizarDados {
 			
 		}
 		
-		System.out.println(numRemocao + " colunas removidas");
-		// Recria matrizes sem colunas desnecessarias
-		if (numRemocao > 0) {
+		setColunasRemovidas(removerColuna);
+		setNumColunasRemovidas(numRemocao);
+		
+		System.out.println(numRemocao + " colunas removidas");		
+		
+	}
+	
+	/**
+	 * Recria a matriz solicitada sem as colunas que não tem significado.
+	 * @param matrizes
+	 * @return
+	 */
+	public ArrayList<int[]> recriaMatrizSemColunas(ArrayList<int[]> matrizes) {
+		Map<Integer, Boolean> colunasRemovidas = getColunasRemovidas();
+		int numColunasRemovidas = getNumColunasRemovidas();
+		if (colunasRemovidas.size() > 0) {
 			ArrayList<int[]> novasMatrizes = new ArrayList<>();
 			
 			for (int i = 0; i < matrizes.size(); i++) {
 				int[] velhaMatriz = matrizes.get(i);
-				int[] novaMatriz = new int[64 - numRemocao];
+				int[] novaMatriz = new int[64 - numColunasRemovidas];
 				int posicaoNovaMatriz = 0;
 				
 				for (int j = 0; j < 64; j++) {
-		
-					if (!removerColuna.get(j)) {
+					if (!colunasRemovidas.get(j)) {
 						novaMatriz[posicaoNovaMatriz] = velhaMatriz[j];
 						posicaoNovaMatriz++;
 					}
@@ -149,14 +165,10 @@ public class NormalizarDados {
 	}
 	
 	/**
-	 * Retorna a matriz normalizada por coluna, por meio da divisão dos elementos da coluna, pelo elemento de maior valor
-	 * da mesma. E seta o array de valoresNormalizacaoColuna, que tem escopo global da classe, com os elementos usados para 
-	 * normalização de cada coluna
+	 * Encontra e seta os valores máximos usados para a normalização por coluna.
 	 * @param matrizes
-	 * @param tipo "treinamento" ou "teste"
-	 * @return
 	 */
-	public ArrayList<double[]> normalizaColunas(ArrayList<int[]> matrizes, String tipo) {
+	public void encontraValoresNormalizacao(ArrayList<int[]> matrizes) {
 		int numColunas = matrizes.get(0).length;
 		int[] valoresMaximos = new int[numColunas];
 
@@ -170,24 +182,27 @@ public class NormalizarDados {
 			}
 		}
 		
+		// Seta o array de pesos maximos por coluna
+		setValoresNormalizacaoColuna(valoresMaximos);
+		
 		//APAGAR DEPOIS
 		System.out.print("Array Pesos por coluna: ");
-		
 		for (int i = 0; i < valoresMaximos.length; i++) {
 			System.out.print(valoresMaximos[i] + " ");
-		}
-		
+		}	
 		System.out.println("");
-		
-		// Seta o array de pesos maximos por coluna
-		if (tipo == "treinamento") {
-			setValoresNormalizacaoColunaTreinamento(valoresMaximos);
-		} else if (tipo == "teste") {
-			setValoresNormalizacaoColunaTeste(valoresMaximos);
-		}
-		
+	
+	}
+	/**
+	 * Normaliza as matrizes dividindo os elementos da mesma pelo máximo da coluna setado no array de valoresMaximos
+	 * @param matrizes
+	 * @return
+	 */
+	public ArrayList<double[]> normalizaColunas(ArrayList<int[]> matrizes) {
 		// Normaliza todas as matrizes por coluna
-		ArrayList<double[]> matrizesNormalizadas = new ArrayList<double[]>();
+		int numColunas = matrizes.get(0).length;
+		int[] valoresMaximos = getValoresNormalizacaoColuna();
+		ArrayList<double[]> matrizesNormalizadas = new ArrayList<>();
 		for (int i = 0; i < matrizes.size(); i++) {
 			int[] matriz = matrizes.get(i);
 			double[] matrizNormalizada = new double[matriz.length];
@@ -196,7 +211,6 @@ public class NormalizarDados {
 			}
 			matrizesNormalizadas.add(matrizNormalizada);
 		}
-		
 		
 		return matrizesNormalizadas;
 	}
@@ -330,39 +344,43 @@ public class NormalizarDados {
 	}
 
 	/**
-	 * Pega o array que tem os valores usados para normalização de cada coluna dos dados de treinamento
-	 * @return
-	 */
-	public int[] getValoresNormalizacaoColunaTreinamento() {
-		return valoresNormalizacaoColunaTreinamento;
-	}
-
-	/**
-	 * Seta os valores usados na normalização da matriz de treinamento por coluna
-	 * @param valoresNormalizacaoColuna
-	 */
-	public void setValoresNormalizacaoColunaTreinamento(int[] valoresNormalizacaoColuna) {
-		this.valoresNormalizacaoColunaTreinamento = valoresNormalizacaoColuna;
-	}
-	
-	/**
-	 * Seta os valores usados na normalização da matriz de teste por coluna
-	 * @param valoresNormalizacaoColuna
-	 */
-	public void setValoresNormalizacaoColunaTeste(int[] valoresNormalizacaoColuna) {
-		this.valoresNormalizacaoColunaTeste = valoresNormalizacaoColuna;
-	}
-	
-	/**
 	 * Pega o array que tem os valores usados para normalização de cada coluna
 	 * @return
 	 */
-	public int[] getValoresNormalizacaoColunaTeste() {
-		return valoresNormalizacaoColunaTeste;
+	public int[] getValoresNormalizacaoColuna() {
+		return valoresNormalizacaoColuna;
 	}
 
+	/**
+	 * Seta os valores usados na normalização da matriz por coluna
+	 * @param valoresNormalizacaoColuna
+	 */
+	public void setValoresNormalizacaoColuna(int[] valoresNormalizacaoColuna) {
+		this.valoresNormalizacaoColuna = valoresNormalizacaoColuna;
+	}
 	
-	
-	
+	/**
+	 * Pega o número das colunas que foram removidas
+	 * @return
+	 */
+	public Map<Integer, Boolean> getColunasRemovidas() {
+		return colunasRemovidas;
+	}
+
+	/**
+	 * Seta as colunas que foram removidas
+	 * @param colunasRemovidas
+	 */
+	public void setColunasRemovidas(Map<Integer, Boolean> colunasRemovidas) {
+		this.colunasRemovidas = colunasRemovidas;
+	}
+
+	public int getNumColunasRemovidas() {
+		return numColunasRemovidas;
+	}
+
+	public void setNumColunasRemovidas(int numColunasRemovidas) {
+		this.numColunasRemovidas = numColunasRemovidas;
+	}
 
 }
