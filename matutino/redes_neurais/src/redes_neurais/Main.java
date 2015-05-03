@@ -36,7 +36,7 @@ public class Main {
 		/* Nome do arquivo que sera gerado com os dados da saida*/
 		//String saida = args[7]; 
 		
-		NormalizarDados dados_normalizados = new NormalizarDados(arquivoTreinamento, arquivoTeste);
+		NormalizarDados dados_normalizados = new NormalizarDados(arquivoTreinamento, arquivoTeste, 0.95); //Pegar a taxa por arg[] mais para frente 
 		
 	}
 

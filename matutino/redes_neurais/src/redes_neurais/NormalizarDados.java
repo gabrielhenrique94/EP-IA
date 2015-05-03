@@ -9,7 +9,7 @@ import java.util.Map;
 public class NormalizarDados {
 	private ArrayList<double[]> matrizesTreinamento;
 	private ArrayList<Integer> classesTreinamento;
-	private ArrayList<int[]> matrizesTeste;
+	private ArrayList<double[]> matrizesTeste;
 	private ArrayList<Integer> classesTeste;
 	private int[] valoresNormalizacaoColuna;
 	
@@ -26,13 +26,15 @@ public class NormalizarDados {
 	}
 	
 	/**
-	 * Construtor usado quando são passados novos arquivos para serem normalizados
-	 * 
+	 * Construtor usado quando são passados novos arquivos para serem normalizados e uma taxa de remoção de colunas
+	 * @param arquivoTreinamento
+	 * @param arquivoTeste
+	 * @param taxaRemocao
 	 */
-	public NormalizarDados(String arquivoTreinamento, String arquivoTeste) {
-		this.setMatrizesTreinamento(normalizaColunas(removerColunas(extrairMatrizes(arquivoTreinamento), 0.95))); // Alterar a taxa depois
+	public NormalizarDados(String arquivoTreinamento, String arquivoTeste, double taxaRemocao) {
+		this.setMatrizesTreinamento(normalizaColunas(removerColunas(extrairMatrizes(arquivoTreinamento), taxaRemocao))); // Alterar a taxa depois
 		this.setClassesTreinamento(extrairClasses(arquivoTreinamento));
-		this.setMatrizesTeste(extrairMatrizes(arquivoTeste));
+		this.setMatrizesTeste(normalizaColunas(removerColunas(extrairMatrizes(arquivoTeste), taxaRemocao)));
 		this.setClassesTeste(extrairClasses(arquivoTeste));
 	}
 	
@@ -128,6 +130,8 @@ public class NormalizarDados {
 		for (int i = 0; i < valoresMaximos.length; i++) {
 			System.out.print(valoresMaximos[i] + " ");
 		}
+		
+		System.out.println("");
 		
 		// Seta o array de pesos maximos por coluna
 		setValoresNormalizacaoColuna(valoresMaximos);
@@ -247,7 +251,7 @@ public class NormalizarDados {
 	 * Retorna as matrizes de teste
 	 * @return
 	 */
-	public ArrayList<int[]> getMatrizesTeste() {
+	public ArrayList<double[]> getMatrizesTeste() {
 		return matrizesTeste;
 	}
 
@@ -255,7 +259,7 @@ public class NormalizarDados {
 	 * Seta as matrizes de teste para um valor específico
 	 * @param matrizesTeste
 	 */
-	public void setMatrizesTeste(ArrayList<int[]> matrizesTeste) {
+	public void setMatrizesTeste(ArrayList<double[]> matrizesTeste) {
 		this.matrizesTeste = matrizesTeste;
 	}
 
