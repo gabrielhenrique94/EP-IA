@@ -1,17 +1,21 @@
 package redes_neurais;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class NormalizarDados {
+	String arquivoDadosNormalizados = "src/dados/dados_normalizados";
 	private ArrayList<double[]> matrizesTreinamento;
 	private ArrayList<Integer> classesTreinamento;
 	private ArrayList<double[]> matrizesTeste;
 	private ArrayList<Integer> classesTeste;
-	private int[] valoresNormalizacaoColuna;
+	private int[] valoresNormalizacaoColunaTreinamento;
+	private int[] valoresNormalizacaoColunaTeste;
 	
 	/**
 	 * Construtor pega os arquivos já normalizados nos arquivos default
@@ -32,12 +36,53 @@ public class NormalizarDados {
 	 * @param taxaRemocao
 	 */
 	public NormalizarDados(String arquivoTreinamento, String arquivoTeste, double taxaRemocao) {
-		this.setMatrizesTreinamento(normalizaColunas(removerColunas(extrairMatrizes(arquivoTreinamento), taxaRemocao))); // Alterar a taxa depois
+		this.setMatrizesTreinamento(normalizaColunas(removerColunas(extrairMatrizes(arquivoTreinamento), taxaRemocao), "treinamento")); // Alterar a taxa depois
 		this.setClassesTreinamento(extrairClasses(arquivoTreinamento));
-		this.setMatrizesTeste(normalizaColunas(removerColunas(extrairMatrizes(arquivoTeste), taxaRemocao)));
+		this.setMatrizesTeste(normalizaColunas(removerColunas(extrairMatrizes(arquivoTeste), taxaRemocao), "teste"));
 		this.setClassesTeste(extrairClasses(arquivoTeste));
+		
+		criarArquivoNormalizado(arquivoDadosNormalizados + "Treinamento.txt", matrizesTreinamento, classesTreinamento, valoresNormalizacaoColunaTreinamento);
+		criarArquivoNormalizado(arquivoDadosNormalizados+ "Teste.txt", matrizesTeste, classesTeste, valoresNormalizacaoColunaTeste);
 	}
 	
+	/**
+	 * Cria o arquivo normalizado
+	 * @param arquivoDadosNormalizados
+	 * @param matrizes
+	 * @param classes
+	 * @param valoresNormalizacaoColuna
+	 */
+	public void criarArquivoNormalizado(String arquivoDadosNormalizados, ArrayList<double[]> matrizes, ArrayList<Integer> classes, int[] valoresNormalizacaoColuna) {
+		
+		try {
+			File arquivo = new File(arquivoDadosNormalizados);
+			arquivo.createNewFile();
+			FileWriter escritor = new FileWriter(arquivo); 
+			
+			// Primeira linha Valor Maximo de normalização por coluna
+			
+			for (int i = 0; i < valoresNormalizacaoColuna.length; i++) {
+				escritor.write(valoresNormalizacaoColuna[i] + " ");
+			}
+			
+			escritor.write("/n");
+			
+			for (int i = 0; i < matrizes.size(); i++) {
+				double[] matriz = matrizes.get(i);
+				int classe = classes.get(i);
+				
+				for (int j = 0; j < matriz.length; j++) {
+					escritor.write(String.valueOf(matriz[j]) + " ");
+				}
+				escritor.write(classe + "/n");
+			}
+			
+			escritor.flush();
+			escritor.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	/**
 	 * Remove as colunas das matrizes que não tem representação significativa para as analises
@@ -108,9 +153,10 @@ public class NormalizarDados {
 	 * da mesma. E seta o array de valoresNormalizacaoColuna, que tem escopo global da classe, com os elementos usados para 
 	 * normalização de cada coluna
 	 * @param matrizes
+	 * @param tipo "treinamento" ou "teste"
 	 * @return
 	 */
-	public ArrayList<double[]> normalizaColunas(ArrayList<int[]> matrizes) {
+	public ArrayList<double[]> normalizaColunas(ArrayList<int[]> matrizes, String tipo) {
 		int numColunas = matrizes.get(0).length;
 		int[] valoresMaximos = new int[numColunas];
 
@@ -134,7 +180,11 @@ public class NormalizarDados {
 		System.out.println("");
 		
 		// Seta o array de pesos maximos por coluna
-		setValoresNormalizacaoColuna(valoresMaximos);
+		if (tipo == "treinamento") {
+			setValoresNormalizacaoColunaTreinamento(valoresMaximos);
+		} else if (tipo == "teste") {
+			setValoresNormalizacaoColunaTeste(valoresMaximos);
+		}
 		
 		// Normaliza todas as matrizes por coluna
 		ArrayList<double[]> matrizesNormalizadas = new ArrayList<double[]>();
@@ -280,20 +330,38 @@ public class NormalizarDados {
 	}
 
 	/**
-	 * Pega o array que tem os valores usados para normalização de cada coluna
+	 * Pega o array que tem os valores usados para normalização de cada coluna dos dados de treinamento
 	 * @return
 	 */
-	public int[] getValoresNormalizacaoColuna() {
-		return valoresNormalizacaoColuna;
+	public int[] getValoresNormalizacaoColunaTreinamento() {
+		return valoresNormalizacaoColunaTreinamento;
 	}
 
 	/**
-	 * 
+	 * Seta os valores usados na normalização da matriz de treinamento por coluna
 	 * @param valoresNormalizacaoColuna
 	 */
-	public void setValoresNormalizacaoColuna(int[] valoresNormalizacaoColuna) {
-		this.valoresNormalizacaoColuna = valoresNormalizacaoColuna;
+	public void setValoresNormalizacaoColunaTreinamento(int[] valoresNormalizacaoColuna) {
+		this.valoresNormalizacaoColunaTreinamento = valoresNormalizacaoColuna;
 	}
+	
+	/**
+	 * Seta os valores usados na normalização da matriz de teste por coluna
+	 * @param valoresNormalizacaoColuna
+	 */
+	public void setValoresNormalizacaoColunaTeste(int[] valoresNormalizacaoColuna) {
+		this.valoresNormalizacaoColunaTeste = valoresNormalizacaoColuna;
+	}
+	
+	/**
+	 * Pega o array que tem os valores usados para normalização de cada coluna
+	 * @return
+	 */
+	public int[] getValoresNormalizacaoColunaTeste() {
+		return valoresNormalizacaoColunaTeste;
+	}
+
+	
 	
 	
 
