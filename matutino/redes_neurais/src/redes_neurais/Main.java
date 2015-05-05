@@ -3,6 +3,8 @@ package redes_neurais;
 public class Main {
 	
 	
+	
+	
 	public static void main(String[] args) {
 		//PRECISA ALTERAR PARA VIR PELOS ARGS DEPOIS
 		
