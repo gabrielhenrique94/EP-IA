@@ -46,8 +46,8 @@ public class NormalizarDados {
 		this.setMatrizesTeste(normalizaColunas(recriaMatrizSemColunas(extrairMatrizes(arquivoTeste))));
 		this.setClassesTeste(extrairClasses(arquivoTeste));
 		
-		//criarArquivoNormalizado(arquivoDadosNormalizados + "Treinamento.txt", matrizesTreinamento, classesTreinamento, valoresNormalizacaoColunaTreinamento);
-		//criarArquivoNormalizado(arquivoDadosNormalizados+ "Teste.txt", matrizesTeste, classesTeste, valoresNormalizacaoColunaTeste);
+		criarArquivoNormalizado(arquivoDadosNormalizados + "Treinamento.txt", this.matrizesTreinamento, classesTreinamento, getClassesTreinamento());
+		criarArquivoNormalizado(arquivoDadosNormalizados+ "Teste.txt", matrizesTeste, classesTeste, getClassesTeste());
 	}
 	
 	/**
@@ -57,7 +57,7 @@ public class NormalizarDados {
 	 * @param classes
 	 * @param valoresNormalizacaoColuna
 	 */
-	public void criarArquivoNormalizado(String arquivoDadosNormalizados, ArrayList<double[]> matrizes, ArrayList<Integer> classes, int[] valoresNormalizacaoColuna) {
+	public void criarArquivoNormalizado(String arquivoDadosNormalizados, ArrayList<double[]> matrizes, ArrayList<Integer> classes, ArrayList<Integer> valoresNormalizacaoColuna) {
 		
 		try {
 			File arquivo = new File(arquivoDadosNormalizados);
@@ -66,20 +66,21 @@ public class NormalizarDados {
 			
 			// Primeira linha Valor Maximo de normalização por coluna
 			
-			for (int i = 0; i < valoresNormalizacaoColuna.length; i++) {
-				escritor.write(valoresNormalizacaoColuna[i] + " ");
+			/*for (int i = 0; i < valoresNormalizacaoColuna.size(); i++) {
+				escritor.write(valoresNormalizacaoColuna.get(i) + " ");
 			}
 			
-			escritor.write("/n");
+			escritor.write("/n");*/
 			
 			for (int i = 0; i < matrizes.size(); i++) {
 				double[] matriz = matrizes.get(i);
 				int classe = classes.get(i);
 				
 				for (int j = 0; j < matriz.length; j++) {
-					escritor.write(String.valueOf(matriz[j]) + " ");
+					escritor.write(String.valueOf(matriz[j]) + ", ");
 				}
-				escritor.write(classe + "/n");
+				
+				escritor.write(classe + "\n");
 			}
 			
 			escritor.flush();
@@ -207,7 +208,7 @@ public class NormalizarDados {
 			int[] matriz = matrizes.get(i);
 			double[] matrizNormalizada = new double[matriz.length];
 			for (int j = 0; j < numColunas; j++) {
-				matrizNormalizada[j] = matriz[j]/valoresMaximos[j];
+				matrizNormalizada[j] = matriz[j]/(double)valoresMaximos[j];
 			}
 			matrizesNormalizadas.add(matrizNormalizada);
 		}
