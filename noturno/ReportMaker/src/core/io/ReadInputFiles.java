@@ -21,12 +21,12 @@ import main.Main;
 public class ReadInputFiles {
 
 	/**
-	 * Lê o arquivo de entrada especificado no parâmetro
+	 * Lï¿½ o arquivo de entrada especificado no parï¿½metro
 	 * 
-	 * @param path - Contém o caminho para o arquivo a ser lido.
-	 * @return List<double[]> - Retorna a lista de neurônios em uma List de vetores de doubles.
+	 * @param path - Contï¿½m o caminho para o arquivo a ser lido.
+	 * @return List<double[]> - Retorna a lista de neurï¿½nios em uma List de vetores de doubles.
 	 * */
-	public List<double[]> readFile(String path) throws FileNotFoundException{
+	public static List<double[]> readFile(String path) throws FileNotFoundException{
 		Scanner sc = new Scanner(new File(path));
 		String [] aux;
 		

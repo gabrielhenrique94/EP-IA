@@ -3,15 +3,17 @@ package redes_neurais;
 public class Main {
 	
 	
+	
+	
 	public static void main(String[] args) {
 		//PRECISA ALTERAR PARA VIR PELOS ARGS DEPOIS
 		
 		/* Nome do arquivo do conjunto de dados de treinamento */
-		String	arquivoTreinamento = "src/dados/optdigits_tes.txt";
+		String	arquivoTreinamento = "src/dados/optdigits_tra.txt";
 		
 		
 		/* Nome do arquivo do conjunto de dados de teste */
-		String	arquivoTeste = "src/dados/optdigits_tra.txt";
+		String	arquivoTeste = "src/dados/optdigits_tes.txt";
 		
 		
 		/* Nome do arquivo do conjunto de dados de teste */
@@ -36,16 +38,8 @@ public class Main {
 		/* Nome do arquivo que sera gerado com os dados da saida*/
 		//String saida = args[7]; 
 		
-		NormalizarDados dados_normalizados = new NormalizarDados(arquivoTreinamento, arquivoTeste);
+		NormalizarDados dados_normalizados = new NormalizarDados(arquivoTreinamento, arquivoTeste, 0.95); //Pegar a taxa por arg[] mais para frente 
 		
-		// SÓ TESTANDO SE MONTOU GRACINHA
-		int[][] teste = dados_normalizados.getMatrizesTreinamento().get(0);
-		for (int i = 0; i < 8; i++) {
-			for(int j = 0;j < 8; j++) {
-				System.out.print(teste[i][j] + " ");
-			}
-			System.out.print("\n");
-		}
 	}
 
 }

@@ -1,13 +1,18 @@
 package core.neural_network.lvq;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import core.io.ReadInputFiles;
 import core.neural_network.interfaces.Classifier;
 import core.neural_network.interfaces.Decaimento_portugues;
 import core.neural_network.interfaces.Metrics;
+import core.neural_network.objects.Entry;
+import core.neural_network.objects.Neuron;
+import static core.neural_network.lvq.vector.*;
 
 /**
  * @author Bruno Murozaki
@@ -16,158 +21,93 @@ import core.neural_network.interfaces.Metrics;
  * @author Thiago Bonfiglio
  * */
 
-public class LVQ implements Classifier, Decaimento_portugues, Metrics {
-	
-	private List<double[]> trainingList;
-	private List<double[]> validationList;
-	private List<double[]> testList;
+public class LVQ implements Classifier, Decaimento_portugues {
+	private static final int MAX_EPOCH = 100;
 	private double learningRate;
 	private int[] nNeurons;
 	private boolean isRandom;
-	private List<double[]> neurons;
-	private int[] classes;
+	private List<Neuron> neurons;
 
-	public LVQ(List<double[]> trainingList, List<double[]> validationList,
-			List<double[]> testList, double learningRate, int[] nNeurons,
+	public LVQ(double learningRate, int[] nNeurons,
 			boolean isRandom) {
-
-		this.trainingList = trainingList;
-		this.validationList = validationList;
-		this.testList = testList;
 		this.learningRate = learningRate;
 		this.nNeurons = nNeurons;
 		this.isRandom = isRandom;
 	}
 
-	private void initializeWeights(List<double[]> neurons, int[] classes) {
-		for (int i = 0; i < mathdotsum(nNeurons); i++){
-			neurons.add(new double[trainingList.get(0).length]);
-			for (int j = 0; j < neurons.get(0).length; j++)
-				neurons.get(i)[j] = Math.random();
-		}
-		int k = 0;
-		for(int i = 0; i < nNeurons.length; i++){
-			for(int a = 0; a < nNeurons[i] ; a++){
-				classes[k] = i;
-				k++;
-			}
-		}
-	}
-
-	private static int mathdotsum(int[] nNeurons) {
-		int sum = 0;
-		for (int i = 0; i < nNeurons.length; i++) {
-			sum += nNeurons[i];
-		}
-
-		return sum;
-	}
-
-	private int findMinDistance(double[] neuron, List<double[]> attr) {
-		double min = Double.MAX_VALUE, aux;
-		double[] auxAttr = null;
-		int ret = 0;
-		for(int j = 0; j < attr.size(); j++){
-			aux = distance(neuron, attr.get(j));
-			if(aux < min) {
-				ret = j;
-				min = aux;
-			}
-		}
-		return ret;
-	}
-
 	
 	@Override
-	public double distance(double[] neu1, double[] neu2) {
-		if(neu1.length != neu2.length){
-			System.out.printf("Deu ruim por motivos de: %d != %d", neu1.length, neu2.length);
-		}
-		double sum = 0;
-		for(int i = 0 ; i < neu1.length; i++ )
-			sum += Math.pow(neu1[i] - neu2[i], 2);
-		return Math.sqrt(sum);
-	}
-
-	@Override
-	public void training(List<double[]> tra, List<double[]> tes) {
-		trainingList = new ArrayList<double[]>();
-		double[] traClasses = new double[tra.size()];
-		for(int j = 0; j < tra.size(); j++){
-			double[] s = tra.get(j);
-			double[] vet = new double[s.length-1];
-			for(int i = 0; i < s.length-1; i++)
-				vet[i] = s[i];
-			traClasses[j] = s[s.length-1];
-			trainingList.add(vet);
-		}
-		
-		testList = new ArrayList<double[]>();
-		double[] tesClasses = new double[tra.size()];
-		for(int j = 0; j < tes.size(); j++){
-			double[] s = tes.get(j);
-			double[] vet = new double[s.length -1];
-			for(int i = 0; i < s.length -1 ; i++)
-				vet[i] = s[i];
-			tesClasses[j] = s[s.length-1];
-			testList.add(vet);
-		}
-
-		int epoca = 0;
-		double learningRate;
-		neurons = new ArrayList<double[]>();
-		classes = new int[mathdotsum(nNeurons)];
-		initializeWeights(neurons, classes);
-		
-		while (willStop(epoca)) {
-			learningRate = calc(this.learningRate, epoca);
-			for(int j = 0; j < neurons.size(); j++){
-				int index = findMinDistance(neurons.get(j),trainingList);
-				if(traClasses[index] == classes[j]){
-					neurons.set(j, sumVector(neurons.get(j), multiplyByConstant(subVector(neurons.get(j), trainingList.get(j)), learningRate))); 
+	public void training(List<Entry> trainingList, List<Entry> tes) {
+		//Passo 1 - Inicializa os Pesos
+		initializeWeigths(trainingList);
+		double learningRate = this.learningRate;
+		int epoca = 1;
+		boolean b = willStop(epoca);
+		do{
+			//Passo 2  - Para cada vetor de entrada executa os passos 3-4
+			for(Entry entry: trainingList){
+				//Passo 3 - Encontra neuronio mais proximo
+				Neuron t = findMinDistance(entry, neurons);
+				//Passo 4 - Altera os pesos
+				if (t.getClazz() == entry.getClazz()){
+					t.setAttr(sumVector(t.getAttr(), 
+							multiplyByConstant(subVector(entry.getAttr(), t.getAttr()), learningRate)));
 				}else{
-					neurons.set(j, subVector(neurons.get(j), multiplyByConstant(subVector(neurons.get(j), trainingList.get(j)), learningRate)));
+					t.setAttr(subVector(t.getAttr(), 
+							multiplyByConstant(subVector(entry.getAttr(), t.getAttr()), learningRate)));
 				}
 			}
-			epoca++;
-			System.out.println(epoca);
-		}
+			//Passo 5 - Reduz taxa de aprendizado
+			learningRate = calcLearningRate(learningRate, ++epoca); 
+		//Passo 6 - verifica condição de Parada
+		}while(willStop(epoca));
 	}
 
-	private static double[] subVector(double[] v1, double[] v2){
-		double[] res = new double[v1.length];
-		for(int i = 0 ; i < res.length;i++)
-			res[i] = v1[i] - v2[i];
-		return res;
-	}
 	
-	private static double[] sumVector(double[] v1, double[] v2){
-		double[] res = new double[v1.length];
-		for(int i = 0 ; i < res.length;i++)
-			res[i] = v1[i] + v2[i];
-		return res;
-	}
-	
-	private static double[] multiplyByConstant(double[] vector, double cons){
-		double res[] = new double[vector.length];
-		for(int i = 0; i < res.length; i++)
-			res[i] = vector[i] * cons;
-		return res;
-	}
-	
-	private boolean willStop(int countEpoca) {
-		int max = 1000;
-
-		if (max <= countEpoca){
-			return false;
+	private Neuron findMinDistance(Entry entry, List<Neuron> neurons) {
+		double min = Double.MAX_VALUE, distance;
+		Neuron nMin = null;
+		for(Neuron n: neurons){
+			distance = distance(n.getAttr(), entry.getAttr());
+			if(distance < min){
+				min = distance;
+				nMin = n;
+			}
 		}
-		return true;
+		return nMin;
 	}
+
+	private boolean willStop(int epoca) {
+		return epoca != MAX_EPOCH;
+	}
+
+
+	private void initializeWeigths(List<Entry> trainingList) {
+		//Criando neuronios
+		neurons = new ArrayList<Neuron>();
+		//pega a dimensão do primeiro neuronio
+		int dimensions = trainingList.get(0).getAttr().length;
+		for(int i = 0; i < nNeurons.length; i++){
+			for(int j = 0; j < nNeurons[i]; j++){
+				Neuron n = new Neuron(dimensions);
+				n.setClazz(i);
+				neurons.add(n);
+			}
+		}
+		//inicializando os neuronios
+		if(isRandom)
+			for(Neuron n: neurons)
+				n.initRandom();
+		else
+			throw new UnsupportedOperationException();
+			//TODO implementar isssaque
+	}
+		
+
 
 	@Override
-	public int classification(double[] v) {
-		int index = findMinDistance(v, neurons);
-		return classes[index];
+	public int classification(Entry v) {
+		return 0;
 	}
 
 	@Override
@@ -180,10 +120,11 @@ public class LVQ implements Classifier, Decaimento_portugues, Metrics {
 	public void loadNetwork(File input) {
 		// TODO Auto-generated method stub
 	}
-
+	
+	//fonte: http://seer.ufrgs.br/index.php/rita/article/view/rita_v19_n1_p120/18115
 	@Override
-	public double calc(double rate, int epoca) {
-		return rate * 0.9;
+	public double calcLearningRate(double rate, int epoca) {
+		return this.learningRate*(1.0 -(((double)epoca)/MAX_EPOCH));
 	}
 
 }

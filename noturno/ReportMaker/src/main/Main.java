@@ -1,8 +1,12 @@
 package main;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ini4j.InvalidFileFormatException;
 import org.ini4j.Wini;
@@ -10,6 +14,8 @@ import org.ini4j.Wini;
 import core.io.ReadInputFiles;
 import core.neural_network.interfaces.Classifier;
 import core.neural_network.lvq.LVQ;
+import core.neural_network.objects.Entry;
+import core.preprocessing.Preprocessing;
 
 /**
  * @author Bruno Murozaki
@@ -17,62 +23,57 @@ import core.neural_network.lvq.LVQ;
  * @author Gabriel Henrique
  * @author Thiago Bonfiglio
  * 
- *         Arquivo de inicialização da aplicação.
+ *         Arquivo de inicializaï¿½ï¿½o da aplicaï¿½ï¿½o.
  * */
 
 public class Main {
 
-	public static Wini configIni;
-	public static String pathTrainingFile;
-
 	/**
-	 * Método de inicialização da aplicação.
+	 * MÃ©todo de inicializaÃ§Ã£o da aplicaÃ§Ã£o
+	 * chamada: Main <training_file> <test_file> <random:(True|False)> <learningRate> <numero_neuronios> 
 	 * 
 	 * @param args
-	 *            - Recebe os parâmetros de inicialização do programa, separado
-	 *            por espaços, e na seguinte ordem: Caminho do arquivo de treinamento, TODO: continuar.
+	 *            - Recebe os parï¿½metros de inicializaï¿½ï¿½o do programa, separado
+	 *            por espaï¿½os, e na seguinte ordem: Caminho do arquivo de treinamento, TODO: continuar.
+	 * @throws FileNotFoundException 
 	 * */
-	public static void main(String[] args) throws InvalidFileFormatException,
-			IOException {
+	public static void main(String[] args) throws FileNotFoundException{
+		//Lendo arquivo de entrada e parseando para objetos Entry
+		List<double[]> training_set = ReadInputFiles.readFile(args[0]);
+		List<Entry> training_entries = new ArrayList<Entry>();
+		for(double[] v: training_set)
+			training_entries.add(Entry.fromVector(v));
+		
+		//Lendo arquivo de entrada e parseando para objetos Entry
+		List<double[]> test_set = ReadInputFiles.readFile(args[1]);
+		List<Entry> test_entries = new ArrayList<Entry>();
+		for(double[] v: test_set)
+			test_entries.add(Entry.fromVector(v));
+		
+		boolean random = Boolean.parseBoolean(args[2]);
+		
+		double learningRate = Double.parseDouble(args[3]);
 
-		pathTrainingFile = args[0];
-		configIni = new Wini(new File("resources/config.ini"));
+		//criando vetor que indica que todas as classes tem o mesmo numero de neuronios
+		int nNeurons = Integer.parseInt(args[4]);
+		
+		int[] neuronsByClass = new int[countClasses(training_entries)];
 
-		int hasInterface = configIni.get("startup", "interface", int.class);
-		if (hasInterface == 0) {
-			ReadInputFiles readTrainingFile = new ReadInputFiles();
-			List<double[]> trainingList = readTrainingFile
-					.readFile("test\\optdigits.tra");
-			List<double[]> validationList = null;
-			List<double[]> testList = readTrainingFile
-					.readFile("test\\optdigits.tes");
-			double learningRate = 1;
-			int[] nNeurons = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-			boolean isRandom = true;
-
-			Classifier lvq = new LVQ(trainingList, validationList, testList,
-					learningRate, nNeurons, isRandom);
-			lvq.training(trainingList, testList);
-			double[] vc = trainingList.get(0);
-			double[] v = new double[64];
-			for (int i = 0; i < v.length; i++)
-				v[i] = vc[i];
-			System.out.println(lvq.classification(v));
-			vc = trainingList.get(1);
-			v = new double[64];
-			for (int i = 0; i < v.length; i++)
-				v[i] = vc[i];
-			System.out.println(lvq.classification(v));
-			vc = trainingList.get(2);
-			v = new double[64];
-			for (int i = 0; i < v.length; i++)
-				v[i] = vc[i];
-			System.out.println(lvq.classification(v));
-
-			// TODO: continuo lendo e dou run no algoritmo...
-		} else {
-			// TODO: new InterfaceGráfica()
+		for(int i = 0; i < neuronsByClass.length; i++){
+			neuronsByClass[i] = nNeurons;
 		}
+		
+		Classifier lvq = new LVQ(learningRate, neuronsByClass, random);
+		//normaliza
+		//Preprocessing.normalize(training_entries);
+		
+		lvq.training(training_entries, test_entries);
 	}
-
+	
+	private static int countClasses(List<Entry> trainigSet){
+		Set<Integer> set = new HashSet<Integer>();
+		for(Entry entry: trainigSet)
+			set.add(entry.getClazz());
+		return set.size();
+	}
 }
