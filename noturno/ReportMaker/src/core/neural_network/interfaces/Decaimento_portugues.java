@@ -7,6 +7,6 @@ package core.neural_network.interfaces;
  * @author Thiago Bonfiglio
  * */
 
-public interface Decrease {
+public interface Decaimento_portugues {
 	public double calc(double rate, int epoca); 
 }
