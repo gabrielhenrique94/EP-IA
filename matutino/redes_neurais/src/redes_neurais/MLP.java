@@ -68,6 +68,16 @@ public class MLP {
 		return  saida;
 	}
 	
+	public double[] calculaErro(double[] saida, double saidaEsperada) {
+		double[] erro = new double[saida.length];
+		for (int i = 0; i < saida.length; i++) {
+			erro[i] = saidaEsperada - saida[i];
+		}
+		return erro;
+	}
+	
+	
+	
 	public double sigmoidal(double valor) {
 		//sigmoidal
 	    return 1 / (1 + (double)Math.exp(-valor));
