@@ -18,7 +18,9 @@ public class Main {
 		String	arquivoTeste = "src/dados/optdigits_tes.txt";
 		
 		/* Numero de neuronios na camada escondida (para a rede MLP) */
-		//int numNeuroniosEscondidosMLP = Integer.parseInt(args[0]);
+		int numNeuroniosEscondidosMLP = 3; //Integer.parseInt(args[0]);
+		
+		int numNeuroniosSaida = 10; // DEPOIS VEMOS O QUE FAZER COM ISSO
 		
 		
 		/* Nome do arquivo do conjunto de dados de teste */
@@ -51,8 +53,9 @@ public class Main {
 			System.out.println(t[i]);
 		}
 		
+		//So teste
+		MLP redeMLP = new MLP(dadosNormalizados.getMatrizesTeste(), numNeuroniosEscondidosMLP, commonsRedes.geradorPesosRandomicos(t.length ,numNeuroniosEscondidosMLP), commonsRedes.geradorPesosRandomicos(numNeuroniosEscondidosMLP, numNeuroniosSaida), numNeuroniosSaida);
 		
-		//MLP redeMLP = new MLP(dadosNormalizados.getMatrizesTeste(), numNeuroniosCamadaEscondida, pesosA, pesosB, numNeuroniosSaida)
 		
 		
 	}
