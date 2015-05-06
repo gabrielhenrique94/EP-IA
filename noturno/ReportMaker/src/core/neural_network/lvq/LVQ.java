@@ -6,7 +6,7 @@ import java.util.List;
 
 import core.io.ReadInputFiles;
 import core.neural_network.interfaces.Classifier;
-import core.neural_network.interfaces.Decaimento_portugues;
+import core.neural_network.interfaces.Decrease;
 import core.neural_network.interfaces.Metrics;
 
 /**
@@ -16,7 +16,7 @@ import core.neural_network.interfaces.Metrics;
  * @author Thiago Bonfiglio
  * */
 
-public class LVQ implements Classifier, Decaimento_portugues, Metrics {
+public class LVQ implements Classifier, Decrease, Metrics {
 	
 	private List<double[]> trainingList;
 	private List<double[]> validationList;
