@@ -11,9 +11,9 @@ import java.util.Map;
 public class NormalizarDados {
 	String arquivoDadosNormalizados = "src/dados/dados_normalizados";
 	private ArrayList<double[]> matrizesTreinamento;
-	private ArrayList<Integer> classesTreinamento;
+	private ArrayList<Double> classesTreinamento;
 	private ArrayList<double[]> matrizesTeste;
-	private ArrayList<Integer> classesTeste;
+	private ArrayList<Double> classesTeste;
 	private int[] valoresNormalizacaoColuna;
 	private Map<Integer, Boolean> colunasRemovidas;
 	private int numColunasRemovidas;
@@ -37,17 +37,22 @@ public class NormalizarDados {
 	 * @param taxaRemocao
 	 */
 	public NormalizarDados(String arquivoTreinamento, String arquivoTeste, double taxaRemocao) {
+		
+		//TUDO SERA REFEITO AQUII, SO PARA TESTAR
+		
 		ArrayList<int[]> matrizesTreinamento = extrairMatrizes(arquivoTreinamento);
 		verificarColunasRemocao(matrizesTreinamento, taxaRemocao);
-		matrizesTreinamento = recriaMatrizSemColunas(matrizesTreinamento);
+		ArrayList<double[]> matrizesTreinamento2 = recriaMatrizSemColunas(matrizesTreinamento);
 		encontraValoresNormalizacao(matrizesTreinamento);
-		this.setMatrizesTreinamento(normalizaColunas(matrizesTreinamento)); 
+		//this.setMatrizesTreinamento(normalizaColunas(matrizesTreinamento)); 
+		this.setMatrizesTreinamento(matrizesTreinamento2);
 		this.setClassesTreinamento(extrairClasses(arquivoTreinamento));
-		this.setMatrizesTeste(normalizaColunas(recriaMatrizSemColunas(extrairMatrizes(arquivoTeste))));
+		//this.setMatrizesTeste(normalizaColunas(recriaMatrizSemColunas(extrairMatrizes(arquivoTeste))));
+		this.setMatrizesTeste(recriaMatrizSemColunas(extrairMatrizes(arquivoTeste)));
 		this.setClassesTeste(extrairClasses(arquivoTeste));
 		
-		criarArquivoNormalizado(arquivoDadosNormalizados + "Treinamento.txt", this.matrizesTreinamento, classesTreinamento, getClassesTreinamento());
-		criarArquivoNormalizado(arquivoDadosNormalizados+ "Teste.txt", matrizesTeste, classesTeste, getClassesTeste());
+		// criarArquivoNormalizado(arquivoDadosNormalizados + "Treinamento.txt", this.matrizesTreinamento, classesTreinamento, getClassesTreinamento());
+		// criarArquivoNormalizado(arquivoDadosNormalizados+ "Teste.txt", matrizesTeste, classesTeste, getClassesTeste());
 	}
 	
 	/**
@@ -57,7 +62,7 @@ public class NormalizarDados {
 	 * @param classes
 	 * @param valoresNormalizacaoColuna
 	 */
-	public void criarArquivoNormalizado(String arquivoDadosNormalizados, ArrayList<double[]> matrizes, ArrayList<Integer> classes, ArrayList<Integer> valoresNormalizacaoColuna) {
+	public void criarArquivoNormalizado(String arquivoDadosNormalizados, ArrayList<double[]> matrizes, ArrayList<Double> classes, ArrayList<Integer> valoresNormalizacaoColuna) {
 		
 		try {
 			File arquivo = new File(arquivoDadosNormalizados);
@@ -74,7 +79,7 @@ public class NormalizarDados {
 			
 			for (int i = 0; i < matrizes.size(); i++) {
 				double[] matriz = matrizes.get(i);
-				int classe = classes.get(i);
+				double classe = classes.get(i);
 				
 				for (int j = 0; j < matriz.length; j++) {
 					escritor.write(String.valueOf(matriz[j]) + ", ");
@@ -136,33 +141,30 @@ public class NormalizarDados {
 	 * @param matrizes
 	 * @return
 	 */
-	public ArrayList<int[]> recriaMatrizSemColunas(ArrayList<int[]> matrizes) {
+	public ArrayList<double[]> recriaMatrizSemColunas(ArrayList<int[]> matrizes) {
 		Map<Integer, Boolean> colunasRemovidas = getColunasRemovidas();
 		int numColunasRemovidas = getNumColunasRemovidas();
-		if (colunasRemovidas.size() > 0) {
-			ArrayList<int[]> novasMatrizes = new ArrayList<>();
+		
+		ArrayList<double[]> novasMatrizes = new ArrayList<>();
+		
+		for (int i = 0; i < matrizes.size(); i++) {
+			int[] velhaMatriz = matrizes.get(i);
+			double[] novaMatriz = new double[64 - numColunasRemovidas];
+			int posicaoNovaMatriz = 0;
 			
-			for (int i = 0; i < matrizes.size(); i++) {
-				int[] velhaMatriz = matrizes.get(i);
-				int[] novaMatriz = new int[64 - numColunasRemovidas];
-				int posicaoNovaMatriz = 0;
-				
-				for (int j = 0; j < 64; j++) {
-					if (!colunasRemovidas.get(j)) {
-						novaMatriz[posicaoNovaMatriz] = velhaMatriz[j];
-						posicaoNovaMatriz++;
-					}
-					
+			for (int j = 0; j < 64; j++) {
+				if (!colunasRemovidas.get(j)) {
+					novaMatriz[posicaoNovaMatriz] = (double) velhaMatriz[j];
+					posicaoNovaMatriz++;
 				}
 				
-				novasMatrizes.add(novaMatriz);
-				
 			}
-		
-			matrizes = novasMatrizes;
+			
+			novasMatrizes.add(novaMatriz);
+				
 		}
 		
-		return matrizes;
+		return novasMatrizes;
 	}
 	
 	/**
@@ -256,9 +258,9 @@ public class NormalizarDados {
 	 * @param arquivo
 	 * @return
 	 */
-	public ArrayList<Integer> extrairClasses(String arquivo) {
+	public ArrayList<Double> extrairClasses(String arquivo) {
 			
-		ArrayList<Integer> classes = new ArrayList<Integer>(); 
+		ArrayList<Double> classes = new ArrayList<Double>(); 
 		
 		try {
 		      FileReader arq = new FileReader(arquivo);
@@ -267,7 +269,7 @@ public class NormalizarDados {
 		      String linha = lerArq.readLine(); 
 		      while (linha != null) {
 		    	  String[] valores = linha.split(",");
-		    	  int classe = Integer.parseInt(valores[valores.length - 1]);
+		    	  double classe = Double.parseDouble(valores[valores.length - 1]);
 	
 		    	  classes.add(classe);
 		    	  
@@ -300,7 +302,7 @@ public class NormalizarDados {
 	 * Retorna as classes das matrizes de treinamento
 	 * @return
 	 */
-	public ArrayList<Integer> getClassesTreinamento() {
+	public ArrayList<Double> getClassesTreinamento() {
 		return classesTreinamento;
 	}
 
@@ -308,7 +310,7 @@ public class NormalizarDados {
 	 * Seta as classes das matrizes de treinamento para um valor específico
 	 * @param classesTreinamento
 	 */
-	public void setClassesTreinamento(ArrayList<Integer> classesTreinamento) {
+	public void setClassesTreinamento(ArrayList<Double> classesTreinamento) {
 		this.classesTreinamento = classesTreinamento;
 	}
 
@@ -332,7 +334,7 @@ public class NormalizarDados {
 	 * Retorna as classes das matrizes de teste
 	 * @return
 	 */
-	public ArrayList<Integer> getClassesTeste() {
+	public ArrayList<Double> getClassesTeste() {
 		return classesTeste;
 	}
 
@@ -340,7 +342,7 @@ public class NormalizarDados {
 	 * Seta as classes das matrizes de teste para um valor específico
 	 * @param classesTeste
 	 */
-	public void setClassesTeste(ArrayList<Integer> classesTeste) {
+	public void setClassesTeste(ArrayList<Double> classesTeste) {
 		this.classesTeste = classesTeste;
 	}
 
