@@ -111,13 +111,14 @@ public class MLP {
 					if (j == 0){
 						saida[k] += pesoB[j];
 					}
-					//Resultado para cada neuronio da camada escondida
+					//Resultado para cada neuronio da camada de saida
 					saida[k] += pesoB[j+1] * resultado[j];
 					
 				}
 			}
+			//vamos deixar a saida sem sigmoidal por enquanto 
+			//saida[k] = sigmoidal(saida[k]);
 			
-			saida[k] = sigmoidal(saida[k]);
 		}
 		
 		return  saida;
@@ -137,7 +138,54 @@ public class MLP {
 		return erro;
 	}
 	
+	/**
+	 * Faz o backpropagation da rede
+	 * fonte http://ecee.colorado.edu/~ecen4831/lectures/NNet3.html
+	 * @param saida
+	 * @param resultadoEscondida
+	 * @param pesosB
+	 * @param pesosA
+	 * @param erro
+	 * @return
+	 */
+	public double[] backpropagation (double[] camadaSaida, double[] camadaAnterior, double[][] pesos, double[] erro) {
+		/*Nesse momento temos a primeira iteracao do feedforward
+		* com resultado da camada escondida e da camada de saida.
+		* 
+		* a Regra de delta usa a camda a frente (comecando pela de saida) para retropropagar 
+		* para a anterior até o inicio da rede
+		* 
+		* Entao o metodo seria chamado varias vezes alterando o seus parametros ex:
+		* 
+		* primeira iteração colocar Camada de Saida (ultima camada mesmo), Camada Escondida (anterior) e pesosB (pesos que ligam elas)
+		* 
+		* na segunda colocar a camadaEsocndida como sendo a de saida, e a camada de entrada ocmo sendo a anterior, e pesosA
+		*/
+		
+		double[] deltaSaida = new double[camadaSaida.length];
+		double[] deltaAnterior = new double[camadaAnterior.length];
+		//passo 4- Calcular os deltas da camada de saida
+		for(int i = 0; i< camadaSaida.length;i++) {
+			//deltaSaida = Saida do neuronio * ( 1 - saida do neuronio)(saida esperada - saida do neuronio)
+			deltaSaida[i] = camadaSaida[i] * ( 1 - camadaSaida[i])*(erro[i]) ;
+		}
+		
+		//passo 5- Retropropaga o erro usando o delta da camada de saida para calcular o delta da camada anterior
+		for(int j = 0; j<camadaSaida.length;j++){
+			 //deltaEscondida = saida do neuronioE(1-saida do neuronioE) * (somatorio em K de deltaSaida[K] *Pesos[K][J])
+			deltaAnterior[j] = camadaAnterior[j]*(1-camadaAnterior[j]);
+			double somatorio = 0;
+			 //calculo somatorio	
+			for(int k =0; k < deltaSaida.length; k++){
+		    somatorio += deltaSaida[k] * pesos[k][j];
+			}
+			deltaAnterior[j] *= somatorio;
+		}
+		
+		return deltaAnterior;
+	}
 	
+			
 	/**
 	 * FunÃ§Ã£o utilizada para o calculo na rede
 	 * @param valor
