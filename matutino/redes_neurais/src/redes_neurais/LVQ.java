@@ -8,6 +8,7 @@ public class LVQ {
 	private  ArrayList<double[]> entradas;
 	private int epocas;
 	private int numNeurNaCamadaEscondida;
+	private double alfa = 1;
 	//Cria vetor com valores para multiplicar os anteriores
 	public int[] multiplicadores = new int[10]; 
 	// Creio que o tamanho esteja errado, nao entendi muito bem como funciona ainda
@@ -24,15 +25,18 @@ public class LVQ {
 		criaMapa();
 		inicializaVetoresPesos();
 		System.out.println(classes);
-	//	double[] testee = entradas.get(1);
-	//	System.out.println("---");
-	//	for(int i=0;i<testee.length;i++) System.out.println(testee[i]);
+		double[] testee ;
+		System.out.println("---");
+		for(int j=0;j<10;j++){
+			testee=entradas.get(j);
+		for(int i=0;i<testee.length;i++) System.out.println(testee[i]);
+		}
 	}
 	/**
 	 * Coloca os vetores de peso no mapa das classes em suas respectivas classes \o/
 	 */
 	public void inicializaVetoresPesos(){
-		for (int i=1; i<10; i++){
+		for (int i=0; i<10; i++){//Verificar se começa no 1 ou 0 !!!
 			classes.put(i,toArrayList(entradas.get(i)));
 		}
 	}
@@ -75,6 +79,21 @@ public class LVQ {
 		distancia= Math.pow(soma, (1/2));
 		return distancia;
 		
+	}
+	/**
+	 * Funcao para atualizar o alfazito :~
+	 */
+	public void atualizaAlfaSimples(){
+		alfa=alfa/2;
+	}
+	
+	/**
+	 * Funcao para atualizar o alfa com uma função monoticamente decrescente
+	 * @param interacao
+	 * @param interacaoMax
+	 */
+	public void atualizaAlfaMonot(int interacao, int interacaoMax){
+		alfa= 1-(interacao/interacaoMax); // Coloquei alfa inicial como 1, mas se nao for q fica alfa=alfainicial*(1-(iteracao/iteracaoMax))
 	}
 	/**
 	 * Calcular a distancia pela medida Distancia de Hamming
