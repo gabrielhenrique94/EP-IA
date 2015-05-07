@@ -1,9 +1,10 @@
 package redes_neurais;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 public class LVQ {
 	
-	private Map<Integer, ArrayList<double[]>> classes;
+	private Map<Integer, ArrayList<double[]>> classes = new HashMap<Integer, ArrayList<double[]>>();
 	private  ArrayList<double[]> entradas;
 	private int epocas;
 	private int numNeurNaCamadaEscondida;
@@ -18,9 +19,21 @@ public class LVQ {
 		this.numNeurNaCamadaEscondida = numNeuronios;
 	}
 
+	public void testa(){
+		
+		criaMapa();
+		inicializaVetoresPesos();
+		System.out.println(classes);
+	//	double[] testee = entradas.get(1);
+	//	System.out.println("---");
+	//	for(int i=0;i<testee.length;i++) System.out.println(testee[i]);
+	}
+	/**
+	 * Coloca os vetores de peso no mapa das classes em suas respectivas classes \o/
+	 */
 	public void inicializaVetoresPesos(){
-		for (int i=0; i<10; i++){
-			classes.put(i,toArrayList( entradas.get(i)));
+		for (int i=1; i<10; i++){
+			classes.put(i,toArrayList(entradas.get(i)));
 		}
 	}
 	
@@ -92,3 +105,4 @@ public class LVQ {
 		return 0;
 	}
 }
+

@@ -54,10 +54,11 @@ public class Main {
 		}
 		
 		//So teste
-		MLP redeMLP = new MLP(dadosNormalizados.getMatrizesTeste(), dadosNormalizados.getClassesTeste(), numNeuroniosEscondidosMLP, commonsRedes.geradorPesosRandomicos(t.length ,numNeuroniosEscondidosMLP), commonsRedes.geradorPesosRandomicos(numNeuroniosEscondidosMLP, numNeuroniosSaida), numNeuroniosSaida);
+		//MLP redeMLP = new MLP(dadosNormalizados.getMatrizesTeste(), dadosNormalizados.getClassesTeste(), numNeuroniosEscondidosMLP, commonsRedes.geradorPesosRandomicos(t.length ,numNeuroniosEscondidosMLP), commonsRedes.geradorPesosRandomicos(numNeuroniosEscondidosMLP, numNeuroniosSaida), numNeuroniosSaida);
+		LVQ teste = new LVQ(dadosNormalizados.getMatrizesTeste(), 2,2);
+		teste.testa();
 		
-		
-		redeMLP.treinar();
+		//redeMLP.treinar();
 		
 		
 	}
