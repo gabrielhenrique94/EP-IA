@@ -148,41 +148,61 @@ public class MLP {
 	 * @param erro
 	 * @return
 	 */
-	public double[] backpropagation (double[] camadaSaida, double[] camadaAnterior, double[][] pesos, double[] erro) {
+	public void backpropagation (double[] camadaSaida, double[] camadaEscondida, double entrada[], double[][] pesosA, double[][] pesosB, double[] erro, double taxaAprendizado) {
 		/*Nesse momento temos a primeira iteracao do feedforward
 		* com resultado da camada escondida e da camada de saida.
 		* 
 		* a Regra de delta usa a camda a frente (comecando pela de saida) para retropropagar 
 		* para a anterior até o inicio da rede
 		* 
-		* Entao o metodo seria chamado varias vezes alterando o seus parametros ex:
-		* 
-		* primeira iteração colocar Camada de Saida (ultima camada mesmo), Camada Escondida (anterior) e pesosB (pesos que ligam elas)
-		* 
-		* na segunda colocar a camadaEsocndida como sendo a de saida, e a camada de entrada ocmo sendo a anterior, e pesosA
 		*/
 		
 		double[] deltaSaida = new double[camadaSaida.length];
-		double[] deltaAnterior = new double[camadaAnterior.length];
+		double[] deltaEscondida = new double[camadaEscondida.length];
+		double[][] pesosBnew = new double[pesosB.length][pesosB[0].length];
+		double[][] pesosAnew = new double[pesosA.length][pesosA[0].length];
 		//passo 4- Calcular os deltas da camada de saida
 		for(int i = 0; i< camadaSaida.length;i++) {
 			//deltaSaida = Saida do neuronio * ( 1 - saida do neuronio)(saida esperada - saida do neuronio)
 			deltaSaida[i] = camadaSaida[i] * ( 1 - camadaSaida[i])*(erro[i]) ;
 		}
 		
+				
 		//passo 5- Retropropaga o erro usando o delta da camada de saida para calcular o delta da camada anterior
 		for(int j = 0; j<camadaSaida.length;j++){
-			 //deltaEscondida = saida do neuronioE(1-saida do neuronioE) * (somatorio em K de deltaSaida[K] *Pesos[K][J])
-			deltaAnterior[j] = camadaAnterior[j]*(1-camadaAnterior[j]);
+			 //deltaEscondida = saida do neuronioE(1-saida do neuronioE) * (somatorio em K de deltaSaida[K] *pesosB[K][J])
+			deltaEscondida[j] = camadaEscondida[j]*(1-camadaEscondida[j]);
 			double somatorio = 0;
 			 //calculo somatorio	
 			for(int k =0; k < deltaSaida.length; k++){
-		    somatorio += deltaSaida[k] * pesos[k][j];
+		    somatorio += deltaSaida[k] * pesosB[k][j];
 			}
-			deltaAnterior[j] *= somatorio;
+			deltaEscondida[j] *= somatorio;
 		}
 		
-		return deltaAnterior;
+		
+		//Passo 6 - Calcular a atualizacao de pesos e bias 
+		//pesos B!
+		// ns= qual neuronio de saida eu estou utilizando
+		for(int ns = 0; ns < deltaSaida.length; ns++){
+			for(int pb =0; pb<pesosB[0].length; pb++){
+				//novoPesoB = pesoAntigoB - aprendizado*deltaSaida* saida gerada anteriormente pelo neuronio da camada anterior
+				pesosBnew[ns][pb] = pesosB[ns][pb] - (taxaAprendizado*deltaSaida[ns]* camadaEscondida[ns]);
+			}
+		}
+		
+		//pesos A
+		for(int ns = 0; ns< deltaEscondida.length; ns++){
+			for(int pa =0; pa < pesosA[0].length; pa++){
+				//novoPesoA = pesoAntigoA - aprendizado*deltaEscondido* entrada recebida pelo neuronio
+				pesosAnew[ns][pa] = pesosA[ns][pa] - (taxaAprendizado*deltaEscondida[ns]*entrada[ns]);
+				
+			}
+		}
+		
+		//Atualiza pesos da classe
+		setPesosA(pesosAnew);
+		setPesosB(pesosBnew);
 	}
 	
 			
