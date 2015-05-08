@@ -8,7 +8,10 @@ public class LVQ {
 	private  ArrayList<double[]> entradas;
 	private int epocas;
 	private int numNeurNaCamadaEscondida;
-	private double alfa = 1;
+	private double alfaInicial = 1;
+	private double alfaRotativo = alfaInicial;
+	private int quantidadeClasses = 10;
+	
 	//Cria vetor com valores para multiplicar os anteriores
 	public int[] multiplicadores = new int[10]; 
 	// Creio que o tamanho esteja errado, nao entendi muito bem como funciona ainda
@@ -61,6 +64,65 @@ public class LVQ {
  //Usar 10 primeiros vetores como vetores de peso!
 	//Usar k-means
 	
+	public void cMeans(){
+		//Quant de partições : quantidadeClasses
+		double erroMax= 0.015;//Ver se esse valor é bom
+		criaMapa();//To criando aqui e no LVQ em algum deles não deve ser para criar, creio eu
+		int contInterador = 0;//IDEM AO COMMENT DE CIMA
+		while(true){// NÃO É TRUE É C(T)-C(T-1)<=EPSOLON;
+			contInterador++;
+			//atualiza U
+			//atualiza C
+			
+		}
+	}
+	/**
+	 * Funcao para treinar a rede
+	 */
+	public void treinamentoLVQ(){
+		criaMapa(); 
+		//Rótulo é o Integer do mapa
+		while(true){//determinar condicao de parada
+			for(int j=0;j<entradas.size() ;j++){
+				//encontrar o prototipo vencedor
+				//Adaptar pesos sinápticos
+			}
+			atualizaAlfaSimples();
+		}
+	}
+	/**
+	 *Metodo da fuzzy c-means (nao sei se vai usar x_X)
+	 * @param m
+	 */
+	public void fuzzyCMeans(double m){//Não entendi se m é double ou se vai ser vetor
+		criaMapa();
+		//Definir matriz de pertinência
+		int contInteracoes=0;
+		while (true){//Colocar cond de parada!!
+			for (int j=0; j< entradas.size();j++){
+				for (int i=0; i<quantidadeClasses; i++){
+					//Colocar a função aqui
+				}
+			}
+			
+		}
+	}
+	
+	/**
+	 * Funcao para atualizar o alfazito :~
+	 */
+	public void atualizaAlfaSimples(){
+		alfaRotativo=alfaRotativo/2;
+	}
+	
+	/**
+	 * Funcao para atualizar o alfa com uma função monoticamente decrescente
+	 * @param interacao
+	 * @param interacaoMax
+	 */
+	public void atualizaAlfaMonot(int interacao, int interacaoMax){
+		alfaRotativo= alfaInicial*(1-(interacao/interacaoMax)); // Confirmar fucao!!
+	}
 	
 	/**
 	 * Calcula a distancia pela medida Distancia Euclidiana
@@ -80,21 +142,7 @@ public class LVQ {
 		return distancia;
 		
 	}
-	/**
-	 * Funcao para atualizar o alfazito :~
-	 */
-	public void atualizaAlfaSimples(){
-		alfa=alfa/2;
-	}
 	
-	/**
-	 * Funcao para atualizar o alfa com uma função monoticamente decrescente
-	 * @param interacao
-	 * @param interacaoMax
-	 */
-	public void atualizaAlfaMonot(int interacao, int interacaoMax){
-		alfa= 1-(interacao/interacaoMax); // Coloquei alfa inicial como 1, mas se nao for q fica alfa=alfainicial*(1-(iteracao/iteracaoMax))
-	}
 	/**
 	 * Calcular a distancia pela medida Distancia de Hamming
 	 * @param vetor
