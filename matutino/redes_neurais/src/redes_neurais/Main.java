@@ -22,6 +22,14 @@ public class Main {
 		
 		int numNeuroniosSaida = 10; // DEPOIS VEMOS O QUE FAZER COM ISSO
 		
+		double alpha = 0.7; //Recer por arg depois - valor que tava escrito como normal
+		
+		boolean alphaEstatico = false; // Args tbm
+		
+		int maxT = 100; // Args, máximo de épocas que se deve executar
+		
+		double erroAceitavel = 0.05; //(5% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
+		
 		
 		/* Nome do arquivo do conjunto de dados de teste */
 		//String	dadosTeste = args[2];
@@ -54,11 +62,16 @@ public class Main {
 		}
 		
 		//So teste
-		//MLP redeMLP = new MLP(dadosNormalizados.getMatrizesTeste(), dadosNormalizados.getClassesTeste(), numNeuroniosEscondidosMLP, commonsRedes.geradorPesosRandomicos(t.length ,numNeuroniosEscondidosMLP), commonsRedes.geradorPesosRandomicos(numNeuroniosEscondidosMLP, numNeuroniosSaida), numNeuroniosSaida);
-		LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(), 2,2);
-		teste.testa();
+		MLP redeMLP = new MLP(dadosNormalizados.getMatrizesTeste(), dadosNormalizados.getClassesTeste(), numNeuroniosEscondidosMLP, 
+				commonsRedes.geradorPesosRandomicos(t.length ,numNeuroniosEscondidosMLP), 
+				commonsRedes.geradorPesosRandomicos(numNeuroniosEscondidosMLP, numNeuroniosSaida),
+				numNeuroniosSaida, alpha, alphaEstatico, maxT, erroAceitavel);
+		redeMLP.treinar();
 		
-		//redeMLP.treinar();
+		// LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(), 2,2);
+		//teste.testa();
+		
+		
 		
 		
 	}
