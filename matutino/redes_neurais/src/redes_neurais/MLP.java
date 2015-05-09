@@ -34,6 +34,25 @@ public class MLP {
 	 */
 	private int numNeuroniosSaida;
 	
+	/**
+	 * Resultado da camada Escondida
+	 */
+	private double[] Z;
+	/**
+	 * Epoca atual da rede
+	 */
+	private int t = 0;
+	
+	/**
+	 * Checa se a taxa de aprendiado é fixo ou variavel
+	 */
+	private boolean alphaEstatico = true;
+	
+	/**
+	 * Valor da taxa de aprendizado
+	 */
+	private double alpha;
+	
 	
 	/**
 	 * Construtor da Rede Neural MLP
@@ -58,16 +77,36 @@ public class MLP {
 	 * Faz o treinamento da rede.
 	 */
 	public void treinar() {
-		// TTESTAndo
 		for (int i = 0; i < this.entradas.size(); i++) {
+			double[] erro;
 			double[] entrada = this.entradas.get(i);
 			double[] saida = processaEntrada(entrada);
+			System.out.println("=========EPOCA" +getT()+ "=========");
 			for (int j = 0; j < saida.length; j++) {
 				System.out.print(saida[j] + " ");
 			}
 			System.out.println();
+			//Retorna o erro
+			erro = calculaErro(saida, this.saidasDesejadas.get(i));
+			
+			//calcula erro Quadratico
+			double erroQuadratico = erroQuadraticoMedio(erro);
+			
+			//Se o erro é maior que o aceitavel retropropaga
+			if (erroQuadratico > erroAceitavel) {
+				//Incrementa a epoca
+				setT(getT() + 1);
+				//retropropaga
+				backpropagation(saida, getZ() , entrada, pesosA, pesosB, erro, getAlpha());
+				//precisa atualizar o alpha
+			} else {
+				//Treinamento concluido
+				break;
+			}
+			
 		}
 		
+					
 	}
 
 	/**
@@ -97,6 +136,7 @@ public class MLP {
 			}
 			
 			resultado[k] = sigmoidal(resultado[k]);
+			setZ(resultado);
 		}
 		
 		
@@ -139,15 +179,23 @@ public class MLP {
 		return erro;
 	}
 	
+	public double erroQuadraticoMedio(double[] erro) {
+		double seq = 0.0;
+		for(int e = 0; e < erro.length; e++) { 
+			seq += Math.pow(erro[e], 2);
+		}
+		return seq/erro.length;
+	}
+	
 	/**
-	 * Faz o backpropagation da rede
-	 * fonte http://ecee.colorado.edu/~ecen4831/lectures/NNet3.html
-	 * @param saida
-	 * @param resultadoEscondida
-	 * @param pesosB
+	 * Faz o backpropagation da rede utilizando a regra delta
+	 * @param camadaSaida
+	 * @param camadaEscondida
+	 * @param entrada
 	 * @param pesosA
+	 * @param pesosB
 	 * @param erro
-	 * @return
+	 * @param taxaAprendizado
 	 */
 	public void backpropagation (double[] camadaSaida, double[] camadaEscondida, double entrada[], double[][] pesosA, double[][] pesosB, double[] erro, double taxaAprendizado) {
 		/*Nesse momento temos a primeira iteracao do feedforward
@@ -205,6 +253,7 @@ public class MLP {
 		setPesosA(pesosAnew);
 		setPesosB(pesosBnew);
 	}
+	
 	
 			
 	/**
@@ -295,5 +344,49 @@ public class MLP {
 	public void setNumNeuroniosSaida(int numNeuroniosSaida) {
 		this.numNeuroniosSaida = numNeuroniosSaida;
 	}
+
+	public ArrayList<Double> getSaidasDesejadas() {
+		return saidasDesejadas;
+	}
+
+	public void setSaidasDesejadas(ArrayList<Double> saidasDesejadas) {
+		this.saidasDesejadas = saidasDesejadas;
+	}
+
+	public double[] getZ() {
+		return Z;
+	}
+
+	public void setZ(double[] z) {
+		Z = z;
+	}
+
+	
+	
+	public boolean isAlphaEstatico() {
+		return alphaEstatico;
+	}
+
+	public void setAlphaEstatico(boolean alphaEstatico) {
+		this.alphaEstatico = alphaEstatico;
+	}
+
+	public double getAlpha() {
+		return alpha;
+	}
+
+	public void setAlpha(double alpha) {
+		this.alpha = alpha;
+	}
+
+	public int getT() {
+		return t;
+	}
+
+	public void setT(int t) {
+		this.t = t;
+	}
+	
+	
 	
 }
