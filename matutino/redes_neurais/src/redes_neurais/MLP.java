@@ -117,6 +117,7 @@ public class MLP {
 				}
 			}
 			//vamos deixar a saida sem sigmoidal por enquanto 
+			
 			//saida[k] = sigmoidal(saida[k]);
 			
 		}
