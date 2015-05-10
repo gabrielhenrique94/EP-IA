@@ -5,9 +5,10 @@ import java.util.Map;
 public class LVQ {
 	
 	/**
-	 * Mapa com as classes de classificacao
+	 * Vetores com as classes de classificacao
+	 * Posicao 0 = classe 0 ... 9 = classe 9
 	 */
-	private Map<Integer, ArrayList<double[]>> classes = new HashMap<Integer, ArrayList<double[]>>();
+	private ArrayList<double[]> vetorPrototipos = new ArrayList<double[]>();
 	
 	private int teste=0;
 	/**
@@ -45,83 +46,53 @@ public class LVQ {
 	
 	private int[][] matrizBool ;
 	//Cria vetor com valores para multiplicar os anteriores
+
+	
 	public int[] multiplicadores = new int[10]; 
 	// Creio que o tamanho esteja errado, nao entendi muito bem como funciona ainda
+
+	
+	private static int countTest = 0;
+	
 	
 	/**
 	 * Construtor do lvq
 	 * **/
 	public LVQ(ArrayList<double[]>entrada, int epoca, int numNeuronios){
-		this.entradas = entrada;
-		this.epocas = epoca;
-		this.numNeurNaCamadaEscondida = numNeuronios;
+		entradas = entrada;
+		epocas = epoca;
+		numNeurNaCamadaEscondida = numNeuronios;
 		teste=entradas.size();
 	}
 
 	
 	public void testa(){
 		System.out.println("---");
-		criaMapa();
-		inicializaVetoresPesos();
-		//System.out.println(classes);
-		double[] testee ;
+		criaVetorPrototipos();
 		inicializarMatrizBool();
-		//System.out.println("---");
-	//	for(int j=0;j<10;j++){
-	//		testee=entradas.get(j);
-	//	for(int i=0;i<testee.length;i++) System.out.println(testee[i]);
-	//	}
-	}
-	
-	/**
-	 * Coloca os vetores de peso no mapa das classes em suas respectivas classes
-	 */
-	public void inicializaVetoresPesos(){
-		for (int i=0; i<10; i++){ //Verificar se começa no 1 ou 0 !!!
-			classes.put(i,toArrayList(entradas.get(i)));
+		double[] vet;
+		for(int i=0; i<10 ; i++ ) {
+			vet = vetorPrototipos.get(i);
+			System.out.print(i+" ");
+			for (int j=0;j<vet.length; j++){
+				System.out.print (vet [j] + " "); 
+			}
+			System.out.println();
 		}
-	}
-	
-	
-	//VERIFICAR OS TRES METODOS ABAIXO - METODOS PARA INSERIR VALOR NO MAP - TALVEZ TODOS ERRADOS
-	
-	//Uma gambiarra até eu descobrir como coloco um item num arraylist num map diretamente 
-	//OBS sei que não funcionaria se eu fosse colocar mais de 1 elem D:
-	//Map<Integer, ArrayList<double[]>> classes
-	
-	public ArrayList<double[]> toArrayList(double[] valor){
-		ArrayList<double[]> gambiarra = new ArrayList<double[]>();
-		gambiarra.add(valor);
-		return gambiarra;
-	}
-	
-	/**
-	 *Cria o Mapa com as classes - versão tentando usar o gambiarra
-	 **/
-	public void criaMapa(){
-		for (int i=0; i<10; i++)
-		classes.put(i, null);//BTW não sei ainda ao certo como vai adicionar os elem do arraylist aqui depois
-		
-	}
-	
-	/**
-	 *Cria o Mapa com as classes 
-	 **/
-	/*
-	//tentando inserir diretamente no map
-	public Map<Integer, ArrayList<double[]>>classes(ArrayList<double[]> valor) {
-		for (int i=0; i<10; i++){
-			classes.put(i, valor);
+		System.out.println(entradas.size());
+		treinamentoLVQ();
+		for(int i = 0; i < 10; i++){
+			for(int j = 0; j < entradas.size(); j++){
+				System.out.print(matrizBool[i][j] );
+			}
+			System.out.println();
 		}
-		return classes;
+
 	}
-	*/
-	
-	//FIM DOS METODOS ZUADOS
 	
 
 	
-	
+
 	/**
 	 * Inicializacao da matriz Uh com todos os elementos = 0, isso e, assumindo que nao estao associados a o grupo
 	 **/
@@ -133,16 +104,24 @@ public class LVQ {
 			}
 		}
 	}
-
 	
- //Usar 10 primeiros vetores como vetores de peso!
+	/**
+	 *Cria vetor de prototipos
+	 **/
+	public void criaVetorPrototipos(){
+		for (int i=0; i<10; i++)
+		vetorPrototipos.add(i, entradas.get(i));
+		
+	}
+
 	//Usar k-means
 	
-	
+	/**
+	 * metodo para fazer o cMeans
+	 */
 	public void cMeans(){
 		//Quant de partições : quantidadeClasses
 		double erroMax= 0.015;//Ver se esse valor é bom
-		criaMapa();//To criando aqui e no LVQ em algum deles não deve ser para criar, creio eu
 		int contInterador = 0;//IDEM AO COMMENT DE CIMA
 		while(true){// NÃO É TRUE É C(T)-C(T-1)<=EPSOLON;
 			contInterador++;
@@ -158,19 +137,51 @@ public class LVQ {
 	 */
 	public void treinamentoLVQ(){
 		
-		criaMapa(); 
-		inicializarMatrizBool();
+	//	inicializarMatrizBool();
+	//	criaVetorPrototipos();
 
 		//Rotulo e o Integer do mapa
-		while(true){//determinar condicao de parada - numero fixo de iteracoes ou valor min p/ taxa de aprendizado
+		while(countTest<=3823){//determinar condicao de parada - numero fixo de iteracoes ou valor min p/ taxa de aprendizado
 			for(int j=0;j<entradas.size() ;j++){
-				//encontrar o prototipo vencedor
+				atualizaMatrizBool (j); //encontrar o prototipo vencedor
 				//Adaptar pesos sinápticos
 			}
 			atualizaAlfaSimples();
 		}
 	}
+	/**
+	 * Funcao para atualizar matris bool
+	 * @param j
+	 */
+	public void atualizaMatrizBool(int j){
+		int classe = argMin(j);
+		matrizBool[classe][j]=1;
+		countTest++;
 	
+	}
+	
+	/**
+	 * Funcao que calcula o arg min 
+	 * @param j
+	 * @return
+	 */
+
+	public int argMin(int j){
+		double distMin = 100000;
+		double dist =0;
+		int classe=-1;
+		for ( int i=0; i<vetorPrototipos.size() ; i++ ){
+			dist = caculaDistEuclidiana(entradas.get(j), vetorPrototipos.get(i));
+			System.out.println("TESTE");
+			if (dist <= distMin){
+				distMin = dist;
+				classe = i;
+			}
+		}
+		System.out.println();
+		System.out.println(countTest);
+		return classe;//Tem que implementar, ainda não sei que estrutura usar x_x
+	}
 	
 	/**
 	 *Metodo da fuzzy c-means (nao sei se vai usar x_X)
@@ -217,12 +228,15 @@ public class LVQ {
 	public double caculaDistEuclidiana(double[] vetor, double[] vetorPesos){
 		double distancia;
 		double soma=0;
+		System.out.println("TESTE DIST");
 		
 		//Calcular a parte do somatorio da funcao
 		for (int i=0; i<vetor.length-1; i++){ //Se não tirar a ultima posicao do vetor (classe) é length-1 se tirar eh so length
-			soma=soma+ Math.pow(vetor[i]-vetorPesos[i], 2);
+			soma+= Math.pow(vetor[i]-vetorPesos[i], 2);
 		}
-		distancia= Math.pow(soma, (1/2));
+		distancia= Math.pow(soma, (0.5));
+		System.out.println(distancia);
+		
 		return distancia;
 		
 	}
