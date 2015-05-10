@@ -292,8 +292,8 @@ public class MLP {
 			for (int pb = 0; pb < pesosB[0].length; pb++) {
 				//novoPesoB = pesoAntigoB - aprendizado*deltaSaida* saida gerada anteriormente pelo neuronio da camada anterior
 				double aux;
-				if (ns < camadaEscondida.length) {
-					aux = camadaEscondida[ns];
+				if (pb < camadaEscondida.length) {
+					aux = camadaEscondida[pb];
 				} else {
 					aux = 1; // BIAS não tem valor específico
 				}
