@@ -18,7 +18,7 @@ public class Main {
 		String	arquivoTeste = "src/dados/optdigits_tes.txt";
 		
 		/* Numero de neuronios na camada escondida (para a rede MLP) */
-		int numNeuroniosEscondidosMLP = 3; //Integer.parseInt(args[0]);
+		int numNeuroniosEscondidosMLP = 2; //Integer.parseInt(args[0]);
 		
 		int numNeuroniosSaida = 10; // DEPOIS VEMOS O QUE FAZER COM ISSO
 		
@@ -26,7 +26,7 @@ public class Main {
 		
 		boolean alphaEstatico = false; // Args tbm
 		
-		int maxT = 100; // Args, máximo de épocas que se deve executar
+		int maxT = 10; // Args, máximo de épocas que se deve executar
 		
 		double erroAceitavel = 0.05; //(5% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
 		
@@ -61,15 +61,15 @@ public class Main {
 			System.out.println(t[i]);
 		}
 		
-		//So teste
-	//	MLP redeMLP = new MLP(dadosNormalizados.getMatrizesTeste(), dadosNormalizados.getClassesTeste(), numNeuroniosEscondidosMLP, 
-	//			commonsRedes.geradorPesosRandomicos(t.length ,numNeuroniosEscondidosMLP), 
-	//			commonsRedes.geradorPesosRandomicos(numNeuroniosEscondidosMLP, numNeuroniosSaida),
-	//			numNeuroniosSaida, alpha, alphaEstatico, maxT, erroAceitavel);
-	//	redeMLP.treinar();
+	   //So teste
+		MLP redeMLP = new MLP(dadosNormalizados.getMatrizesTeste(), dadosNormalizados.getClassesTeste(), numNeuroniosEscondidosMLP, 
+		commonsRedes.geradorPesosRandomicos(t.length ,numNeuroniosEscondidosMLP), 
+		commonsRedes.geradorPesosRandomicos(numNeuroniosEscondidosMLP, numNeuroniosSaida),
+		numNeuroniosSaida, alpha, alphaEstatico, maxT, erroAceitavel);
+		redeMLP.treinar();
 		
-		LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(), 2,2);
-		teste.testa();
+		//LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(), 2,2);
+		//teste.testa();
 		
 		
 		
