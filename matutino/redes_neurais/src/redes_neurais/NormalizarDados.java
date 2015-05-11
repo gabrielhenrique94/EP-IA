@@ -66,11 +66,13 @@ public class NormalizarDados {
 		possiveisClasses[0] = 0;
 		possiveisClasses[9] = 1;
 		
-		double intervalo = 1 / 9;
-		
+		double intervalo = 1.0 / 9.0;
+		double valor = intervalo;
+		System.out.println("intervalo :" + intervalo);
 		for (int i = 1; i < 9; i++) {
-			possiveisClasses[i] = intervalo;
-			intervalo += intervalo;
+			possiveisClasses[i] = valor;
+			valor += intervalo;
+			System.out.println("Classe :" + i + " " + possiveisClasses[i]);
 		}
 		ArrayList<Double> novasClasses = new ArrayList<Double>();
 		for (int j = 0; j < classes.size(); j++) {
