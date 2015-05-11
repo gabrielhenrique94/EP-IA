@@ -14,7 +14,8 @@ public class NormalizarDados {
 	private ArrayList<Double> classesTreinamento;
 	private ArrayList<double[]> matrizesTeste;
 	private ArrayList<Double> classesTeste;
-	private int[] valoresNormalizacaoColuna;
+	private int[] valoresMaxColuna;
+	private int[] valoresMinColuna;
 	private Map<Integer, Boolean> colunasRemovidas;
 	private int numColunasRemovidas;
 	
@@ -38,21 +39,51 @@ public class NormalizarDados {
 	 */
 	public NormalizarDados(String arquivoTreinamento, String arquivoTeste, double taxaRemocao) {
 		
-		//TUDO SERA REFEITO AQUII, SO PARA TESTAR
-		
 		ArrayList<int[]> matrizesTreinamento = extrairMatrizes(arquivoTreinamento);
 		verificarColunasRemocao(matrizesTreinamento, taxaRemocao);
-		ArrayList<double[]> matrizesTreinamento2 = recriaMatrizSemColunas(matrizesTreinamento);
+		matrizesTreinamento = recriaMatrizSemColunas(matrizesTreinamento);
 		encontraValoresNormalizacao(matrizesTreinamento);
-		//this.setMatrizesTreinamento(normalizaColunas(matrizesTreinamento)); 
-		this.setMatrizesTreinamento(matrizesTreinamento2);
-		this.setClassesTreinamento(extrairClasses(arquivoTreinamento));
-		//this.setMatrizesTeste(normalizaColunas(recriaMatrizSemColunas(extrairMatrizes(arquivoTeste))));
-		this.setMatrizesTeste(recriaMatrizSemColunas(extrairMatrizes(arquivoTeste)));
-		this.setClassesTeste(extrairClasses(arquivoTeste));
+		this.setMatrizesTreinamento(normalizaColunas(matrizesTreinamento)); 
+		this.setClassesTreinamento(classificarClasses(extrairClasses(arquivoTreinamento)));
+		this.setMatrizesTeste(normalizaColunas(recriaMatrizSemColunas(extrairMatrizes(arquivoTeste))));
+
+		this.setClassesTeste(classificarClasses(extrairClasses(arquivoTeste)));
 		
 		// criarArquivoNormalizado(arquivoDadosNormalizados + "Treinamento.txt", this.matrizesTreinamento, classesTreinamento, getClassesTreinamento());
 		// criarArquivoNormalizado(arquivoDadosNormalizados+ "Teste.txt", matrizesTeste, classesTeste, getClassesTeste());
+	}
+	
+	/**
+	 * Classificar as classes que vão de 0-9 em números mais próximos dentro de um intervalo de 0-1.
+	 * @param classes
+	 * @return
+	 */
+	public ArrayList<Double> classificarClasses(ArrayList<Double> classes) {
+		System.out.println("CLASSIFICAR CLASSES");
+		double[] possiveisClasses = new double[10]; // Tenho classes de 0 a 9
+		
+		// Quero no intervalo de 0 - 1
+		possiveisClasses[0] = 0;
+		possiveisClasses[9] = 1;
+		
+		double intervalo = 1.0 / 9.0;
+		double valor = intervalo;
+		System.out.println("intervalo :" + intervalo);
+		for (int i = 1; i < 9; i++) {
+			possiveisClasses[i] = valor;
+			valor += intervalo;
+			System.out.println("Classe :" + i + " " + possiveisClasses[i]);
+		}
+		ArrayList<Double> novasClasses = new ArrayList<Double>();
+		for (int j = 0; j < classes.size(); j++) {
+			int index = classes.get(j).intValue();
+			novasClasses.add(possiveisClasses[index]);
+			System.out.print(possiveisClasses[index] + " ");
+		}
+		
+		System.out.println();
+		return novasClasses;
+		
 	}
 	
 	/**
@@ -141,20 +172,20 @@ public class NormalizarDados {
 	 * @param matrizes
 	 * @return
 	 */
-	public ArrayList<double[]> recriaMatrizSemColunas(ArrayList<int[]> matrizes) {
+	public ArrayList<int[]> recriaMatrizSemColunas(ArrayList<int[]> matrizes) {
 		Map<Integer, Boolean> colunasRemovidas = getColunasRemovidas();
 		int numColunasRemovidas = getNumColunasRemovidas();
 		
-		ArrayList<double[]> novasMatrizes = new ArrayList<>();
+		ArrayList<int[]> novasMatrizes = new ArrayList<>();
 		
 		for (int i = 0; i < matrizes.size(); i++) {
 			int[] velhaMatriz = matrizes.get(i);
-			double[] novaMatriz = new double[64 - numColunasRemovidas];
+			int[] novaMatriz = new int[64 - numColunasRemovidas];
 			int posicaoNovaMatriz = 0;
 			
 			for (int j = 0; j < 64; j++) {
 				if (!colunasRemovidas.get(j)) {
-					novaMatriz[posicaoNovaMatriz] = (double) velhaMatriz[j];
+					novaMatriz[posicaoNovaMatriz] = velhaMatriz[j];
 					posicaoNovaMatriz++;
 				}
 				
@@ -174,44 +205,54 @@ public class NormalizarDados {
 	public void encontraValoresNormalizacao(ArrayList<int[]> matrizes) {
 		int numColunas = matrizes.get(0).length;
 		int[] valoresMaximos = new int[numColunas];
+		int[] valoresMinimos = new int[numColunas];
+		
+		// Inicializar minimos com 16 (maximo dos valores) para dar certo a validação
+		for (int k = 0; k < valoresMinimos.length; k++) {
+			valoresMinimos[k] = 16;
+		}
 
-		// Encontrar os valores maximos que serão usados para normalização por coluna
+		// Encontrar os valores maximos e mínimos que serão usados para normalização por coluna
 		for (int i = 0; i < matrizes.size(); i++) {
 			int[] matriz = matrizes.get(i);
 			for (int j = 0; j < numColunas; j++) {
 				if (valoresMaximos[j] < matriz[j]) {
 					valoresMaximos[j] = matriz[j];
 				}
+				
+				if (valoresMinimos[j] > matriz[j]) {
+					valoresMinimos[j] = matriz[j];
+				}
 			}
 		}
 		
 		// Seta o array de pesos maximos por coluna
-		setValoresNormalizacaoColuna(valoresMaximos);
-		
-		//APAGAR DEPOIS
-		System.out.print("Array Pesos por coluna: ");
-		for (int i = 0; i < valoresMaximos.length; i++) {
-			System.out.print(valoresMaximos[i] + " ");
-		}	
-		System.out.println("");
-	
+		setValoresMaxColuna(valoresMaximos);
+		setValoresMinColuna(valoresMinimos);
 	}
+	
 	/**
-	 * Normaliza as matrizes dividindo os elementos da mesma pelo máximo da coluna setado no array de valoresMaximos
+	 * Normaliza as matrizes utilizando min-max em 0 ou 1, assumindo o valor presente como v,
+	 * o calculo é o seguinte: vNovo = (v - minColuna)/(maxColuna - minColuna)
 	 * @param matrizes
 	 * @return
 	 */
 	public ArrayList<double[]> normalizaColunas(ArrayList<int[]> matrizes) {
+		System.out.println("NORMALIZA");
 		// Normaliza todas as matrizes por coluna
 		int numColunas = matrizes.get(0).length;
-		int[] valoresMaximos = getValoresNormalizacaoColuna();
-		ArrayList<double[]> matrizesNormalizadas = new ArrayList<>();
+		int[] valoresMaximos = getValoresMaxColuna();
+		int[] valoresMinimos = getValoresMinColuna();
+		ArrayList<double[]> matrizesNormalizadas = new ArrayList<double[]>();
+		
 		for (int i = 0; i < matrizes.size(); i++) {
 			int[] matriz = matrizes.get(i);
 			double[] matrizNormalizada = new double[matriz.length];
 			for (int j = 0; j < numColunas; j++) {
-				matrizNormalizada[j] = matriz[j]/(double)valoresMaximos[j];
+				matrizNormalizada[j] = (matriz[j] - valoresMinimos[j])/(valoresMaximos[j] - valoresMinimos[j]);
+				System.out.print(matrizNormalizada[j] + " ");
 			}
+			System.out.println();
 			matrizesNormalizadas.add(matrizNormalizada);
 		}
 		
@@ -345,22 +386,6 @@ public class NormalizarDados {
 	public void setClassesTeste(ArrayList<Double> classesTeste) {
 		this.classesTeste = classesTeste;
 	}
-
-	/**
-	 * Pega o array que tem os valores usados para normalização de cada coluna
-	 * @return
-	 */
-	public int[] getValoresNormalizacaoColuna() {
-		return valoresNormalizacaoColuna;
-	}
-
-	/**
-	 * Seta os valores usados na normalização da matriz por coluna
-	 * @param valoresNormalizacaoColuna
-	 */
-	public void setValoresNormalizacaoColuna(int[] valoresNormalizacaoColuna) {
-		this.valoresNormalizacaoColuna = valoresNormalizacaoColuna;
-	}
 	
 	/**
 	 * Pega o número das colunas que foram removidas
@@ -378,12 +403,52 @@ public class NormalizarDados {
 		this.colunasRemovidas = colunasRemovidas;
 	}
 
+	/**
+	 * Numero de colunas que foram removidas na normalização.
+	 * @return
+	 */
 	public int getNumColunasRemovidas() {
 		return numColunasRemovidas;
 	}
 
+	/**
+	 * Seta o número de colunas que foram removidas na normalização
+	 * @param numColunasRemovidas
+	 */
 	public void setNumColunasRemovidas(int numColunasRemovidas) {
 		this.numColunasRemovidas = numColunasRemovidas;
+	}
+
+	/**
+	 * Pega o array que tem os valores máximos usados para normalização de cada coluna
+	 * @return
+	 */
+	public int[] getValoresMaxColuna() {
+		return valoresMaxColuna;
+	}
+
+	/**
+	 * Seta os valores máximos usados na normalização da matriz por coluna
+	 * @param valoresNormalizacaoColuna
+	 */
+	public void setValoresMaxColuna(int[] valoresMaxColuna) {
+		this.valoresMaxColuna = valoresMaxColuna;
+	}
+
+	/**
+	 * Pega o array que tem os valores mínimos usados para normalização de cada coluna
+	 * @return
+	 */
+	public int[] getValoresMinColuna() {
+		return valoresMinColuna;
+	}
+
+	/**
+	 * Seta os valores mínimos usados na normalização da matriz por coluna
+	 * @param valoresNormalizacaoColuna
+	 */
+	public void setValoresMinColuna(int[] valoresMinColuna) {
+		this.valoresMinColuna = valoresMinColuna;
 	}
 
 }
