@@ -299,6 +299,10 @@ public class MLP {
 				}
 				
 				pesosBnew[ns][pb] = pesosB[ns][pb] - (taxaAprendizado * deltaSaida[ns] * aux);
+				System.out.println("pesoaBnovo["+ns+"]["+pb+"] = (pesoaBold["+ns+"]["+pb+"])="+	pesosB[ns][pb]+" - ("+taxaAprendizado+" * "+deltaSaida[ns]+" * "+aux+" = "+ pesosBnew[ns][pb]);
+				
+				
+				
 			}
 		}
 		
@@ -346,6 +350,26 @@ public class MLP {
 			System.out.println("");
 		}
 		setPesosB(pesosBnew);
+		System.out.println("=========Matriz pesos B Antigos ======");
+		for(int i =0 ; i< pesosB.length; i++){
+			System.out.print("|");
+			for(int j = 0; j< pesosB[0].length; j++){
+				System.out.print(pesosB[i][j]+"  ");
+			}
+			System.out.print("|");
+			System.out.println("");
+		}
+		
+		
+		System.out.println("=========Matriz pesos B Novos ======");
+		for(int i =0 ; i< pesosB.length; i++){
+			System.out.print("|");
+			for(int j = 0; j< pesosB[0].length; j++){
+				System.out.print(pesosBnew[i][j]+"  ");
+			}
+			System.out.print("|");
+			System.out.println("");
+		}
 	}
 	
 	
