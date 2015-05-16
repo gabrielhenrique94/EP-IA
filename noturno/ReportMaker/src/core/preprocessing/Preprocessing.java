@@ -25,17 +25,6 @@ public class Preprocessing {
 	private int[] usableAtributes;
 	public static List<double[]> trainingList = new ArrayList<double[]>();
 	
-	public static void main(String[] args) throws InvalidFileFormatException,
-	IOException {
-		
-		ReadInputFiles readTrainingFile = new ReadInputFiles();
-		trainingList = readTrainingFile
-				.readFile("test\\optdigits.tra");
-		
-		int[] test = cleanAtributes();
-		
-	}
-	
 	public static void normalize(List<Entry> entries){
 		for(Entry entry: entries){
 			double[] attr = entry.getAttr();

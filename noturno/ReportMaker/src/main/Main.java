@@ -2,6 +2,7 @@ package main;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,6 +29,9 @@ import core.preprocessing.Preprocessing;
 
 public class Main {
 
+	private static final boolean DEBUG = false;
+	private static FileWriter wri; 
+	
 	/**
 	 * Método de inicialização da aplicação
 	 * chamada: Main <training_file> <test_file> <random:(True|False)> <learningRate> <numero_neuronios> 
@@ -35,9 +39,11 @@ public class Main {
 	 * @param args
 	 *            - Recebe os par�metros de inicializa��o do programa, separado
 	 *            por espa�os, e na seguinte ordem: Caminho do arquivo de treinamento, TODO: continuar.
-	 * @throws FileNotFoundException 
+	 * @throws IOException 
 	 * */
-	public static void main(String[] args) throws FileNotFoundException{
+	public static void main(String[] args) throws IOException{
+		wri = new FileWriter(new File("test\\debug.txt"));
+		
 		//Lendo arquivo de entrada e parseando para objetos Entry
 		List<double[]> training_set = ReadInputFiles.readFile(args[0]);
 		List<Entry> training_entries = new ArrayList<Entry>();
@@ -59,6 +65,11 @@ public class Main {
 		
 		int[] neuronsByClass = new int[countClasses(training_entries)];
 
+		// Preprocessando os dados
+		Preprocessing.normalize(training_entries);
+		// TODO: utilizar o segundo metodo de pre-processamento.
+		
+		
 		for(int i = 0; i < neuronsByClass.length; i++){
 			neuronsByClass[i] = nNeurons;
 		}
@@ -68,6 +79,22 @@ public class Main {
 		//Preprocessing.normalize(training_entries);
 		
 		lvq.training(training_entries, test_entries);
+		
+		
+		wri.close();
+	}
+	
+	public static void appendInDebugFile(String append){
+		if(!DEBUG)
+			return;
+		
+		try {
+			wri.write(append);
+			wri.write("\n");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private static int countClasses(List<Entry> trainigSet){

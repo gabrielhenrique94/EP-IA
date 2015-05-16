@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import main.Main;
 import core.io.ReadInputFiles;
 import core.neural_network.interfaces.Classifier;
 import core.neural_network.interfaces.Decaimento_portugues;
@@ -42,19 +43,33 @@ public class LVQ implements Classifier, Decaimento_portugues {
 		initializeWeigths(trainingList);
 		double learningRate = this.learningRate;
 		int epoca = 1;
-		boolean b = willStop(epoca);
+
 		do{
+			System.out.println(epoca);
+			printStartEpoch(epoca, learningRate);
 			//Passo 2  - Para cada vetor de entrada executa os passos 3-4
 			for(Entry entry: trainingList){
+				Main.appendInDebugFile("Entry inicial: " + entry.toString());
 				//Passo 3 - Encontra neuronio mais proximo
 				Neuron t = findMinDistance(entry, neurons);
-				//Passo 4 - Altera os pesos
-				if (t.getClazz() == entry.getClazz()){
-					t.setAttr(sumVector(t.getAttr(), 
-							multiplyByConstant(subVector(entry.getAttr(), t.getAttr()), learningRate)));
-				}else{
-					t.setAttr(subVector(t.getAttr(), 
-							multiplyByConstant(subVector(entry.getAttr(), t.getAttr()), learningRate)));
+				
+				if(t != null)
+				{
+					Main.appendInDebugFile(t.toString());
+					//Passo 4 - Altera os pesos
+					if (t.getClazz() == entry.getClazz()){
+						Main.appendInDebugFile("Casse Igual!!!!");
+						t.setAttr(sumVector(t.getAttr(), 
+								multiplyByConstant(subVector(entry.getAttr(), t.getAttr()), learningRate)));
+					}else{
+						Main.appendInDebugFile("Casse Diferente!!!!");
+						t.setAttr(subVector(t.getAttr(), 
+								multiplyByConstant(subVector(entry.getAttr(), t.getAttr()), learningRate)));
+					}	
+				}
+				else
+				{
+					System.out.println("Neuronio Nulo " + t);
 				}
 			}
 			//Passo 5 - Reduz taxa de aprendizado
@@ -63,24 +78,35 @@ public class LVQ implements Classifier, Decaimento_portugues {
 		}while(willStop(epoca));
 	}
 
-	
+
+	private void printStartEpoch(int epoca, double learn) {
+		Main.appendInDebugFile("------------------------------------------------------");
+		Main.appendInDebugFile("Epoca: " + epoca);
+		Main.appendInDebugFile("Learning Rate: " + learn);
+		Main.appendInDebugFile("------------------------------------------------------");
+		Main.appendInDebugFile("------------------------------------------------------");
+	}
+
 	private Neuron findMinDistance(Entry entry, List<Neuron> neurons) {
-		double min = Double.MAX_VALUE, distance;
+		double min = Double.MAX_VALUE, distance = 0.0;
 		Neuron nMin = null;
 		for(Neuron n: neurons){
 			distance = distance(n.getAttr(), entry.getAttr());
+			if(Double.isInfinite(distance))
+				continue;
+			
 			if(distance < min){
 				min = distance;
 				nMin = n;
 			}
 		}
+		Main.appendInDebugFile("Menor distancia eh: " + distance);
 		return nMin;
 	}
 
 	private boolean willStop(int epoca) {
 		return epoca != MAX_EPOCH;
 	}
-
 
 	private void initializeWeigths(List<Entry> trainingList) {
 		//Criando neuronios
