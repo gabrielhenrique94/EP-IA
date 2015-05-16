@@ -1,6 +1,7 @@
 package redes_neurais;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class LVQ {
 	
@@ -30,7 +31,7 @@ public class LVQ {
 	/**
 	 * Numero de neuronios que a rede neural apresenta na camada escondida.
 	 */
-	private int numNeurNaCamadaEscondida;
+	private int numNeur;
 	
 	/**
 	 * Taxa de aprendizado. A taxa sempre inicia em 1 e vai diminuindo
@@ -70,7 +71,7 @@ public class LVQ {
 	public LVQ(ArrayList<double[]>entrada, int epoca, int numNeuronios){
 		entradas = entrada;
 		epocas = epoca;
-		numNeurNaCamadaEscondida = numNeuronios;
+		numNeur = numNeuronios;
 		teste=entradas.size();
 	}
 
@@ -82,7 +83,7 @@ public class LVQ {
 		criaVetorPrototipos();
 		inicializarMatrizBool();
 		double[] vet;
-		for(int i=0; i<10 ; i++ ) {
+		for(int i=0; i<numNeur ; i++ ) {
 			vet = vetorPrototipos.get(i);
 			System.out.print(i+" ");
 			for (int j=0;j<vet.length; j++){
@@ -92,7 +93,7 @@ public class LVQ {
 		}
 		System.out.println(entradas.size());
 		treinamentoLVQ();
-		for(int i = 0; i < 10; i++){
+		for(int i = 0; i < numNeur; i++){
 			for(int j = 0; j < entradas.size(); j++){
 				System.out.print(matrizBool[i][j] );
 			}
@@ -106,8 +107,8 @@ public class LVQ {
 	 * elemento = 1, pertence
 	 **/
 	public void inicializarMatrizBool(){
-		matrizBool = new int[10][entradas.size()];
-		for(int i = 0; i < 10; i++){
+		matrizBool = new int[numNeur][entradas.size()];
+		for(int i = 0; i < numNeur; i++){
 			for(int j = 0; j < entradas.size(); j++){
 				matrizBool[i][j] = 0;
 			}
@@ -118,10 +119,19 @@ public class LVQ {
 	 *Cria vetor de prototipos 
 	 **/
 	public void criaVetorPrototipos(){
-		for (int i=0; i<10; i++)
-		vetorPrototipos.add(i, entradas.get(i));
+		for (int i=0; i<=numNeur; i++){
+			vetorPrototipos.add(geraVetorAleatorio()) ;
+		}
 	}
 
+	public double[] geraVetorAleatorio(){
+		double[] vetor = new double[64];
+		Random rdm = new Random();
+		for(int i=0; i<64;i++){
+			vetor[i]=rdm.nextDouble() * 2 - 1;
+		}
+		return vetor;
+	}
 	//Usar k-means
 	
 	/**
@@ -300,25 +310,6 @@ public class LVQ {
 		return classe;//Tem que implementar, ainda não sei que estrutura usar 
 	}
 	
-	/**
-	 *Metodo da fuzzy c-means (nao sei se vai usar)
-	 * @param m
-	 */
-	/* Talvez nao vá precisar usar
-	public void fuzzyCMeans(double m){//Não entendi se m é double ou se vai ser vetor
-		criaMapa();
-		//Definir matriz de pertinência
-		int contInteracoes=0;
-		while (true){//Colocar cond de parada!!
-			for (int j=0; j< entradas.size();j++){
-				for (int i=0; i<quantidadeClasses; i++){
-					//Colocar a função aqui
-				}
-			}
-			
-		}
-	}
-	*/
 	
 	/**
 	 * Funcao para atualizar o alfa
