@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class NormalizarDados {
-	String arquivoDadosNormalizados = "src/dados/dados_normalizados";
+	String arquivoDadosNormalizados = "src/dados/dadosNormalizados";
 	private ArrayList<double[]> matrizesTreinamento;
 	private ArrayList<Double> classesTreinamento;
 	private ArrayList<double[]> matrizesTeste;
@@ -49,8 +49,8 @@ public class NormalizarDados {
 
 		this.setClassesTeste(classificarClasses(extrairClasses(arquivoTeste)));
 		
-		// criarArquivoNormalizado(arquivoDadosNormalizados + "Treinamento.txt", this.matrizesTreinamento, classesTreinamento, getClassesTreinamento());
-		// criarArquivoNormalizado(arquivoDadosNormalizados+ "Teste.txt", matrizesTeste, classesTeste, getClassesTeste());
+		criarArquivoNormalizado(this.arquivoDadosNormalizados + "Treinamento.txt", getMatrizesTreinamento(), getClassesTreinamento());
+		criarArquivoNormalizado(this.arquivoDadosNormalizados+ "Teste.txt", getMatrizesTeste(), getClassesTreinamento());
 	}
 	
 	/**
@@ -59,29 +59,26 @@ public class NormalizarDados {
 	 * @return
 	 */
 	public ArrayList<Double> classificarClasses(ArrayList<Double> classes) {
-		System.out.println("CLASSIFICAR CLASSES");
 		double[] possiveisClasses = new double[10]; // Tenho classes de 0 a 9
 		
-		// Quero no intervalo de 0 - 1
-		possiveisClasses[0] = 0;
+		// Quero no intervalo de -1 a 1
+		possiveisClasses[0] = -1;
 		possiveisClasses[9] = 1;
 		
-		double intervalo = 1.0 / 9.0;
-		double valor = intervalo;
-		System.out.println("intervalo :" + intervalo);
+		double intervalo = 2.0 / 9.0;
+		double valor = possiveisClasses[0] + intervalo;
+		
 		for (int i = 1; i < 9; i++) {
 			possiveisClasses[i] = valor;
 			valor += intervalo;
-			System.out.println("Classe :" + i + " " + possiveisClasses[i]);
 		}
+		
 		ArrayList<Double> novasClasses = new ArrayList<Double>();
 		for (int j = 0; j < classes.size(); j++) {
 			int index = classes.get(j).intValue();
 			novasClasses.add(possiveisClasses[index]);
-			System.out.print(possiveisClasses[index] + " ");
 		}
 		
-		System.out.println();
 		return novasClasses;
 		
 	}
@@ -93,7 +90,7 @@ public class NormalizarDados {
 	 * @param classes
 	 * @param valoresNormalizacaoColuna
 	 */
-	public void criarArquivoNormalizado(String arquivoDadosNormalizados, ArrayList<double[]> matrizes, ArrayList<Double> classes, ArrayList<Integer> valoresNormalizacaoColuna) {
+	public void criarArquivoNormalizado(String arquivoDadosNormalizados, ArrayList<double[]> matrizes, ArrayList<Double> classes) {
 		
 		try {
 			File arquivo = new File(arquivoDadosNormalizados);
@@ -101,13 +98,22 @@ public class NormalizarDados {
 			FileWriter escritor = new FileWriter(arquivo); 
 			
 			// Primeira linha Valor Maximo de normalização por coluna
-			
-			/*for (int i = 0; i < valoresNormalizacaoColuna.size(); i++) {
-				escritor.write(valoresNormalizacaoColuna.get(i) + " ");
+			int[] max = getValoresMaxColuna();
+			for (int i = 0; i < max.length; i++) {
+				escritor.write(max[i] + " ");
 			}
 			
-			escritor.write("/n");*/
+			escritor.write("\n");
 			
+			// Segunda linha Valor Minimo de normalização por coluna
+			int[] min = getValoresMinColuna();
+			for (int i = 0; i < min.length; i++) {
+				escritor.write(min[i] + " ");
+			}
+			
+			escritor.write("\n");
+			
+			// Matrizes com classe normalizados
 			for (int i = 0; i < matrizes.size(); i++) {
 				double[] matriz = matrizes.get(i);
 				double classe = classes.get(i);
@@ -232,13 +238,12 @@ public class NormalizarDados {
 	}
 	
 	/**
-	 * Normaliza as matrizes utilizando min-max em 0 ou 1, assumindo o valor presente como v,
-	 * o calculo é o seguinte: vNovo = (v - minColuna)/(maxColuna - minColuna)
+	 * Normaliza as matrizes utilizando min-max em -1 ou 1, assumindo o valor presente como v,
+	 * o calculo é o seguinte: vNovo = (v - minColuna)/(maxColuna - minColuna) * (novoMax - novoMin) + novoMin
 	 * @param matrizes
 	 * @return
 	 */
 	public ArrayList<double[]> normalizaColunas(ArrayList<int[]> matrizes) {
-		System.out.println("NORMALIZA");
 		// Normaliza todas as matrizes por coluna
 		int numColunas = matrizes.get(0).length;
 		int[] valoresMaximos = getValoresMaxColuna();
@@ -249,10 +254,9 @@ public class NormalizarDados {
 			int[] matriz = matrizes.get(i);
 			double[] matrizNormalizada = new double[matriz.length];
 			for (int j = 0; j < numColunas; j++) {
-				matrizNormalizada[j] = (matriz[j] - valoresMinimos[j])/(valoresMaximos[j] - valoresMinimos[j]);
-				System.out.print(matrizNormalizada[j] + " ");
+				
+				matrizNormalizada[j] = (matriz[j] - valoresMinimos[j])/(valoresMaximos[j] - valoresMinimos[j]) * (1 - (-1)) + (-1);
 			}
-			System.out.println();
 			matrizesNormalizadas.add(matrizNormalizada);
 		}
 		

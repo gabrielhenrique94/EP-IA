@@ -57,10 +57,6 @@ public class Main {
 		ArrayList<double[]> x = dadosNormalizados.getMatrizesTeste();
 		double[] t = x.get(0);
 		
-		for (int i = 0; i < t.length; i++) {
-			System.out.println(t[i]);
-		}
-		
 	   //So teste
 		MLP redeMLP = new MLP(dadosNormalizados.getMatrizesTeste(), dadosNormalizados.getClassesTeste(), numNeuroniosEscondidosMLP, 
 		commonsRedes.geradorPesosRandomicos(t.length ,numNeuroniosEscondidosMLP), 
@@ -68,7 +64,7 @@ public class Main {
 		numNeuroniosSaida, alpha, alphaEstatico, maxT, erroAceitavel);
 		redeMLP.treinar();
 		
-		//LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(), 2,2);
+		//LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(), maxT,2, alpha, erroAceitavel);
 		//teste.testa();
 		
 		

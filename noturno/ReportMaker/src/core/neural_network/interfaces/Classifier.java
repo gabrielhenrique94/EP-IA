@@ -40,4 +40,6 @@ public interface Classifier {
 	 * @param input Arquivo de onde será lido
 	 */
 	public void loadNetwork(File input);
+	
+	public double errorRate(List<Entry> tes);
 }

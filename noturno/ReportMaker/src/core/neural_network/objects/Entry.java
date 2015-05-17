@@ -35,4 +35,9 @@ public class Entry {
 			attr[i] = vector[i];
 		return new Entry(attr, clazz);
 	}
+	
+	@Override
+	public String toString() {
+		return "[Entry: {Clazz: " + this.getClazz() + "} ]";
+	}
 }
