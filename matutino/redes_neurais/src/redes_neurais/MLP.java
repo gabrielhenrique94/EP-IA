@@ -100,11 +100,15 @@ public class MLP {
 	public void treinar() {
 		
 		for (int i = 0; i < this.entradas.size(); i++) {
+			
+			//Passo 1 - Enquanto a condicao de parada for falsa faça passo 2 a 9
 			if(getT() < this.maxT){
 				
 			double[] erro;
 			double[] entrada = this.entradas.get(i);
 			System.out.println("=========EPOCA" +getT()+ "=========");
+			
+			//Passo 2 - FEEDFORWARD DA REDE
 			double[] saida = processaEntrada(entrada);
 			System.out.println("saida");
 			for(double s:saida) {
@@ -125,11 +129,12 @@ public class MLP {
 			System.out.println(erroQuadratico > this.erroAceitavel);
 			// Incrementa a epoca
 			setT(getT() + 1);
+			
 			if (erroQuadratico > this.erroAceitavel) {
 				
 				
 				
-				// Retropropaga 
+				//Passo 6 - Retropropaga 
 				backpropagation(saida, getZ(), entrada, pesosA, pesosB, erro, getAlpha());
 				
 				// Atualiza o alpha
@@ -157,6 +162,7 @@ public class MLP {
 		int numNeuroniosCamadaEscondida = getNumNeuroniosCamadaEscondida();
 		double[] resultado = new double[numNeuroniosCamadaEscondida];
 		
+		//Passo 3 - leva o sinal para da camada de entrada para a camada escondida
 		//Calcula dados para camada escondida
 		for (int k = 0; k < numNeuroniosCamadaEscondida; k++) {			
 			//for (int i = 0; i < pesosA.length; i++) {
@@ -166,6 +172,7 @@ public class MLP {
 					if (j == 0){
 						resultado[k] += pesoA[j];
 					}
+					//Passo 4 - Calcula resultado final para a camada escondida 
 					//Resultado para cada neuronio da camada escondida
 					resultado[k] += pesoA[j+1] * entrada[j];
 					//System.out.print("Z["+k+1+"] ["+j+"] -->" + pesoA[j+1] + "*" + entrada[j]);
@@ -174,6 +181,7 @@ public class MLP {
 			
 			//}
 			
+			//Passo 4 Continuacao - Calcula a funcao de ativacao para o neuronio da camada escondida
 			resultado[k] = sigmoidal(resultado[k]);
 			System.out.println("RESULTADO PARA O NEURONIO ESCONDIDO ["+k+"] = "+resultado[k]);
 			setZ(resultado);
@@ -182,6 +190,7 @@ public class MLP {
 		
 		int numNeuroniosSaida = getNumNeuroniosSaida();
 		double[] saida = new double[numNeuroniosSaida];
+		//Passo 5 - Calcula a soma dos pesos para saida 
 		//Calcula dados para camada de saida
 		for (int k = 0; k < numNeuroniosSaida; k++) {			
 			//for (int i = 0; i < pesosB.length; i++) {
@@ -196,9 +205,9 @@ public class MLP {
 										
 				}
 			//}
-			//vamos deixar a saida sem sigmoidal por enquanto 
-			
-			//saida[k] = sigmoidal(saida[k]);
+		
+			//Passo 5 Continuacao - Calcula a saida sigmoidal para a rede
+			saida[k] = sigmoidal(saida[k]);
 			
 		}
 		
@@ -258,18 +267,18 @@ public class MLP {
 		double[][] pesosBnew = new double[pesosB.length][pesosB[0].length];
 		double[][] pesosAnew = new double[pesosA.length][pesosA[0].length];
 		
-		// Passo 4- Calcular os deltas da camada de saida
+		// Passo 6 Continuacao Calcular os deltas da camada de saida
 		System.out.println("PASSO 4");
 		for (int i = 0; i < camadaSaida.length; i++) {
 			//deltaSaida = Saida do neuronio * ( 1 - saida do neuronio)(saida esperada - saida do neuronio)
 			deltaSaida[i] = camadaSaida[i] * (1 - camadaSaida[i]) * (erro[i]) ;
 		}
 		
-		// Passo 5- Retropropaga o erro usando o delta da camada de saida para calcular o delta da camada anterior
+		// Passo 7 - Retropropaga o erro usando o delta da camada de saida para calcular o delta da camada anterior
 		System.out.println("PASSO 5");
 		for (int j = 0; j < camadaEscondida.length; j++) {
 			
-			//deltaEscondida = saida do neuronioE(1-saida do neuronioE) * (somatorio em K de deltaSaida[K] *pesosB[K][J])
+			//deltaEscondida = saida do neuronioE(1-saida do neuronioE) * (somatorio em K de deltaSaida[K] *pesosB[J][K])
 			deltaEscondida[j] = camadaEscondida[j]*(1-camadaEscondida[j]);
 			
 			double somatorio = 0;
@@ -284,7 +293,7 @@ public class MLP {
 		}
 		
 		
-		// Passo 6 - Calcular a atualizacao de pesos e bias 
+		// Passo 7 continuacao  - Calcular a atualizacao de pesos e bias 
 		// Pesos B
 		// ns = qual neuronio de saida eu estou utilizando
 		System.out.println("PASSO 6 PESO B");

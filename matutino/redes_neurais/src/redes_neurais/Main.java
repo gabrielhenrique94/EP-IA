@@ -20,9 +20,9 @@ public class Main {
 		/* Numero de neuronios na camada escondida (para a rede MLP) */
 		int numNeuroniosEscondidosMLP = 2; //Integer.parseInt(args[0]);
 		
-		int numNeuroniosSaida = 10; // DEPOIS VEMOS O QUE FAZER COM ISSO
+		int numNeuroniosSaida = 1; // DEPOIS VEMOS O QUE FAZER COM ISSO
 		
-		double alpha = 0.7; //Recer por arg depois - valor que tava escrito como normal
+		double alpha = 0.5; //Recer por arg depois - valor que tava escrito como normal
 		
 		boolean alphaEstatico = false; // Args tbm
 		
@@ -88,12 +88,14 @@ public class Main {
 		redeMLP.treinar();
 		*/
 		
+		//Passo 0 Inicializa os pesos
 		//TREINAR ENTRADA
 		MLP redeMLP = new MLP(xorProblem, xorClazz, numNeuroniosEscondidosMLP, 
 		commonsRedes.geradorPesosRandomicos(t.length ,numNeuroniosEscondidosMLP), 
 		commonsRedes.geradorPesosRandomicos(numNeuroniosEscondidosMLP, numNeuroniosSaida),
 		numNeuroniosSaida, alpha, alphaEstatico, maxT, erroAceitavel);
 		redeMLP.treinar();
+		
 		//LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(), maxT,2, alpha, erroAceitavel);
 		//teste.testa();
 		
