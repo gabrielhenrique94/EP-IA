@@ -307,7 +307,7 @@ public class MLP {
 					aux = 1; // BIAS não tem valor específico
 				}
 				
-				pesosBnew[ns][pb] = pesosB[ns][pb] - (taxaAprendizado * deltaSaida[ns] * aux);
+				pesosBnew[ns][pb] = pesosB[ns][pb] + (taxaAprendizado * deltaSaida[ns] * aux);
 				System.out.println("pesoaBnovo["+ns+"]["+pb+"] = (pesoaBold["+ns+"]["+pb+"])="+	pesosB[ns][pb]+" - ("+taxaAprendizado+" * "+deltaSaida[ns]+" * "+aux+" = "+ pesosBnew[ns][pb]);
 				
 				
@@ -330,7 +330,7 @@ public class MLP {
 					aux = 1; // BIAS não tem valor específico
 				}
 				
-				pesosAnew[ns][pa] = pesosA[ns][pa] - (taxaAprendizado * deltaEscondida[ns] * aux);
+				pesosAnew[ns][pa] = pesosA[ns][pa] + (taxaAprendizado * deltaEscondida[ns] * aux);
 				//System.out.println("ATUALIZACAO PESOS A ->");
 				//System.out.println("pesoaAnovo["+ns+"]["+pa+"] = (pesoaAold["+ns+"]["+pa+"])="+	pesosA[ns][pa]+" - ("+taxaAprendizado+" * "+deltaEscondida[ns]+" * "+aux+" = " + 	pesosAnew[ns][pa]);
 			}
