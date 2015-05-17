@@ -16,6 +16,10 @@ public class Entry {
 		return attr;
 	}
 	
+	public void setAttrAtPosition(int n, double val){
+		attr[n] = val;
+	}
+	
 	public int getClazz() {
 		return clazz;
 	}
@@ -34,6 +38,18 @@ public class Entry {
 		for(int i = 0; i < attr.length; i++)
 			attr[i] = vector[i];
 		return new Entry(attr, clazz);
+	}
+	
+	// Limpa a coluna, ja que esta nao sera usada
+	public void clearCol(int n){
+		double[] newAttr = new double[this.attr.length-1];
+		for(int i = 0; i < n; i++){
+			newAttr[i] = attr[i];
+		}
+		
+		for(int i = n+1; i < attr.length; i++){
+			newAttr[i-1] = attr[i];
+		}
 	}
 	
 	@Override

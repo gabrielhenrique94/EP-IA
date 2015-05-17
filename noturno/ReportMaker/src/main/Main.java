@@ -11,6 +11,7 @@ import java.util.Set;
 import core.io.ReadInputFiles;
 import core.neural_network.interfaces.Classifier;
 import core.neural_network.lvq.LVQ;
+import core.neural_network.lvq.vector;
 import core.neural_network.objects.Entry;
 import core.preprocessing.Preprocessing;
 
@@ -72,31 +73,28 @@ public class Main {
 		double decreaseRate = Double.parseDouble(args[5]);
 		
 		// Embaralhar a entrada
-		boolean sortEntry = Boolean.parseBoolean(args[6]);
+		int numEpochs = Integer.parseInt(args[6]);
 
 		int[] neuronsByClass = new int[countClasses(training_entries)];
 
 		// Preprocessando os dados
-		Preprocessing.normalize(training_entries);
+		//Preprocessing.normalize(training_entries);
+		Preprocessing.minMaxMethod(training_entries);
+		Preprocessing.cleanAtributes(training_entries);
+		
+		
+		
 		// TODO: utilizar o segundo metodo de pre-processamento.
 
 		for (int i = 0; i < neuronsByClass.length; i++) {
 			neuronsByClass[i] = nNeurons;
 		}
 
-		Classifier lvq = new LVQ(learningRate, neuronsByClass, random, decreaseRate);
+		Classifier lvq = new LVQ(learningRate, neuronsByClass, random, decreaseRate, numEpochs);
 		// normaliza
 		// Preprocessing.normalize(training_entries);
 
 		lvq.training(training_entries, test_entries);
-
-		System.out.println("Classe: " + lvq.classification(test_entries.get(1)));
-		System.out.println("Classe: " + lvq.classification(test_entries.get(2)));
-		System.out.println("Classe: " + lvq.classification(test_entries.get(3)));
-		System.out.println("Classe: " + lvq.classification(test_entries.get(4)));
-		System.out.println("Classe: " + lvq.classification(test_entries.get(5)));
-		System.out.println("Classe: " + lvq.classification(test_entries.get(6)));
-		
 	}
 
 	private static int countClasses(List<Entry> trainigSet) {

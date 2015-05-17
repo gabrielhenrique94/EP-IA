@@ -23,18 +23,19 @@ import static core.neural_network.lvq.vector.*;
  * */
 
 public class LVQ implements Classifier, Decaimento_portugues {
-	private static final int MAX_EPOCH = 100;
+	private int max_epoch;
 	private double learningRate;
 	private int[] nNeurons;
 	private boolean isRandom;
 	private List<Neuron> neurons;
 	private double decreaseRate;
 
-	public LVQ(double learningRate, int[] nNeurons, boolean isRandom, double decreaseRate) {
+	public LVQ(double learningRate, int[] nNeurons, boolean isRandom, double decreaseRate, int max_epoch) {
 		this.learningRate = learningRate;
 		this.nNeurons = nNeurons;
 		this.isRandom = isRandom;
 		this.decreaseRate = decreaseRate;
+		this.max_epoch = max_epoch;
 	}
 
 	@Override
@@ -89,7 +90,7 @@ public class LVQ implements Classifier, Decaimento_portugues {
 	}
 
 	private boolean willStop(int epoca) {
-		return epoca != MAX_EPOCH;
+		return epoca != max_epoch;
 	}
 
 	private void initializeWeigths(List<Entry> trainingList) {
@@ -134,7 +135,7 @@ public class LVQ implements Classifier, Decaimento_portugues {
 	// http://seer.ufrgs.br/index.php/rita/article/view/rita_v19_n1_p120/18115
 	@Override
 	public double calcLearningRate(double rate, int epoca) {
-		return rate - ((rate * 10) / 100);
+		return rate - ((rate * decreaseRate) / 100);
 	}
 
 	@Override
