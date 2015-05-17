@@ -72,7 +72,7 @@ public class Main {
 		double decreaseRate = Double.parseDouble(args[5]);
 		
 		// Embaralhar a entrada
-		boolean sortEntry = Boolean.parseBoolean(args[6]);
+		int numEpochs = Integer.parseInt(args[6]);
 
 		int[] neuronsByClass = new int[countClasses(training_entries)];
 
@@ -84,19 +84,11 @@ public class Main {
 			neuronsByClass[i] = nNeurons;
 		}
 
-		Classifier lvq = new LVQ(learningRate, neuronsByClass, random, decreaseRate);
+		Classifier lvq = new LVQ(learningRate, neuronsByClass, random, decreaseRate, numEpochs);
 		// normaliza
 		// Preprocessing.normalize(training_entries);
 
 		lvq.training(training_entries, test_entries);
-
-		System.out.println("Classe: " + lvq.classification(test_entries.get(1)));
-		System.out.println("Classe: " + lvq.classification(test_entries.get(2)));
-		System.out.println("Classe: " + lvq.classification(test_entries.get(3)));
-		System.out.println("Classe: " + lvq.classification(test_entries.get(4)));
-		System.out.println("Classe: " + lvq.classification(test_entries.get(5)));
-		System.out.println("Classe: " + lvq.classification(test_entries.get(6)));
-		
 	}
 
 	private static int countClasses(List<Entry> trainigSet) {

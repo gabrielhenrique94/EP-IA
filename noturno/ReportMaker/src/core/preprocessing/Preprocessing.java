@@ -35,6 +35,30 @@ public class Preprocessing {
 		}
 	}
  	
+	// Range de 0 a 1
+	public static void minMaxMethod(List<Entry> entries){
+		Entry first = entries.get(0);
+		
+		double min = Double.MAX_VALUE, max = 0;
+		
+		for(int i = 0; i < first.getAttr().length; i++){
+			
+			for(Entry e : entries)
+			{
+				
+			}			
+		}
+		
+		for(Entry entry: entries){
+			double[] attr = entry.getAttr();
+			for(int i = 0; i < attr.length; i++){
+				attr[i] = attr[i]/16.0;
+			}
+			entry.setAttr(attr);
+		}
+	}
+	
+	
 	/**
 	 * @return result
 	 * 
