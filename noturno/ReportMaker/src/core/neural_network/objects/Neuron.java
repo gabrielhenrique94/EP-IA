@@ -23,7 +23,14 @@ public class Neuron extends Entry {
 		double[] neurons = new double[dimensions];
 		for (int j = 0; j < neurons.length; j++) {
 			neurons[j] = Math.random();
-			System.out.println(neurons[j]);
+		}
+		setAttr(neurons);
+	}
+	
+	public void initZero() {
+		double[] neurons = new double[dimensions];
+		for (int j = 0; j < neurons.length; j++) {
+			neurons[j] = 0;
 		}
 		setAttr(neurons);
 	}

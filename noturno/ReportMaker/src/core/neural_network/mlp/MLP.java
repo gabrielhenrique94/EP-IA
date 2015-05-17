@@ -39,6 +39,12 @@ public class MLP implements Classifier{
 		
 	}
 
+	@Override
+	public double errorRate(List<Entry> tes) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 	
 	
 }

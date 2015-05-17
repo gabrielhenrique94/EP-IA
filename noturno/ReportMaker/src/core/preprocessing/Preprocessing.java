@@ -35,7 +35,6 @@ public class Preprocessing {
 		}
 	}
  	
-	
 	/**
 	 * @return result
 	 * 
@@ -85,5 +84,4 @@ public class Preprocessing {
 		}			
 		return result;
 	}
-	
 }
