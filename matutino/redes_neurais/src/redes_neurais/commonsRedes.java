@@ -37,4 +37,6 @@ public class commonsRedes {
 			return taxaAprendizado*(1.0 -(((double)epoca)/maxEpocas));
 		}
 	}
+    
+
 }

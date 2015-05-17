@@ -9,7 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class NormalizarDados {
-	String arquivoDadosNormalizados = "src/dados/dadosNormalizados";
+	String arquivoDadosNormalizadosTreinamento = "src/dados/dadosNormalizadosTreinamento.txt";
+	String arquivoDadosNormalizadosTeste = "src/dados/dadosNormalizadosTeste.txt";
+	String arquivoComplementosNormalizacao = "src/dados/dadosComplementosNormalizacao.txt";
 	private ArrayList<double[]> matrizesTreinamento;
 	private ArrayList<Double> classesTreinamento;
 	private ArrayList<double[]> matrizesTeste;
@@ -24,11 +26,55 @@ public class NormalizarDados {
 	 * treinamentoNormalizado.txt e testeNormalizado.txt
 	 */
 	public NormalizarDados() {
-		/*
-		this.setMatrizesTreinamento(extrairMatrizes(arquivoTreinamento));
-		this.setClassesTreinamento(extrairClasses(arquivoTreinamento));
-		this.setMatrizesTeste(extrairMatrizes(arquivoTeste));
-		this.setClassesTeste(extrairClasses(arquivoTeste));*/
+		this.setMatrizesTreinamento(convertArrayListDoubleArray((extrairMatrizes(this.arquivoDadosNormalizadosTreinamento))));
+		this.setClassesTreinamento(extrairClasses(this.arquivoDadosNormalizadosTreinamento));
+		this.setMatrizesTeste(convertArrayListDoubleArray(extrairMatrizes(this.arquivoDadosNormalizadosTeste)));
+		this.setClassesTeste(extrairClasses(this.arquivoDadosNormalizadosTeste));
+		carregarComplementosNormalizacao();
+	}
+	
+	public void carregarComplementosNormalizacao() {
+		try {
+		      FileReader arq = new FileReader(this.arquivoComplementosNormalizacao);
+		      BufferedReader lerArq = new BufferedReader(arq);
+
+		      String linha1 = lerArq.readLine(); 
+		      String[] valores1 = linha1.split(",");
+		      int[] valoresMax = new int[valores1.length];
+		      for (int i = 0; i < valores1.length; i++) {
+		    	  valoresMax[i] = Integer.parseInt(valores1[i]);
+		      }
+		      setValoresMaxColuna(valoresMax);
+		     
+		      String linha2 = lerArq.readLine(); 
+		      String[] valores2 = linha2.split(",");
+		      int[] valoresMin = new int[valores2.length];
+		      for (int i = 0; i < valores2.length; i++) {
+		    	  valoresMin[i] = Integer.parseInt(valores2[i]);
+		      }
+		      setValoresMinColuna(valoresMin);
+		      
+		      String linha3 = lerArq.readLine();
+		      setNumColunasRemovidas(Integer.parseInt(linha3));
+		      
+		      String linha4 = lerArq.readLine();
+		      String[] valores4 = linha4.split(",");
+		      Map<Integer, Boolean> mapa = new HashMap<>();
+		      for (int i = 0; i < valores4.length; i++) {
+		    	  String[] keyvalue = valores4[i].split(":");
+		    	  Boolean value = false;
+		    	  if (keyvalue[1] == "1") {
+		    		  value = true;
+		    	  }
+		    	  mapa.put(Integer.parseInt(keyvalue[0]), value);
+		      }
+		      
+		      setColunasRemovidas(mapa);
+		      
+		      lerArq.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -49,8 +95,9 @@ public class NormalizarDados {
 
 		this.setClassesTeste(classificarClasses(extrairClasses(arquivoTeste)));
 		
-		criarArquivoNormalizado(this.arquivoDadosNormalizados + "Treinamento.txt", getMatrizesTreinamento(), getClassesTreinamento());
-		criarArquivoNormalizado(this.arquivoDadosNormalizados+ "Teste.txt", getMatrizesTeste(), getClassesTreinamento());
+		criarArquivoValoresNormalizacao(this.arquivoComplementosNormalizacao);
+		criarArquivoNormalizado(this.arquivoDadosNormalizadosTreinamento, getMatrizesTreinamento(), getClassesTreinamento());
+		criarArquivoNormalizado(this.arquivoDadosNormalizadosTeste, getMatrizesTeste(), getClassesTreinamento());
 	}
 	
 	/**
@@ -82,13 +129,80 @@ public class NormalizarDados {
 		return novasClasses;
 		
 	}
+	/**
+	 * Cria um arquivo contendo os valores máximos e mínimos utilizados para normalizar cada coluna,
+	 * caso seja preciso voltar os valores.
+	 * @param arquivo
+	 */
+	public void criarArquivoValoresNormalizacao(String arquivo) {
+		try {
+			File arquivonovo = new File(arquivo);
+			arquivonovo.createNewFile();
+			FileWriter escritor = new FileWriter(arquivonovo); 
+			
+			// Primeira linha Valor Maximo de normalização por coluna
+			int[] max = getValoresMaxColuna();
+			for (int i = 0; i < max.length; i++) {
+				String aux = Integer.toString(max[i]);
+				if (i < max.length - 1) {
+					aux +=",";
+				}
+				
+				escritor.write(aux);
+			}
+			
+			escritor.write("\n");
+			
+			// Segunda linha Valor Minimo de normalização por coluna
+			int[] min = getValoresMinColuna();
+			for (int i = 0; i < min.length; i++) {
+				String aux = Integer.toString(min[i]);
+				if (i < min.length - 1) {
+					aux +=",";
+				}
+				
+				escritor.write(aux);
+				
+			}
+			
+			escritor.write("\n");
+			
+			// Terceira linha num colunas removidas
+			escritor.write(getNumColunasRemovidas() + "\n");
+			
+			// Quarta linha mapa das colunas removidas com o num da coluna e 0 = false e 1 = true
+			
+			Map<Integer, Boolean> mapa = getColunasRemovidas();
+			for (int i = 0; i < mapa.size(); i++) {
+				String aux = Integer.toString(i) + ":";
+
+				if (mapa.get(i)){
+					aux += Integer.toString(1);
+				} else {
+					aux += Integer.toString(0);
+				}
+				
+				if (i < mapa.size() - 1) {
+					aux += ",";
+				}
+				escritor.write(aux);
+			}
+			
+			escritor.write("\n");
+			
+			
+			escritor.flush();
+			escritor.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	/**
-	 * Cria o arquivo normalizado
+	 * Cria o arquivo com as matrizes e a classes normalizadas (mesmo formato do inicial)
 	 * @param arquivoDadosNormalizados
 	 * @param matrizes
 	 * @param classes
-	 * @param valoresNormalizacaoColuna
 	 */
 	public void criarArquivoNormalizado(String arquivoDadosNormalizados, ArrayList<double[]> matrizes, ArrayList<Double> classes) {
 		
@@ -97,29 +211,14 @@ public class NormalizarDados {
 			arquivo.createNewFile();
 			FileWriter escritor = new FileWriter(arquivo); 
 			
-			// Primeira linha Valor Maximo de normalização por coluna
-			int[] max = getValoresMaxColuna();
-			for (int i = 0; i < max.length; i++) {
-				escritor.write(max[i] + " ");
-			}
-			
-			escritor.write("\n");
-			
-			// Segunda linha Valor Minimo de normalização por coluna
-			int[] min = getValoresMinColuna();
-			for (int i = 0; i < min.length; i++) {
-				escritor.write(min[i] + " ");
-			}
-			
-			escritor.write("\n");
-			
 			// Matrizes com classe normalizados
 			for (int i = 0; i < matrizes.size(); i++) {
 				double[] matriz = matrizes.get(i);
 				double classe = classes.get(i);
 				
 				for (int j = 0; j < matriz.length; j++) {
-					escritor.write(String.valueOf(matriz[j]) + ", ");
+				
+					escritor.write(String.valueOf(matriz[j]) + ",");
 				}
 				
 				escritor.write(classe + "\n");
@@ -326,6 +425,26 @@ public class NormalizarDados {
 		}
 		return classes;
 	}
+    
+    /**
+     * Converte array list de array de int para array double
+     * @param array
+     * @return
+     */
+    public ArrayList<double[]> convertArrayListDoubleArray(ArrayList<int[]> array) {
+    	ArrayList<double[]>  aux = new ArrayList<double[]>();
+    	for (int i = 0; i < array.size(); i++) {
+    		int[] a = array.get(i);
+    		double[] b = new double[a.length];
+    		for (int j = 0; j < a.length; j++) {
+    			b[j] = (double) a[j];
+    		}
+    		
+    		aux.add(b);
+    	}
+    	
+    	return aux;
+    }
 	
 	/**
 	 * Retorna as matrizes de treinamento
