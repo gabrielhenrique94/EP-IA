@@ -39,22 +39,27 @@ public class Preprocessing {
 	public static void minMaxMethod(List<Entry> entries){
 		Entry first = entries.get(0);
 		
-		double min = Double.MAX_VALUE, max = 0;
+		double min = Double.MAX_VALUE, max = 0, curr, newVal;
 		
 		for(int i = 0; i < first.getAttr().length; i++){
 			
 			for(Entry e : entries)
 			{
-				
-			}			
-		}
-		
-		for(Entry entry: entries){
-			double[] attr = entry.getAttr();
-			for(int i = 0; i < attr.length; i++){
-				attr[i] = attr[i]/16.0;
+				curr = e.getAttr()[i];
+				if(curr < min)
+					min = curr;
+				if(curr > max)
+					max = curr;
 			}
-			entry.setAttr(attr);
+			
+			for(Entry e : entries)
+			{
+				curr = e.getAttr()[i];
+				newVal = (curr - min) / ((max - min));
+				if(Double.isNaN(newVal))
+					newVal = 0;
+				e.setAttrAtPosition(i, newVal);
+			}
 		}
 	}
 	
@@ -65,11 +70,19 @@ public class Preprocessing {
 	 * Calcula frequencia de valores repetidos em cada atributo e caso se repita mais que 95% o ignora ao implementar o algoritmo
 	 * e mostra por meio de um vetor de binario quais atributos serao usados no algoritmo 
 	 */
-	private static int[] cleanAtributes() {
-		
-		System.out.println(trainingList.size()-1);
-		System.out.println(trainingList.get(0).length-1);
-		int[] result = new int[trainingList.get(0).length-1];
+	public static void cleanAtributes(List<Entry> entries) {
+		int[] result = usedColumns(entries);
+		for(int i = 0; i < result.length; i++){
+			if(result[i] == 0)
+			{
+				for(Entry e : entries)
+					e.clearCol(i);
+			}
+		}
+	}
+
+	private static int[] usedColumns(List<Entry> entries) {
+		int[] result = new int[entries.get(0).getAttr().length];
 		
 		int totalOfcases = 0;
 		
@@ -82,9 +95,9 @@ public class Preprocessing {
 			somatoria.add(i, 0);
 		}
 		
-		for( int i = 0; i < trainingList.get(0).length-1; i++){
-			for ( int j = 0; j < trainingList.size()-1; j++) {
-				int value = (int) trainingList.get(j)[i];
+		for( int i = 0; i < entries.get(0).getAttr().length; i++){
+			for ( int j = 0; j < entries.size()-1; j++) {
+				int value = (int) entries.get(j).getAttr()[i];
 				somatoria.add(value, somatoria.get(value)+1);
 				totalOfcases += 1;
 			}
@@ -105,7 +118,7 @@ public class Preprocessing {
 			}else{
 				result[i] = 1;
 			}
-		}			
+		}
 		return result;
 	}
 }

@@ -29,6 +29,13 @@ public class vector {
 		System.out.print(v[v.length - 1]+"]\n");
 	}
 	
+	public static void printV(int[] v){
+		System.out.print("[");
+		for(int i = 0; i < v.length-1; i++)
+			System.out.print(String.valueOf(v[i])+", ");
+		System.out.print(v[v.length - 1]+"]\n");
+	}
+	
 	public static double distance(double[] neu1, double[] neu2) {
 		double sum = 0;
 		for(int i = 0 ; i < neu1.length; i++ )

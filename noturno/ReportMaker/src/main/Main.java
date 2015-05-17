@@ -11,6 +11,7 @@ import java.util.Set;
 import core.io.ReadInputFiles;
 import core.neural_network.interfaces.Classifier;
 import core.neural_network.lvq.LVQ;
+import core.neural_network.lvq.vector;
 import core.neural_network.objects.Entry;
 import core.preprocessing.Preprocessing;
 
@@ -77,7 +78,12 @@ public class Main {
 		int[] neuronsByClass = new int[countClasses(training_entries)];
 
 		// Preprocessando os dados
-		Preprocessing.normalize(training_entries);
+		//Preprocessing.normalize(training_entries);
+		Preprocessing.minMaxMethod(training_entries);
+		Preprocessing.cleanAtributes(training_entries);
+		
+		
+		
 		// TODO: utilizar o segundo metodo de pre-processamento.
 
 		for (int i = 0; i < neuronsByClass.length; i++) {
