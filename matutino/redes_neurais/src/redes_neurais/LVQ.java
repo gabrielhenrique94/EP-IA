@@ -8,48 +8,46 @@ public class LVQ {
 	/**
 	 * Vetores com as classes de classificacao
 	 * Posicao 0 = classe 0 ... 9 = classe 9
-	 */
+	 * **/
 	private ArrayList<double[]> vetorPrototipos = new ArrayList<double[]>();
 	
-	private double erroMax;
+	private int teste=0;
 	
 	/**
 	 * Array de vetores de entrada
-	 */
+	 * **/
 	private  ArrayList<double[]> entradas;
 	
 	/**
 	 * Epocas
-	 */
+	 * **/
 	private int epocas;
 	
 	/**
 	 * Numero maximo de epocas
-	 */
-	private int max_epocas;
+	 * **/
+	private int max_epocas = 3823;
 	
 	/**
-	 * Numero de neuronios total.
-	 */
+	 * Numero de neuronios que a rede neural apresenta na camada escondida.
+	 * **/
 	private int numNeur;
 	
-	private int numNeurPorClasse;
-	
 	/**
-	 * Taxa de aprendizado. A taxa sempre inicia em 1 e vai diminuindo
+	 * Taxa de aprendizado. A taxa sempre inicia em no máximo 1 (pode ser um valor menor) e vai diminuindo
 	 * Essa variavel e para apenas armazenar o valor inicial de alfa 
-	 */
-	private double alfaInicial;
+	 * **/
+	private double alfaInicial = 0.9;
 	
 	/**
 	 * Variavel para armazenar as mudancas da taxa de aprendizado
 	 * Inicia em 1 e vai diminuindo
-	 */
+	 * **/
 	private double alfaRotativo = alfaInicial;
 	
 	/**
 	 * Quantidade total de classes de classificacao
-	 */
+	 * **/
 	private int quantidadeClasses = 10;
 	
 	/**
@@ -58,25 +56,25 @@ public class LVQ {
 	* n e o numero de conjutos de dados (entradas.size)
 	* indica a associacao de um dado a um grupo
 	* 0 e nao associado e 1 associado
-	**/
+	* **/
 	private int[][] matrizBool ;
-	//Cria vetor com valores para multiplicar os anteriores
-
+	
+	/**
+	 * Cria vetor com valores para multiplicar os anteriores
+	 * **/
 	public int[] multiplicadores = new int[10]; 
 	// Creio que o tamanho esteja errado, nao entendi muito bem como funciona ainda
 	
 	private static int countTest = 0;
 	
 	/**
-	 * Construtor do lvq
+	 * Construtor da lvq
 	 * **/
-	public LVQ(ArrayList<double[]>entrada, int epoca, int numNeuronios, double alfa, double erro){
+	public LVQ(ArrayList<double[]>entrada, int epoca, int numNeuronios){
 		entradas = entrada;
-		erroMax=erro;
-		max_epocas = epoca;
-		numNeurPorClasse = numNeuronios;
-		alfaInicial=alfa;
-		
+		epocas = epoca;
+		numNeur = numNeuronios;
+		teste=entradas.size();
 	}
 
 	/**
@@ -97,18 +95,16 @@ public class LVQ {
 		}
 		System.out.println(entradas.size());
 		treinamentoLVQ();
-		/*for(int i = 0; i < numNeur; i++){
+		for(int i = 0; i < numNeur; i++){
 			for(int j = 0; j < entradas.size(); j++){
 				System.out.print(matrizBool[i][j] );
 			}
 			System.out.println();
-		}*/
+		}
 	}
 	
 	/**
 	 * Inicializacao da matriz Uh com todos os elementos = 0
-	 * Quando elemento = 0 - nao pertence
-	 * elemento = 1, pertence
 	 **/
 	public void inicializarMatrizBool(){
 		matrizBool = new int[numNeur][entradas.size()];
@@ -123,25 +119,16 @@ public class LVQ {
 	 *Cria vetor de prototipos 
 	 **/
 	public void criaVetorPrototipos(){
-		numNeur=numNeurPorClasse *10;
-		int cont =0;
-		double[] vetor;
 		for (int i=0; i<=numNeur; i++){
 			vetorPrototipos.add(geraVetorAleatorio()) ;
 		}
-		for (int i=0;i<vetorPrototipos.size();i++){ 
-			if (cont == 10) cont=0;
-			vetor = vetorPrototipos.get(i);
-			vetor[64]=cont;
-			cont++;
-			
-		}
 	}
 
+	
 	public double[] geraVetorAleatorio(){
-		double[] vetor = new double[65];
+		double[] vetor = new double[64];
 		Random rdm = new Random();
-		for(int i=0; i<65;i++){
+		for(int i=0; i<64;i++){
 			vetor[i]=rdm.nextDouble() * 2 - 1;
 		}
 		return vetor;
@@ -187,13 +174,13 @@ public class LVQ {
 	 */
 	public static double[] subtracaoDeVetores(double[] vetor1, double[] vetor2){
 		double[] res = new double[vetor1.length];
-		for(int i = 0 ; i < res.length;i++)
+		for(int i = 0; i < res.length;i++)
 			res[i] = vetor1[i] - vetor2[i];
 		return res;
 	}
 		
 	/**
-	 * Funcao de multiplicacao de alfa (taxa de aprendizador) por vetores que sera utilizada no treinamento 
+	 * Funcao de multiplicacao de alfa (taxa de aprendizado) por vetores que sera utilizada no treinamento 
 	 * dentro da atualizacao dos pesos sinapticos - funcao auxiliar
 	 * @param vetor
 	 * @param alfa
@@ -208,7 +195,8 @@ public class LVQ {
 	
 	/**
 	 * Funcao para treinamento da rede
-	 */
+	 **/
+	//CORRIGIR
 	public void treinamentoLVQ(){
 		
 		//	inicializarMatrizBool();
@@ -216,7 +204,7 @@ public class LVQ {
 		
 		/**
 		 * Inicializando o conjunto de protótipos
-		 */
+		 **/
 		//	inicializarMatrizBool();
 		//	criaVetorPrototipos();
 		
@@ -236,16 +224,17 @@ public class LVQ {
 		 */
 
 		//nesse caso = numero fixo de iteracoes
+		
 		while(epocas < max_epocas){
 			for(int j=0;j<entradas.size(); j++){
 				//encontrar o prototipo vencedor - certeza q e isso?
 				atualizaMatrizBool(j); 
-				int a = pegaNeurVencedor(j); //tem de encontrar a distancia minima - Iv
+				int a = argMin(j); //tem de encontrar a distancia minima - Iv
 				
-				/**
-				 * Adaptar pesos sinapticos 
-				 * pesos sinapticos = coordenadas dos vetores prototipos
-				 */
+				
+				 //Adaptar pesos sinapticos 
+				 //pesos sinapticos = coordenadas dos vetores prototipos
+				 
 				
 				/**se ((classe correta para o vetor treinamento = classe representada pela j-ésima unidade de saída)
 			 	* entao 
@@ -280,10 +269,11 @@ public class LVQ {
 			}
 			/**
 			 * Reduzir a taxa de aprendizado
-			 */
+			 **/
 			//atualizaAlfaSimples();
 			alfaRotativo = atualizaAlfaMonot(epocas, max_epocas);
 	}
+		
 		
 		//nesse caso = valor minimo taxa de aprendizado
 		while(alfaRotativo >= 0){
@@ -296,8 +286,8 @@ public class LVQ {
 	 * @param j
 	 */
 	public void atualizaMatrizBool(int j){
-		int neurVencedor = pegaNeurVencedor(j);
-		matrizBool[neurVencedor][j]=1;
+		int classe = argMin(j);
+		matrizBool[classe][j]=1;
 		countTest++;
 	}
 	
@@ -307,21 +297,21 @@ public class LVQ {
 	 * @param j
 	 * @return
 	 */
-	public int pegaNeurVencedor(int j){
+	public int argMin(int j){
 		double distMin = 100000;
 		double dist =0;
-		int neurVencedor=-1;
+		int classe=-1;
 		for (int i=0; i<vetorPrototipos.size(); i++ ){
 			dist = caculaDistEuclidiana(entradas.get(j), vetorPrototipos.get(i));
 			System.out.println("TESTE");
 			if (dist <= distMin){
 				distMin = dist;
-				neurVencedor = i;
+				classe = i;
 			}
 		}
 		System.out.println();
 		System.out.println(countTest);
-		return neurVencedor;//Tem que implementar, ainda não sei que estrutura usar 
+		return classe;//Tem que implementar, ainda não sei que estrutura usar 
 	}
 	
 	
@@ -364,18 +354,25 @@ public class LVQ {
 	}
 	
 	/**
-	 * Calcular a distancia pela medida Distancia de Hamming
+	 * Caluclar a distancia pela Geometria do Taxi/Distancia de Manhattan
+	 * A distancia entre dois pontos e a soma das diferenças absolutas de suas coordenadas
 	 * @param vetor
 	 * @param vetorPesos
 	 * @return
 	 */
-	public double caculaDistHamming(double[] vetor, double[] vetorPesos){
+	public double calculaDistManhattan(double[] vetor, double[] vetorPesos){
 		//completar
-		return 0;
+		double distancia = 0;
+		for (int i = 0; i < vetor.length-1; i++){
+			//Math.abs(x1-x2) + Math.abs(y1-y2) 
+			//usa o valor absoluto (modulo), assim nao precisa elevar ao quadrado como na distancia euclidiana nem tirar a raiz
+			distancia+= (Math.abs(vetor[i]-vetorPesos[i]));
+		}
+		return distancia;
 	}
 	
 	/**
-	 * Calcular a distancia pela medida Distancia de Chebschev
+	 * Calcular a distancia pela medida Distancia de Chebyschev
 	 * @param vetor
 	 * @param vetorPesos
 	 * @return
@@ -384,7 +381,6 @@ public class LVQ {
 		//completar
 		return 0;
 	}
-	
 	/**
 	 * Calcula erro da Quantizacao
 	 * @return
