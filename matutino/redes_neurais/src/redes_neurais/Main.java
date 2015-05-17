@@ -52,18 +52,48 @@ public class Main {
 		/* Nome do arquivo que sera gerado com os dados da saida*/
 		//String saida = args[7]; 
 		
+		
+		
+		
 		NormalizarDados dadosNormalizados = new NormalizarDados(arquivoTreinamento, arquivoTeste, 0.95); //Pegar a taxa por arg[] mais para frente 
 		
-		ArrayList<double[]> x = dadosNormalizados.getMatrizesTeste();
-		double[] t = x.get(0);
+	//	ArrayList<double[]> x = dadosNormalizados.getMatrizesTeste();
+	//	double[] t = x.get(0);
 		
-	   //So teste
+	    //XOR mounting
+		ArrayList<double[]> xorProblem = new ArrayList<double[]>();
+		double[][] xorEntrada = new double[4][2];
+		xorEntrada[0][0] = 0; xorEntrada[0][1] = 0;
+		xorEntrada[1][0] = 1; xorEntrada[1][1] = 1;
+		xorEntrada[2][0] = 1; xorEntrada[2][1] = 0;
+		xorEntrada[3][0] = 0; xorEntrada[3][1] = 1;
+		xorProblem.add(xorEntrada[0]);
+		xorProblem.add(xorEntrada[1]);
+		xorProblem.add(xorEntrada[2]);
+		xorProblem.add(xorEntrada[3]);
+		
+		ArrayList<Double> xorClazz = new ArrayList<Double>();
+		xorClazz.add(0.0); //entrada 0 0  
+		xorClazz.add(0.0); //entrada 1 1
+		xorClazz.add(1.0); //entrada 1 0
+		xorClazz.add(1.0); //entrada 0 1
+	  
+		double[] t = xorProblem.get(0);
+		//TREINAR ENTRADA CLODS
+		/*
 		MLP redeMLP = new MLP(dadosNormalizados.getMatrizesTeste(), dadosNormalizados.getClassesTeste(), numNeuroniosEscondidosMLP, 
 		commonsRedes.geradorPesosRandomicos(t.length ,numNeuroniosEscondidosMLP), 
 		commonsRedes.geradorPesosRandomicos(numNeuroniosEscondidosMLP, numNeuroniosSaida),
 		numNeuroniosSaida, alpha, alphaEstatico, maxT, erroAceitavel);
 		redeMLP.treinar();
+		*/
 		
+		//TREINAR ENTRADA
+		MLP redeMLP = new MLP(xorProblem, xorClazz, numNeuroniosEscondidosMLP, 
+		commonsRedes.geradorPesosRandomicos(t.length ,numNeuroniosEscondidosMLP), 
+		commonsRedes.geradorPesosRandomicos(numNeuroniosEscondidosMLP, numNeuroniosSaida),
+		numNeuroniosSaida, alpha, alphaEstatico, maxT, erroAceitavel);
+		redeMLP.treinar();
 		//LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(), maxT,2, alpha, erroAceitavel);
 		//teste.testa();
 		
