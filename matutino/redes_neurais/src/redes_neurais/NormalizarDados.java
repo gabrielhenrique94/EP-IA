@@ -33,49 +33,7 @@ public class NormalizarDados {
 		carregarComplementosNormalizacao();
 	}
 	
-	public void carregarComplementosNormalizacao() {
-		try {
-		      FileReader arq = new FileReader(this.arquivoComplementosNormalizacao);
-		      BufferedReader lerArq = new BufferedReader(arq);
-
-		      String linha1 = lerArq.readLine(); 
-		      String[] valores1 = linha1.split(",");
-		      int[] valoresMax = new int[valores1.length];
-		      for (int i = 0; i < valores1.length; i++) {
-		    	  valoresMax[i] = Integer.parseInt(valores1[i]);
-		      }
-		      setValoresMaxColuna(valoresMax);
-		     
-		      String linha2 = lerArq.readLine(); 
-		      String[] valores2 = linha2.split(",");
-		      int[] valoresMin = new int[valores2.length];
-		      for (int i = 0; i < valores2.length; i++) {
-		    	  valoresMin[i] = Integer.parseInt(valores2[i]);
-		      }
-		      setValoresMinColuna(valoresMin);
-		      
-		      String linha3 = lerArq.readLine();
-		      setNumColunasRemovidas(Integer.parseInt(linha3));
-		      
-		      String linha4 = lerArq.readLine();
-		      String[] valores4 = linha4.split(",");
-		      Map<Integer, Boolean> mapa = new HashMap<>();
-		      for (int i = 0; i < valores4.length; i++) {
-		    	  String[] keyvalue = valores4[i].split(":");
-		    	  Boolean value = false;
-		    	  if (keyvalue[1] == "1") {
-		    		  value = true;
-		    	  }
-		    	  mapa.put(Integer.parseInt(keyvalue[0]), value);
-		      }
-		      
-		      setColunasRemovidas(mapa);
-		      
-		      lerArq.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	
 	
 	/**
 	 * Construtor usado quando são passados novos arquivos para serem normalizados e uma taxa de remoção de colunas
@@ -424,6 +382,54 @@ public class NormalizarDados {
 			e.printStackTrace();
 		}
 		return classes;
+	}
+	
+	/**
+	 * Carrega dados do arquivo de complementos da normalização, que são os valores usados
+	 * para os calculos.
+	 */
+	public void carregarComplementosNormalizacao() {
+		try {
+		      FileReader arq = new FileReader(this.arquivoComplementosNormalizacao);
+		      BufferedReader lerArq = new BufferedReader(arq);
+
+		      String linha1 = lerArq.readLine(); 
+		      String[] valores1 = linha1.split(",");
+		      int[] valoresMax = new int[valores1.length];
+		      for (int i = 0; i < valores1.length; i++) {
+		    	  valoresMax[i] = Integer.parseInt(valores1[i]);
+		      }
+		      setValoresMaxColuna(valoresMax);
+		     
+		      String linha2 = lerArq.readLine(); 
+		      String[] valores2 = linha2.split(",");
+		      int[] valoresMin = new int[valores2.length];
+		      for (int i = 0; i < valores2.length; i++) {
+		    	  valoresMin[i] = Integer.parseInt(valores2[i]);
+		      }
+		      setValoresMinColuna(valoresMin);
+		      
+		      String linha3 = lerArq.readLine();
+		      setNumColunasRemovidas(Integer.parseInt(linha3));
+		      
+		      String linha4 = lerArq.readLine();
+		      String[] valores4 = linha4.split(",");
+		      Map<Integer, Boolean> mapa = new HashMap<>();
+		      for (int i = 0; i < valores4.length; i++) {
+		    	  String[] keyvalue = valores4[i].split(":");
+		    	  Boolean value = false;
+		    	  if (keyvalue[1] == "1") {
+		    		  value = true;
+		    	  }
+		    	  mapa.put(Integer.parseInt(keyvalue[0]), value);
+		      }
+		      
+		      setColunasRemovidas(mapa);
+		      
+		      lerArq.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
     
     /**
