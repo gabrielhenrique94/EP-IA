@@ -41,6 +41,7 @@ public class LVQ {
 	
 	/**
 	 * Variavel para armazenar as mudancas da taxa de aprendizado
+	 * Inicia em 1 e vai diminuindo
 	 * **/
 	private double alfaRotativo = alfaInicial;
 	
@@ -123,10 +124,7 @@ public class LVQ {
 		}
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
+	
 	public double[] geraVetorAleatorio(){
 		double[] vetor = new double[64];
 		Random rdm = new Random();
@@ -201,70 +199,86 @@ public class LVQ {
 	//CORRIGIR
 	public void treinamentoLVQ(){
 		
-		//Inicializando o conjunto de protótipos
-		inicializarMatrizBool();
-		criaVetorPrototipos();
+		//	inicializarMatrizBool();
+		//	criaVetorPrototipos();
 		
-		//Determinacacao de condicao de parada
-		//Numero Fixo de iteracoes (max_Epocas) ou valor minimo taxa de aprendizado(alfaRotativo)
+		/**
+		 * Inicializando o conjunto de protótipos
+		 **/
+		//	inicializarMatrizBool();
+		//	criaVetorPrototipos();
+		
+		/**
+		 * Determine o coeficiente de aprendizado alfa	
+		 */
+		
+		
+		/**
+		 * Determine o rótulo r de cada vetor protótipo
+		 * Rotulo e o Integer do mapa
+		 */
+
+		/**
+		 * Determinacacao de condicao de parada
+		 * Numero Fixo de iteracoes (max_Epocas) ou valor minimo taxa de aprendizado(alfaRotativo)
+		 */
 
 		//nesse caso = numero fixo de iteracoes
+		
 		while(epocas < max_epocas){
-			
-			//para cada vetor de entrada de treinamento, execute
-			for(int j=0; j<entradas.size(); j++){
-				
+			for(int j=0;j<entradas.size(); j++){
+				//encontrar o prototipo vencedor - certeza q e isso?
 				atualizaMatrizBool(j); 
+				int a = argMin(j); //tem de encontrar a distancia minima - Iv
 				
-				//Encontrar i tal que |xj-Wi| seja minima
-				//i e o indice do prototipo vencedor
-				//verificar o que exatamente deve retornar no argMin
-				int i = argMin(j); 
 				
-				//entradas
-				//Xj = conjunto de dados (entradas) para LVQ
-				double[] Xj = entradas.get(j);
+				 //Adaptar pesos sinapticos 
+				 //pesos sinapticos = coordenadas dos vetores prototipos
+				 
 				
-				//Rj e o rotulo associado a Xj
-				//Rj = 
+				/**se ((classe correta para o vetor treinamento = classe representada pela j-ésima unidade de saída)
+			 	* entao 
+			 	* classe representada pela j-ésima unidade de saída(nova) = classe representada pela j-ésima unidade de saída(velha) + 
+			 	* ((alfa-coeficiente de aprendizado) * (vetor de treinamento - classe representada pela j-ésima unidade de saída(velha)))
+			 	* 
+			 	* se Xj = civ
+			 	* sendo Xj rotulo associado ao dado xj entradas.get(j)
+			 	* CIv rotulo associado ao prototipo vencedor - vetorPrototipos(a)
+			 	* entao
+			 	* 
+			 	*/
 				
-				//vetor prototipos
-				//Wi = vetor de peso da j-esima unidade de saida
-				double[] Wi = vetorPrototipos.get(i);
+				//Observacao - tem um t nos slides da Sara q eu nao entendi bem onde ele se encaixaria - na atualizacao de pesos
+				//Observacao 2 - tem de verificar se xj e civ esta certo
 				
-				//Ri e o rotulo associado a Wi (classe correta p/ o vetor treinamento)
-				//Ri = 
-				
-				//Adaptar pesos sinapticos 
-				//Se o rotulo associado as entradas for igual ao rotulo associado ao vetor de prototipos
-			/*	if(Rj == Ri){ 
+				double[] xj = entradas.get(j);
+				double[] civ = vetorPrototipos.get(a);
+				if(xj == civ){ //verificacao
 					//adaptando peso sinaptico
-					//vetor de peso novo da j-esima unidade saida = vetor peso antigo - alfa(entrada da j-esima unidade - vetor peso antigo)
-					Wi = somaDeVetores(Wi, multiplicaAlfa((subtracaoDeVetores(Xj, Wi)), alfaRotativo));
-					//tem de colocar isso no vetorPrototipos diretamente
+					civ = somaDeVetores(civ, multiplicaAlfa((subtracaoDeVetores(xj, civ)), alfaRotativo));
 				}
-				//Senao
+				/**
+				 * senao
+				 * classe representada pela j-ésima unidade de saída(nova) = classe representada pela j-ésima unidade de saída(velha) -
+				 * ((alfa-coeficiente de aprendizado) * (vetor de treinamento - classe representada pela j-ésima unidade de saída(velha)))
+				 */
 				else{
 					//adaptando peso sinaptico
-					//vetor de peso novo da j-esima unidade saida = vetor peso antigo + alfa(entrada da j-esima unidade - vetor peso antigo)
-					Wi = subtracaoDeVetores(Wi, multiplicaAlfa((subtracaoDeVetores(Xj, Wi)), alfaRotativo));
-					//tem de colocar isso no vetorPrototipos diretamente
+					civ = subtracaoDeVetores(civ, multiplicaAlfa((subtracaoDeVetores(xj, civ)), alfaRotativo));
 				}
-				*/
 			}
-			
-			//Reduz a taxa de aprendizado
+			/**
+			 * Reduzir a taxa de aprendizado
+			 **/
+			//atualizaAlfaSimples();
 			alfaRotativo = atualizaAlfaMonot(epocas, max_epocas);
-			
-			epocas++;
 	}
 		
 		
-		//nesse caso = valor minimo taxa de aprendizado e a condicao de parada
+		//nesse caso = valor minimo taxa de aprendizado
 		while(alfaRotativo >= 0){
 			
 		}
-		
 	}
 	
 	/**
