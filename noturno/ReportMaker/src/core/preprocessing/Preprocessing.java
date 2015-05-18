@@ -60,6 +60,7 @@ public class Preprocessing {
 	public static void cleanAtributes(List<Entry> entries) {
 		int[] result = usedColumns(entries);
 		for (int i = 0; i < result.length; i++) {
+			System.out.print(result[i] + " - ");
 			if (result[i] == 0) {
 				for (Entry e : entries)
 					e.clearCol(i);
@@ -71,41 +72,48 @@ public class Preprocessing {
 	 * @return result
 	 * 
 	 *         Calcula frequencia de valores repetidos em cada atributo e caso
-	 *         se repita mais que 95% o ignora ao implementar o algoritmo e
+	 *         se repita 95% ou mais o ignora ao implementar o algoritmo e
 	 *         mostra por meio de um vetor de binario quais atributos serao
 	 *         usados no algoritmo
 	 */
 	private static int[] usedColumns(List<Entry> entries) {
 		int[] result = new int[entries.get(0).getAttr().length];
 
-		int totalOfcases = 0;
-
 		// cria vetor para somar frequencia de cada valor no atributo, sao 17
 		// valores possiveis [0-16]
 		int qntOfValues = 17;
 		List<Integer> somatoria = new ArrayList<>(qntOfValues);
-
+		
 		// inicializa vetor de somatoria com zero
-		for (int i = 0; i < qntOfValues + 1; i++) {
-			somatoria.add(i, 0);
+		for (int k = 0; k < qntOfValues; k++) {
+			somatoria.add(k, 0);
 		}
 
-		for (int i = 0; i < entries.get(0).getAttr().length; i++) {
-			for (int j = 0; j < entries.size() - 1; j++) {
+		// Percorre exemplos e conta quantidade de repeticoes para cada possivel valor de atributo
+		for (int i = 0; i < entries.get(0).getAttr().length-1; i++) {
+			int totalOfcases = 0;
+			
+			for (int j = 0; j < entries.size()-1; j++) {
 				int value = (int) entries.get(j).getAttr()[i];
-				somatoria.add(value, somatoria.get(value) + 1);
+				somatoria.set(value, somatoria.get(value) + 1);
 				totalOfcases += 1;
 			}
-
+			
+			// Organiza para pegar o de maior repeticao e verificar o percentual
 			Collections.sort(somatoria);
-
 			double percentMax = somatoria.get(somatoria.size() - 1)
 					/ totalOfcases;
 			
-			if (percentMax > 0.95) {
+			// 0: REMOVE ou 1: MANTEM o atributo
+			if (percentMax >= 0.95) {
 				result[i] = 0;
 			} else {
 				result[i] = 1;
+			}
+			
+			// Zera vetor de somatoria para proximo atributo
+			for (int k = 0; k < qntOfValues; k++) {
+				somatoria.set(k, 0);
 			}
 		}
 		return result;

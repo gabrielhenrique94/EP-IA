@@ -72,8 +72,8 @@ public class Main {
 		int[] neuronsByClass = new int[10];
 
 		// Preprocessando os dados
-		Preprocessing.minMaxMethod(training_entries);
 		Preprocessing.cleanAtributes(training_entries);
+		Preprocessing.minMaxMethod(training_entries);
 
 		for (int i = 0; i < neuronsByClass.length; i++) {
 			neuronsByClass[i] = nNeurons;
