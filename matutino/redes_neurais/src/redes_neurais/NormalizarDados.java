@@ -224,7 +224,6 @@ public class NormalizarDados {
 		setColunasRemovidas(removerColuna);
 		setNumColunasRemovidas(numRemocao);
 		
-		System.out.println(numRemocao + " colunas removidas");		
 		
 	}
 	
@@ -309,8 +308,7 @@ public class NormalizarDados {
 			int[] matriz = matrizes.get(i);
 			double[] matrizNormalizada = new double[matriz.length];
 			for (int j = 0; j < numColunas; j++) {
-				matrizNormalizada[j] = (matriz[j] - valoresMinimos[j])/(valoresMaximos[j] - valoresMinimos[j]);
-				System.out.print(matrizNormalizada[j] + " ");
+				matrizNormalizada[j] = (((double)matriz[j] - (double)valoresMinimos[j])/((double)valoresMaximos[j] - (double)valoresMinimos[j])) * (1.0 - (-1.0)) + (-1.0) ;
 			}
 			matrizesNormalizadas.add(matrizNormalizada);
 		}
