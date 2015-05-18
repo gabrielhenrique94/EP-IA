@@ -90,7 +90,7 @@ public class Preprocessing {
 
 		// Percorre exemplos e conta quantidade de repeticoes para cada possivel valor de atributo
 		for (int i = 0; i < entries.get(0).getAttr().length-1; i++) {
-			int totalOfcases = 0;
+			double totalOfcases = 0;
 			
 			for (int j = 0; j < entries.size()-1; j++) {
 				int value = (int) entries.get(j).getAttr()[i];
