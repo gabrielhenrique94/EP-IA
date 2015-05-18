@@ -47,14 +47,15 @@ public class ReadInputFiles {
 		sc.close();
 		return ret;
 	}
+	
+	public static List<double[]> sumBothFiles(String path1, String path2) throws FileNotFoundException{
+		List<double[]> firstFile = readFile(path1);
+		List<double[]> secondFile = readFile(path2);
+		List<double[]> allFiles = firstFile;
+		allFiles.addAll(secondFile);
 
-//	private void test(List<int[]> tst){
-//		
-//		for(int[] t: tst){
-//			System.out.println();
-//			for(int s : t){
-//				System.out.print(s + ",");
-//			}
-//		}
-//	}
+		return allFiles;
+	}
+	
+
 }

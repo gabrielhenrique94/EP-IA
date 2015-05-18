@@ -1,6 +1,8 @@
 package redes_neurais;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
 
 public class LVQ {
 	
@@ -10,7 +12,7 @@ public class LVQ {
 	 */
 	private ArrayList<double[]> vetorPrototipos = new ArrayList<double[]>();
 	
-	private int teste=0;
+	private double erroMax;
 	
 	/**
 	 * Array de vetores de entrada
@@ -25,18 +27,20 @@ public class LVQ {
 	/**
 	 * Numero maximo de epocas
 	 */
-	private int max_epocas = 3823;
+	private int max_epocas;
 	
 	/**
-	 * Numero de neuronios que a rede neural apresenta na camada escondida.
+	 * Numero de neuronios total.
 	 */
-	private int numNeurNaCamadaEscondida;
+	private int numNeur;
+	
+	private int numNeurPorClasse;
 	
 	/**
 	 * Taxa de aprendizado. A taxa sempre inicia em 1 e vai diminuindo
 	 * Essa variavel e para apenas armazenar o valor inicial de alfa 
 	 */
-	private double alfaInicial = 1;
+	private double alfaInicial;
 	
 	/**
 	 * Variavel para armazenar as mudancas da taxa de aprendizado
@@ -67,11 +71,13 @@ public class LVQ {
 	/**
 	 * Construtor do lvq
 	 * **/
-	public LVQ(ArrayList<double[]>entrada, int epoca, int numNeuronios){
+	public LVQ(ArrayList<double[]>entrada, int epoca, int numNeuronios, double alfa, double erro){
 		entradas = entrada;
-		epocas = epoca;
-		numNeurNaCamadaEscondida = numNeuronios;
-		teste=entradas.size();
+		erroMax=erro;
+		max_epocas = epoca;
+		numNeurPorClasse = numNeuronios;
+		alfaInicial=alfa;
+		
 	}
 
 	/**
@@ -79,10 +85,9 @@ public class LVQ {
 	 * **/
 	public void testa(){
 		System.out.println("---");
-		criaVetorPrototipos();
-		inicializarMatrizBool();
+		//criaVetorPrototipos();
 		double[] vet;
-		for(int i=0; i<10 ; i++ ) {
+		for(int i=0; i<numNeur ; i++ ) {
 			vet = vetorPrototipos.get(i);
 			System.out.print(i+" ");
 			for (int j=0;j<vet.length; j++){
@@ -90,14 +95,23 @@ public class LVQ {
 			}
 			System.out.println();
 		}
-		System.out.println(entradas.size());
-		treinamentoLVQ();
-		for(int i = 0; i < 10; i++){
+		System.out.println();
+		for(int i=0; i<entradas.size() ; i++ ) {
+			vet = entradas.get(i);
+			System.out.print(i+" ");
+			for (int j=0;j<vet.length; j++){
+				System.out.print (vet [j] + " "); 
+			}
+			System.out.println();
+		}
+		System.out.println();
+		//treinamentoLVQ();
+		/*for(int i = 0; i < numNeur; i++){
 			for(int j = 0; j < entradas.size(); j++){
 				System.out.print(matrizBool[i][j] );
 			}
 			System.out.println();
-		}
+		}*/
 	}
 	
 	/**
@@ -106,8 +120,8 @@ public class LVQ {
 	 * elemento = 1, pertence
 	 **/
 	public void inicializarMatrizBool(){
-		matrizBool = new int[10][entradas.size()];
-		for(int i = 0; i < 10; i++){
+		matrizBool = new int[numNeur][entradas.size()];
+		for(int i = 0; i < numNeur; i++){
 			for(int j = 0; j < entradas.size(); j++){
 				matrizBool[i][j] = 0;
 			}
@@ -118,27 +132,101 @@ public class LVQ {
 	 *Cria vetor de prototipos 
 	 **/
 	public void criaVetorPrototipos(){
-		for (int i=0; i<10; i++)
-		vetorPrototipos.add(i, entradas.get(i));
+		numNeur=numNeurPorClasse *10;
+		int cont =0;
+		double[] vetor;
+		for (int i=0; i<=numNeur; i++){
+			vetorPrototipos.add(geraVetorAleatorio()) ;
+		}
+		for (int i=0;i<vetorPrototipos.size();i++){ 
+			if (cont == 10) cont=0;
+			vetor = vetorPrototipos.get(i);
+			vetor[vetor.length-1]=cont;
+			cont++;
+			
+		}
 	}
-
-	//Usar k-means
 	
 	/**
-	 * Metodo para fazer o cMeans
+	 * Criando um vetor com valores aleatórios
+	 * @return
 	 */
-	public void cMeans(){
-		//Determine a quantidade de particoes c
-		//Quant de particoes : quantidadeClasses
-		//Determine um valor pequeno e positivo para um erro máximo, epsilon , permitido no processo; ver se esse e bom
-		double erroMax= 0.015;//Ver se esse valor é bom
-		int contInterador = 0;//Ver se esse valor é bom
-		while(true){// NÃO É TRUE É C(T)-C(T-1)<=EPSILON;
-			contInterador++;
-			//atualiza Uh - matriz de particao
-				//1 se i - grupo = argm minimo 
-				//0 caso ao contrario
-			//atualiza C - conjunto de prototipos que esta no mapa - vetor prototipo
+	public double[] geraVetorAleatorio(){
+		double[] vetor = new double[entradas.get(0).length-1];
+		Random rdm = new Random();
+		for(int i=0; i<vetor.length;i++){
+			vetor[i]=rdm.nextDouble() * 2 - 1;
+		}
+		return vetor;
+	}
+	
+	
+	/**
+	 * Funcao para treinamento da rede
+	 */
+	public void treinamentoLVQ(){
+		/**
+		 * Embaralhando as entradas
+		 */
+		Collections.shuffle(entradas);
+		/**
+		 * Inicializando o conjunto de protótipos
+		 */
+		criaVetorPrototipos();
+		//	inicializarMatrizBool();
+
+		/**
+		 * Determinacacao de condicao de parada
+		 * Numero Fixo de iteracoes (max_Epocas) ou valor minimo taxa de aprendizado(alfaRotativo)
+		 */
+
+		//nesse caso = numero fixo de iteracoes
+		while(epocas <= max_epocas || alfaRotativo==0.000001){//Perguntar para o prof
+			for(int j=0;j<entradas.size(); j++){
+				
+				double[] vetorAuxiliar;
+				double[] neuronioVencedor = pegaNeurVencedor(j); //tem de encontrar a distancia minima - Iv
+				double[] entradaAtual = entradas.get(j);
+				int index = vetorPrototipos.indexOf(pegaNeurVencedor(j));
+				System.out.println();
+				vetorAuxiliar = neuronioVencedor;
+					for (int k=0;k<vetorAuxiliar.length; k++){
+					System.out.print (vetorAuxiliar [k] + " "); 
+				}
+					System.out.println(entradaAtual.length + " " + neuronioVencedor.length);
+				if((int)neuronioVencedor[neuronioVencedor.length-1]==(int)entradaAtual[entradaAtual.length-1]){
+					//Aproxima
+					//vetor de peso novo da j-esima unidade saida = vetor peso antigo + alfa(entrada da j-esima unidade - vetor peso antigo)
+					vetorAuxiliar = somaDeVetores(neuronioVencedor, multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor), alfaRotativo));
+					
+				}
+				else {
+					//afasta
+					//vetor de peso novo da j-esima unidade saida = vetor peso antigo - alfa(entrada da j-esima unidade - vetor peso antigo)
+					vetorAuxiliar = subtracaoDeVetores(neuronioVencedor, multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor), alfaRotativo));
+					
+				}
+				//vetorPrototipos.remove(index);
+				//vetorPrototipos.add(vetorAuxiliar);
+				atualizaVetorPrototipos(vetorAuxiliar, index);
+			/**
+			 * Reduzir a taxa de aprendizado
+			 */
+			atualizaAlfaSimples();
+			//atualizaAlfaMonot(epocas, max_epocas);
+			
+			}
+			System.out.println("EPOCAS "+ epocas);
+			epocas++;
+			
+		}
+	
+
+	}
+	
+	public void atualizaVetorPrototipos(double[] vetorAuxiliar, int index){
+		for (int i =0; i<vetorAuxiliar.length;i++){
+			vetorPrototipos.get(index)[i]=vetorAuxiliar[i];
 		}
 	}
 	
@@ -150,8 +238,9 @@ public class LVQ {
 	 */
 	public static double[] somaDeVetores(double[] vetor1, double[] vetor2){
 		double[] res = new double[vetor1.length];
-		for(int i = 0 ; i < res.length;i++)
+		for(int i = 0 ; i < res.length-1;i++)
 			res[i] = vetor1[i] + vetor2[i];
+		res[res.length-1]=vetor1[vetor1.length-1];
 		return res;
 	}
 	
@@ -163,13 +252,15 @@ public class LVQ {
 	 */
 	public static double[] subtracaoDeVetores(double[] vetor1, double[] vetor2){
 		double[] res = new double[vetor1.length];
-		for(int i = 0 ; i < res.length;i++)
+		System.out.println(res.length);
+		for(int i = 0; i < res.length-1;i++)
 			res[i] = vetor1[i] - vetor2[i];
+		res[res.length-1]=vetor1[vetor1.length-1];
 		return res;
 	}
 		
 	/**
-	 * Funcao de multiplicacao de alfa (taxa de aprendizador) por vetores que sera utilizada no treinamento 
+	 * Funcao de multiplicacao de alfa (taxa de aprendizado) por vetores que sera utilizada no treinamento 
 	 * dentro da atualizacao dos pesos sinapticos - funcao auxiliar
 	 * @param vetor
 	 * @param alfa
@@ -177,94 +268,10 @@ public class LVQ {
 	 */
 	public static double[] multiplicaAlfa(double[] vetor, double alfa){
 			double res[] = new double[vetor.length];
-			for(int i = 0; i < res.length; i++)
+			for(int i = 0; i < res.length-1; i++)
 				res[i] = vetor[i] * alfa;
+			res[res.length-1]=vetor[vetor.length-1];
 			return res;
-	}
-	
-	/**
-	 * Funcao para treinamento da rede
-	 */
-	public void treinamentoLVQ(){
-		
-		//	inicializarMatrizBool();
-		//	criaVetorPrototipos();
-		
-		/**
-		 * Inicializando o conjunto de protótipos
-		 */
-		//	inicializarMatrizBool();
-		//	criaVetorPrototipos();
-		
-		/**
-		 * Determine o coeficiente de aprendizado alfa	
-		 */
-		
-		
-		/**
-		 * Determine o rótulo r de cada vetor protótipo
-		 * Rotulo e o Integer do mapa
-		 */
-
-		/**
-		 * Determinacacao de condicao de parada
-		 * Numero Fixo de iteracoes (max_Epocas) ou valor minimo taxa de aprendizado(alfaRotativo)
-		 */
-
-		//nesse caso = numero fixo de iteracoes
-		while(epocas < max_epocas){
-			for(int j=0;j<entradas.size(); j++){
-				//encontrar o prototipo vencedor - certeza q e isso?
-				atualizaMatrizBool(j); 
-				int a = argMin(j); //tem de encontrar a distancia minima - Iv
-				
-				/**
-				 * Adaptar pesos sinapticos 
-				 * pesos sinapticos = coordenadas dos vetores prototipos
-				 */
-				
-				/**se ((classe correta para o vetor treinamento = classe representada pela j-ésima unidade de saída)
-			 	* entao 
-			 	* classe representada pela j-ésima unidade de saída(nova) = classe representada pela j-ésima unidade de saída(velha) + 
-			 	* ((alfa-coeficiente de aprendizado) * (vetor de treinamento - classe representada pela j-ésima unidade de saída(velha)))
-			 	* 
-			 	* se Xj = civ
-			 	* sendo Xj rotulo associado ao dado xj entradas.get(j)
-			 	* CIv rotulo associado ao prototipo vencedor - vetorPrototipos(a)
-			 	* entao
-			 	* 
-			 	*/
-				
-				//Observacao - tem um t nos slides da Sara q eu nao entendi bem onde ele se encaixaria - na atualizacao de pesos
-				//Observacao 2 - tem de verificar se xj e civ esta certo
-				
-				double[] xj = entradas.get(j);
-				double[] civ = vetorPrototipos.get(a);
-				if(xj == civ){ //verificacao
-					//adaptando peso sinaptico
-					civ = somaDeVetores(civ, multiplicaAlfa((subtracaoDeVetores(xj, civ)), alfaRotativo));
-				}
-				/**
-				 * senao
-				 * classe representada pela j-ésima unidade de saída(nova) = classe representada pela j-ésima unidade de saída(velha) -
-				 * ((alfa-coeficiente de aprendizado) * (vetor de treinamento - classe representada pela j-ésima unidade de saída(velha)))
-				 */
-				else{
-					//adaptando peso sinaptico
-					civ = subtracaoDeVetores(civ, multiplicaAlfa((subtracaoDeVetores(xj, civ)), alfaRotativo));
-				}
-			}
-			/**
-			 * Reduzir a taxa de aprendizado
-			 */
-			//atualizaAlfaSimples();
-			alfaRotativo = atualizaAlfaMonot(epocas, max_epocas);
-	}
-		
-		//nesse caso = valor minimo taxa de aprendizado
-		while(alfaRotativo >= 0){
-			
-		}
 	}
 	
 	/**
@@ -272,8 +279,8 @@ public class LVQ {
 	 * @param j
 	 */
 	public void atualizaMatrizBool(int j){
-		int classe = argMin(j);
-		matrizBool[classe][j]=1;
+		double[] neurVencedor = pegaNeurVencedor(j);
+		matrizBool[(int)neurVencedor[neurVencedor.length-1]][j]=1;
 		countTest++;
 	}
 	
@@ -283,48 +290,29 @@ public class LVQ {
 	 * @param j
 	 * @return
 	 */
-	public int argMin(int j){
-		double distMin = 100000;
+	public double[] pegaNeurVencedor(int j){
+		double distMin = 100000000;
 		double dist =0;
-		int classe=-1;
+		double neurVencedor[]= new double[entradas.get(0).length];
 		for (int i=0; i<vetorPrototipos.size(); i++ ){
-			dist = caculaDistEuclidiana(entradas.get(j), vetorPrototipos.get(i));
+			dist = calculaDistEuclidiana(entradas.get(j), vetorPrototipos.get(i));
 			System.out.println("TESTE");
 			if (dist <= distMin){
 				distMin = dist;
-				classe = i;
+				neurVencedor = vetorPrototipos.get(i);
 			}
 		}
 		System.out.println();
 		System.out.println(countTest);
-		return classe;//Tem que implementar, ainda não sei que estrutura usar 
+		return neurVencedor;//Tem que implementar, ainda não sei que estrutura usar 
 	}
 	
-	/**
-	 *Metodo da fuzzy c-means (nao sei se vai usar)
-	 * @param m
-	 */
-	/* Talvez nao vá precisar usar
-	public void fuzzyCMeans(double m){//Não entendi se m é double ou se vai ser vetor
-		criaMapa();
-		//Definir matriz de pertinência
-		int contInteracoes=0;
-		while (true){//Colocar cond de parada!!
-			for (int j=0; j< entradas.size();j++){
-				for (int i=0; i<quantidadeClasses; i++){
-					//Colocar a função aqui
-				}
-			}
-			
-		}
-	}
-	*/
 	
 	/**
 	 * Funcao para atualizar o alfa
 	 */
 	public void atualizaAlfaSimples(){
-		alfaRotativo=alfaRotativo/2; //verificar	
+		alfaRotativo=alfaRotativo*0.9; //verificar	
 	}
 	
 	/**
@@ -332,9 +320,9 @@ public class LVQ {
 	 * @param interacao
 	 * @param interacaoMax
 	 */
-	public double atualizaAlfaMonot(int interacao, int interacaoMax){
+	public void atualizaAlfaMonot(int interacao, int interacaoMax){
 		alfaRotativo= alfaInicial*(1.0-((double)interacao))/((double)interacaoMax); // Confirmar funcao!!
-		return alfaRotativo;
+		
 	}
 	
 	/**
@@ -343,7 +331,7 @@ public class LVQ {
 	 * @param vetorPesos
 	 * @return
 	 */
-	public double caculaDistEuclidiana(double[] vetor, double[] vetorPesos){
+	public double calculaDistEuclidiana(double[] vetor, double[] vetorPesos){
 		double distancia;
 		double soma=0;
 		System.out.println("TESTE DIST");
@@ -359,14 +347,22 @@ public class LVQ {
 	}
 	
 	/**
-	 * Calcular a distancia pela medida Distancia de Hamming
+	 * Caluclar a distancia pela Geometria do Taxi/Distancia de Manhattan
+	 * A distancia entre dois pontos e a soma das diferenças absolutas de suas coordenadas
 	 * @param vetor
 	 * @param vetorPesos
 	 * @return
 	 */
-	public double caculaDistHamming(double[] vetor, double[] vetorPesos){
+	public double calculaDistManhattan(double[] vetor, double[] vetorPesos){//VERIFICAR FUNCAO!!
 		//completar
-		return 0;
+		double distancia = 0;
+		for (int i = 0; i < vetor.length-1; i++){
+			//Math.abs(x1-x2) + Math.abs(y1-y2) 
+			//usa o valor absoluto (modulo), assim nao precisa elevar ao quadrado como na distancia euclidiana nem tirar a raiz
+			distancia+= (Math.abs(vetor[i]-vetorPesos[i]));
+		}
+		System.out.println(distancia);
+		return distancia;
 	}
 	
 	/**

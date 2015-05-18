@@ -1,19 +1,18 @@
 package main;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.ini4j.InvalidFileFormatException;
-import org.ini4j.Wini;
-
+import core.data_treatment.DataTreatment;
 import core.io.ReadInputFiles;
 import core.neural_network.interfaces.Classifier;
 import core.neural_network.lvq.LVQ;
+import core.neural_network.lvq.vector;
 import core.neural_network.objects.Entry;
 import core.preprocessing.Preprocessing;
 
@@ -28,52 +27,70 @@ import core.preprocessing.Preprocessing;
 
 public class Main {
 
+	private static final boolean DEBUG = false;
+	private static FileWriter wri;
+
 	/**
-	 * Método de inicialização da aplicação
-	 * chamada: Main <training_file> <test_file> <random:(True|False)> <learningRate> <numero_neuronios> 
+	 * Método de inicialização da aplicação chamada: Main <training_file>
+	 * <rede a ser utilizada:(MLP|LVQ)> <test_file> <random:(True|False)> <learningRate> <numero_neuronios> <decaimento da taxa de aprendizado em %> <embaralhar entrada>
 	 * 
 	 * @param args
-	 *            - Recebe os par�metros de inicializa��o do programa, separado
-	 *            por espa�os, e na seguinte ordem: Caminho do arquivo de treinamento, TODO: continuar.
-	 * @throws FileNotFoundException 
+	 *            - Recebe os par�metros de inicializa��o do programa,
+	 *            separado por espa�os, e na seguinte ordem: Caminho do
+	 *            arquivo de treinamento, TODO: continuar.
+	 * @throws IOException
 	 * */
-	public static void main(String[] args) throws FileNotFoundException{
-		//Lendo arquivo de entrada e parseando para objetos Entry
-		List<double[]> training_set = ReadInputFiles.readFile(args[0]);
-		List<Entry> training_entries = new ArrayList<Entry>();
-		for(double[] v: training_set)
-			training_entries.add(Entry.fromVector(v));
+	public static void main(String[] args) throws IOException {
 		
-		//Lendo arquivo de entrada e parseando para objetos Entry
-		List<double[]> test_set = ReadInputFiles.readFile(args[1]);
-		List<Entry> test_entries = new ArrayList<Entry>();
-		for(double[] v: test_set)
-			test_entries.add(Entry.fromVector(v));
+		/*
+		 * depois do treinamento � bom voce eliminar os neuronios q nunca s�o ativados ou q s�o pouco ativados em compara��o aos outros
+		 * */
+		// Criando o set de dados (Soma dos arquivos de treinamento e teste
+		List<double[]> set = ReadInputFiles.sumBothFiles(args[1], args[2]);
 		
-		boolean random = Boolean.parseBoolean(args[2]);
-		
-		double learningRate = Double.parseDouble(args[3]);
+		DataTreatment tr = new DataTreatment(set);
+		tr.applyHoldout();
 
-		//criando vetor que indica que todas as classes tem o mesmo numero de neuronios
-		int nNeurons = Integer.parseInt(args[4]);
+		List<Entry> training_entries = tr.getTrainingEntries();
+		List<Entry> test_entries = tr.getTestEntries();
+		List<Entry> validation_entries = tr.getValidationEntries();
 		
-		int[] neuronsByClass = new int[countClasses(training_entries)];
+		boolean random = Boolean.parseBoolean(args[3]);
 
-		for(int i = 0; i < neuronsByClass.length; i++){
+		double learningRate = Double.parseDouble(args[4]);
+
+		// criando vetor que indica que todas as classes tem o mesmo numero de
+		// neuronios
+		int nNeurons = Integer.parseInt(args[5]);
+		
+		// Taxa de decaimento da taxa de aprendizado (em %)
+		double decreaseRate = Double.parseDouble(args[6]);
+		
+		// Embaralhar a entrada
+		int numEpochs = Integer.parseInt(args[7]);
+
+		int[] neuronsByClass = new int[10];
+
+		// Preprocessando os dados
+		Preprocessing.cleanAtributes(training_entries);
+		Preprocessing.minMaxMethod(training_entries);
+
+		for (int i = 0; i < neuronsByClass.length; i++) {
 			neuronsByClass[i] = nNeurons;
 		}
+
+		// escolhendo a rede a ser utilizada
+		if(args[0].equalsIgnoreCase("lvq"))
+		{
+			Classifier lvq = new LVQ(learningRate, neuronsByClass, random, decreaseRate, numEpochs);
+			lvq.training(training_entries, test_entries);
+			lvq.validation(validation_entries);
+		}
+		else
+		{
+			Classifier mlp = null; // TODO: Gordinho <3
+			mlp.training(training_entries, test_entries);
+		}
 		
-		Classifier lvq = new LVQ(learningRate, neuronsByClass, random);
-		//normaliza
-		//Preprocessing.normalize(training_entries);
-		
-		lvq.training(training_entries, test_entries);
-	}
-	
-	private static int countClasses(List<Entry> trainigSet){
-		Set<Integer> set = new HashSet<Integer>();
-		for(Entry entry: trainigSet)
-			set.add(entry.getClazz());
-		return set.size();
 	}
 }

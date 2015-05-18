@@ -6,9 +6,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import main.Main;
 import core.io.ReadInputFiles;
 import core.neural_network.interfaces.Classifier;
-import core.neural_network.interfaces.Decaimento_portugues;
+import core.neural_network.interfaces.DecreaseRate;
 import core.neural_network.interfaces.Metrics;
 import core.neural_network.objects.Entry;
 import core.neural_network.objects.Neuron;
@@ -21,55 +22,110 @@ import static core.neural_network.lvq.vector.*;
  * @author Thiago Bonfiglio
  * */
 
-public class LVQ implements Classifier, Decaimento_portugues {
-	private static final int MAX_EPOCH = 100;
+public class LVQ implements Classifier, DecreaseRate {
+	private int max_epoch;
 	private double learningRate;
 	private int[] nNeurons;
 	private boolean isRandom;
 	private List<Neuron> neurons;
+	private double decreaseRate;
 
-	public LVQ(double learningRate, int[] nNeurons,
-			boolean isRandom) {
+	public LVQ(double learningRate, int[] nNeurons, boolean isRandom,
+			double decreaseRate, int max_epoch) {
 		this.learningRate = learningRate;
 		this.nNeurons = nNeurons;
 		this.isRandom = isRandom;
+		this.decreaseRate = decreaseRate;
+		this.max_epoch = max_epoch;
 	}
 
-	
 	@Override
 	public void training(List<Entry> trainingList, List<Entry> tes) {
-		//Passo 1 - Inicializa os Pesos
-		initializeWeigths(trainingList);
+		// Passo 1 - Inicializa os Pesos
+		initializeWeigths(trainingList.get(0).getAttr().length);
 		double learningRate = this.learningRate;
 		int epoca = 1;
-		boolean b = willStop(epoca);
-		do{
-			//Passo 2  - Para cada vetor de entrada executa os passos 3-4
-			for(Entry entry: trainingList){
-				//Passo 3 - Encontra neuronio mais proximo
+
+		do {
+
+			double errorRate = errorRate(tes);
+
+			System.out.println("Epoca: " + epoca + ", Learning Rate: "
+					+ learningRate + ", Error rate: " + errorRate);
+			
+			// Se a taxa de erro atinge um nivel ruim, breca a execuÁ„o
+			if(breakByErrorRate())
+				break;
+			
+			// Passo 2 - Para cada vetor de entrada executa os passos 3-4
+			for (Entry entry : trainingList) {
+				// Passo 3 - Encontra neuronio mais proximo
 				Neuron t = findMinDistance(entry, neurons);
-				//Passo 4 - Altera os pesos
-				if (t.getClazz() == entry.getClazz()){
-					t.setAttr(sumVector(t.getAttr(), 
-							multiplyByConstant(subVector(entry.getAttr(), t.getAttr()), learningRate)));
-				}else{
-					t.setAttr(subVector(t.getAttr(), 
-							multiplyByConstant(subVector(entry.getAttr(), t.getAttr()), learningRate)));
+
+				// Caso este t seja nulo, a distancia minima estourou o limite
+				// do double, entao este neuronio esta miot longe do attr
+				if (t == null)
+					continue;
+				// Passo 4 - Altera os pesos
+				if (t.getClazz() == entry.getClazz()) {
+					double[] newAttrForT = subVector(entry.getAttr(),
+							t.getAttr());
+					newAttrForT = multiplyByConstant(newAttrForT, learningRate);
+					newAttrForT = sumVector(t.getAttr(), newAttrForT);
+					t.setAttr(newAttrForT);
+					t.activate();
+				} else {
+					double[] newAttrForT = subVector(entry.getAttr(),
+							t.getAttr());
+					newAttrForT = multiplyByConstant(newAttrForT, learningRate);
+					newAttrForT = subVector(t.getAttr(), newAttrForT);
+					t.setAttr(newAttrForT);
 				}
 			}
-			//Passo 5 - Reduz taxa de aprendizado
-			learningRate = calcLearningRate(learningRate, ++epoca); 
-		//Passo 6 - verifica condi√ß√£o de Parada
-		}while(willStop(epoca));
+			// Passo 5 - Reduz taxa de aprendizado
+			learningRate = calcLearningRate(learningRate, ++epoca);
+			// Passo 6 - verifica condi√ß√£o de Parada
+		} while (willStop(epoca));
+
+		// Descartando os neuronios pouco usados.
+		DiscardUselessNeurons();
 	}
 
+	private boolean breakByErrorRate(){
+		return false;
+	}
 	
+	/**
+	 * Apos o treinamento, retiramos os neuronios que nao foram ativados nenhuma
+	 * vez, ou abaixo de uma taxa de 5% da media (Mesmo padrao utilizado na
+	 * limpeza dos atributos).
+	 * */
+	private void DiscardUselessNeurons() {
+
+		// Calculo a media geral de ativacoes
+		int sumActivate = 0;
+		double averageActivate, minActive = 0;
+		for (Neuron n : neurons) {
+			sumActivate += n.getActivated();
+		}
+
+		averageActivate = sumActivate / neurons.size();
+		minActive = averageActivate * 0.05;
+
+		for (int i = 0; i < neurons.size(); i++) {
+			if (neurons.get(i).getActivated() <= minActive) {
+				neurons.remove(i);
+				i--;
+			}
+		}
+	}
+
 	private Neuron findMinDistance(Entry entry, List<Neuron> neurons) {
-		double min = Double.MAX_VALUE, distance;
+		double min = Double.MAX_VALUE, distance = 0.0;
 		Neuron nMin = null;
-		for(Neuron n: neurons){
+		for (Neuron n : neurons) {
 			distance = distance(n.getAttr(), entry.getAttr());
-			if(distance < min){
+			if (distance < min) {
 				min = distance;
 				nMin = n;
 			}
@@ -78,36 +134,33 @@ public class LVQ implements Classifier, Decaimento_portugues {
 	}
 
 	private boolean willStop(int epoca) {
-		return epoca != MAX_EPOCH;
+		return epoca != max_epoch;
 	}
 
-
-	private void initializeWeigths(List<Entry> trainingList) {
-		//Criando neuronios
+	private void initializeWeigths(int dimensions) {
+		// Criando neuronios
 		neurons = new ArrayList<Neuron>();
-		//pega a dimens√£o do primeiro neuronio
-		int dimensions = trainingList.get(0).getAttr().length;
-		for(int i = 0; i < nNeurons.length; i++){
-			for(int j = 0; j < nNeurons[i]; j++){
+		// pega a dimens√£o do primeiro neuronio
+		for (int i = 0; i < nNeurons.length; i++) {
+			for (int j = 0; j < nNeurons[i]; j++) {
 				Neuron n = new Neuron(dimensions);
 				n.setClazz(i);
 				neurons.add(n);
 			}
 		}
-		//inicializando os neuronios
-		if(isRandom)
-			for(Neuron n: neurons)
+		// inicializando os neuronios
+		if (isRandom)
+			for (Neuron n : neurons)
 				n.initRandom();
 		else
-			throw new UnsupportedOperationException();
-			//TODO implementar isssaque
+			for (Neuron n : neurons)
+				n.initZero();
 	}
-		
-
 
 	@Override
 	public int classification(Entry v) {
-		return 0;
+		Neuron t = findMinDistance(v, neurons);
+		return t.getClazz();
 	}
 
 	@Override
@@ -120,11 +173,34 @@ public class LVQ implements Classifier, Decaimento_portugues {
 	public void loadNetwork(File input) {
 		// TODO Auto-generated method stub
 	}
-	
-	//fonte: http://seer.ufrgs.br/index.php/rita/article/view/rita_v19_n1_p120/18115
+
+	// fonte:
+	// http://seer.ufrgs.br/index.php/rita/article/view/rita_v19_n1_p120/18115
 	@Override
 	public double calcLearningRate(double rate, int epoca) {
-		return this.learningRate*(1.0 -(((double)epoca)/MAX_EPOCH));
+		return rate - ((rate * decreaseRate) / 100);
 	}
 
+	@Override
+	public double errorRate(List<Entry> tes) {
+		double numOfTests = tes.size();
+		double numOfErrors = 0, numOfHits = 0, currClass = 0;
+
+		for (Entry e : tes) {
+			currClass = classification(e);
+			if (currClass == e.getClazz()) {
+				numOfHits++;
+			} else {
+				numOfErrors++;
+			}
+		}
+
+		return (numOfErrors * 100) / numOfTests;
+	}
+
+	@Override
+	public void validation(List<Entry> validationList) {
+		System.out.println("Erro da lista de validaÁ„o: "
+				+ this.errorRate(validationList));
+	}
 }
