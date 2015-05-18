@@ -30,7 +30,8 @@ public class LVQ implements Classifier, DecreaseRate {
 	private List<Neuron> neurons;
 	private double decreaseRate;
 
-	public LVQ(double learningRate, int[] nNeurons, boolean isRandom, double decreaseRate, int max_epoch) {
+	public LVQ(double learningRate, int[] nNeurons, boolean isRandom,
+			double decreaseRate, int max_epoch) {
 		this.learningRate = learningRate;
 		this.nNeurons = nNeurons;
 		this.isRandom = isRandom;
@@ -41,28 +42,39 @@ public class LVQ implements Classifier, DecreaseRate {
 	@Override
 	public void training(List<Entry> trainingList, List<Entry> tes) {
 		// Passo 1 - Inicializa os Pesos
-		initializeWeigths(trainingList);
+		initializeWeigths(trainingList.get(0).getAttr().length);
 		double learningRate = this.learningRate;
 		int epoca = 1;
 
 		do {
+
+			double errorRate = errorRate(tes);
+
 			System.out.println("Epoca: " + epoca + ", Learning Rate: "
-					+ learningRate + ", Error rate: " + errorRate(tes));
+					+ learningRate + ", Error rate: " + errorRate);
+			
+			// Se a taxa de erro atinge um nivel ruim, breca a execução
+			if(breakByErrorRate())
+				break;
+			
 			// Passo 2 - Para cada vetor de entrada executa os passos 3-4
 			for (Entry entry : trainingList) {
 				// Passo 3 - Encontra neuronio mais proximo
 				Neuron t = findMinDistance(entry, neurons);
 
+				// Caso este t seja nulo, a distancia minima estourou o limite
+				// do double, entao este neuronio esta miot longe do attr
+				if (t == null)
+					continue;
 				// Passo 4 - Altera os pesos
 				if (t.getClazz() == entry.getClazz()) {
-					// Main.appendInDebugFile("Classe Igual!!!!");
 					double[] newAttrForT = subVector(entry.getAttr(),
 							t.getAttr());
 					newAttrForT = multiplyByConstant(newAttrForT, learningRate);
 					newAttrForT = sumVector(t.getAttr(), newAttrForT);
 					t.setAttr(newAttrForT);
+					t.activate();
 				} else {
-					// Main.appendInDebugFile("Classe Diferente!!!!");
 					double[] newAttrForT = subVector(entry.getAttr(),
 							t.getAttr());
 					newAttrForT = multiplyByConstant(newAttrForT, learningRate);
@@ -74,6 +86,38 @@ public class LVQ implements Classifier, DecreaseRate {
 			learningRate = calcLearningRate(learningRate, ++epoca);
 			// Passo 6 - verifica condiÃ§Ã£o de Parada
 		} while (willStop(epoca));
+
+		// Descartando os neuronios pouco usados.
+		DiscardUselessNeurons();
+	}
+
+	private boolean breakByErrorRate(){
+		return false;
+	}
+	
+	/**
+	 * Apos o treinamento, retiramos os neuronios que nao foram ativados nenhuma
+	 * vez, ou abaixo de uma taxa de 5% da media (Mesmo padrao utilizado na
+	 * limpeza dos atributos).
+	 * */
+	private void DiscardUselessNeurons() {
+
+		// Calculo a media geral de ativacoes
+		int sumActivate = 0;
+		double averageActivate, minActive = 0;
+		for (Neuron n : neurons) {
+			sumActivate += n.getActivated();
+		}
+
+		averageActivate = sumActivate / neurons.size();
+		minActive = averageActivate * 0.05;
+
+		for (int i = 0; i < neurons.size(); i++) {
+			if (neurons.get(i).getActivated() <= minActive) {
+				neurons.remove(i);
+				i--;
+			}
+		}
 	}
 
 	private Neuron findMinDistance(Entry entry, List<Neuron> neurons) {
@@ -93,11 +137,10 @@ public class LVQ implements Classifier, DecreaseRate {
 		return epoca != max_epoch;
 	}
 
-	private void initializeWeigths(List<Entry> trainingList) {
+	private void initializeWeigths(int dimensions) {
 		// Criando neuronios
 		neurons = new ArrayList<Neuron>();
 		// pega a dimensÃ£o do primeiro neuronio
-		int dimensions = trainingList.get(0).getAttr().length;
 		for (int i = 0; i < nNeurons.length; i++) {
 			for (int j = 0; j < nNeurons[i]; j++) {
 				Neuron n = new Neuron(dimensions);
@@ -153,5 +196,11 @@ public class LVQ implements Classifier, DecreaseRate {
 		}
 
 		return (numOfErrors * 100) / numOfTests;
+	}
+
+	@Override
+	public void validation(List<Entry> validationList) {
+		System.out.println("Erro da lista de validação: "
+				+ this.errorRate(validationList));
 	}
 }

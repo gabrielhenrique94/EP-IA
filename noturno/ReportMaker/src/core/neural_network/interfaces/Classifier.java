@@ -39,6 +39,9 @@ public interface Classifier {
 	 * O arquivo deve seguir o padrão salvo pelo método save.
 	 * @param input Arquivo de onde será lido
 	 */
+	
+	public void validation(List<Entry> validationList);
+	
 	public void loadNetwork(File input);
 	
 	public double errorRate(List<Entry> tes);

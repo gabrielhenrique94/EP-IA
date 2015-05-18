@@ -45,6 +45,12 @@ public class MLP implements Classifier{
 		return 0;
 	}
 
+	@Override
+	public void validation(List<Entry> validationList) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 	
 }

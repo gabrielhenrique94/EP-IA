@@ -84,6 +84,7 @@ public class Main {
 		{
 			Classifier lvq = new LVQ(learningRate, neuronsByClass, random, decreaseRate, numEpochs);
 			lvq.training(training_entries, test_entries);
+			lvq.validation(validation_entries);
 		}
 		else
 		{

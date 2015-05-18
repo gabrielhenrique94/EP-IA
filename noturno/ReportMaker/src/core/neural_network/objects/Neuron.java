@@ -2,10 +2,12 @@ package core.neural_network.objects;
 
 public class Neuron extends Entry {
 	private int dimensions;
-
+	private int activated;
+	
 	public Neuron(int dimensions) {
 		super();
 		this.dimensions = dimensions;
+		activated = 0;
 	}
 
 	public static Neuron fromVector(double[] vector) {
@@ -33,6 +35,14 @@ public class Neuron extends Entry {
 			neurons[j] = 0;
 		}
 		setAttr(neurons);
+	}
+	
+	public void activate(){
+		activated++;
+	}
+	
+	public int getActivated() {
+		return activated;
 	}
 
 	@Override
