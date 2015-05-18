@@ -249,8 +249,10 @@ public class NormalizarDados {
 			int[] matriz = matrizes.get(i);
 			double[] matrizNormalizada = new double[matriz.length];
 			for (int j = 0; j < numColunas; j++) {
-				matrizNormalizada[j] = (matriz[j] - valoresMinimos[j])/(valoresMaximos[j] - valoresMinimos[j]) * (1 - (-1)) + (-1);
+				matrizNormalizada[j] = ((double)matriz[j] - (double)valoresMinimos[j])/((double)valoresMaximos[j] - (double)valoresMinimos[j]) * (1.0 - (-1.0)) + (-1.0);
+				System.out.print(matrizNormalizada[j] + " ");
 			}
+			System.out.println();
 			matrizesNormalizadas.add(matrizNormalizada);
 		}
 		
