@@ -9,7 +9,7 @@ import java.util.List;
 import main.Main;
 import core.io.ReadInputFiles;
 import core.neural_network.interfaces.Classifier;
-import core.neural_network.interfaces.Decaimento_portugues;
+import core.neural_network.interfaces.DecreaseRate;
 import core.neural_network.interfaces.Metrics;
 import core.neural_network.objects.Entry;
 import core.neural_network.objects.Neuron;
@@ -22,7 +22,7 @@ import static core.neural_network.lvq.vector.*;
  * @author Thiago Bonfiglio
  * */
 
-public class LVQ implements Classifier, Decaimento_portugues {
+public class LVQ implements Classifier, DecreaseRate {
 	private int max_epoch;
 	private double learningRate;
 	private int[] nNeurons;
