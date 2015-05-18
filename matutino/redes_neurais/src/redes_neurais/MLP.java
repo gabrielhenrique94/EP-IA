@@ -130,7 +130,7 @@ public class MLP {
 			}
 			// Calcula erro Quadratico
 			double erroQuadratico = erroQuadraticoMedio(erro);
-			System.out.println("erroQ:" + erroQuadratico);
+			System.err.println("erroQ:" + erroQuadratico);
 			// Se o erro for maior que o aceitavel retropropaga
 			
 			//System.out.println(erroQuadratico > this.erroAceitavel);
@@ -187,6 +187,7 @@ public class MLP {
 				for (int j = 0; j < entrada.length; j++) {
 					
 					if (j == 0){
+				
 						resultado[k] += pesoA[j];
 					}
 					//Passo 4 - Calcula resultado final para a camada escondida 
@@ -254,6 +255,7 @@ public class MLP {
 		double seq = 0.0;
 		for(int e = 0; e < erro.length; e++) { 
 			seq += Math.pow(erro[e], 2);
+			seq = seq/2;
 			
 		}
 		return seq/erro.length;
@@ -300,16 +302,20 @@ public class MLP {
 		// Passo 7 - Retropropaga o erro usando o delta da camada de saida para calcular o delta da camada anterior
 		//System.out.println("PASSO 7");
 		for (int j = 0; j < camadaEscondida.length; j++) {
+			double somatorio = 0;
+			
+			//calculo somatorio em K de deltaSaida[K] *pesosB[J][K]
+			for (int k = 0; k < deltaSaida.length; k++) {
+				somatorio += deltaSaida[k] * pesosB[k][j];
+			}
+			
 			
 			//deltaEscondida = saida do neuronioE(1-saida do neuronioE) * (somatorio em K de deltaSaida[K] *pesosB[J][K])
 			deltaEscondida[j] = camadaEscondida[j]*(1-camadaEscondida[j]);
 			
-			double somatorio = 0;
 			
-			//calculo somatorio	
-			for (int k = 0; k < deltaSaida.length; k++) {
-				somatorio += deltaSaida[k] * pesosB[k][j];
-			}
+			
+			
 			//System.out.println("DELTA ESCONDIDO CAMADA"+j);
 			deltaEscondida[j] *= somatorio;
 			System.out.println("DELTA ESCONDIDA : "+" "+camadaEscondida[j]+"*"+(1-camadaEscondida[j])+"*"+somatorio+"*"+deltaEscondida[j]);
@@ -323,15 +329,18 @@ public class MLP {
 		for (int ns = 0; ns < deltaSaida.length; ns++) {
 			for (int pb = 0; pb < pesosB[0].length; pb++) {
 				//novoPesoB = pesoAntigoB + aprendizado*deltaSaida* saida gerada anteriormente pelo neuronio da camada anterior
-				double aux;
-				if (pb < camadaEscondida.length) {
-					aux = camadaEscondida[pb];
+				
+				if (pb == 0) {
+					//ATUALIZA BIAS
+					pesosBnew[ns][pb] = pesosB[ns][pb] + (taxaAprendizado * deltaSaida[ns]);
+					System.out.println("BIASBnovo["+ns+"]["+pb+"] = (BIASold["+ns+"]["+pb+"])="+	pesosB[ns][pb]+" - ("+taxaAprendizado+" * "+deltaSaida[ns]+" = "+ pesosBnew[ns][pb]);
 				} else {
-					aux = 1; // BIAS não tem valor específico
+					pesosBnew[ns][pb] = pesosB[ns][pb] + (taxaAprendizado * deltaSaida[ns] * camadaEscondida[pb-1]);
+					System.out.println("pesoaBnovo["+ns+"]["+pb+"] = (pesoaBold["+ns+"]["+pb+"])="+	pesosB[ns][pb]+" - ("+taxaAprendizado+" * "+deltaSaida[ns]+" * "+ camadaEscondida[pb-1]+" = "+ pesosBnew[ns][pb]);
 				}
 				
-				pesosBnew[ns][pb] = pesosB[ns][pb] + (taxaAprendizado * deltaSaida[ns] * aux);
-				//System.out.println("pesoaBnovo["+ns+"]["+pb+"] = (pesoaBold["+ns+"]["+pb+"])="+	pesosB[ns][pb]+" - ("+taxaAprendizado+" * "+deltaSaida[ns]+" * "+aux+" = "+ pesosBnew[ns][pb]);
+				
+				
 				
 				
 				
@@ -344,24 +353,24 @@ public class MLP {
 			for (int pa = 0; pa < pesosA[0].length; pa++) {
 				//novoPesoA = pesoAntigoA - aprendizado*deltaEscondido* entrada recebida pelo neuronio
 				
-				double aux;
-				if (pa < entrada.length) {
+				if (pa == 0) {
 					
-					aux = entrada[pa];
-					
+					pesosAnew[ns][pa] = pesosA[ns][pa] + (taxaAprendizado * deltaEscondida[ns]);
+					System.out.println("BIAS-A-new["+ns+"]["+pa+"] = (BIASnew["+ns+"]["+pa+"])="+	pesosA[ns][pa]+" - ("+taxaAprendizado+" * "+deltaEscondida[ns]+" * "+entrada[pa]+" = " + 	pesosAnew[ns][pa]);
 				} else {
-					aux = 1; // BIAS não tem valor específico
+					pesosAnew[ns][pa] = pesosA[ns][pa] + (taxaAprendizado * deltaEscondida[ns] * entrada[pa-1]);
+					System.out.println("pesoaAnovo["+ns+"]["+pa+"] = (pesoaAold["+ns+"]["+pa+"])="+	pesosA[ns][pa]+" - ("+taxaAprendizado+" * "+deltaEscondida[ns]+" * "+entrada[pa-1]+" = " + 	pesosAnew[ns][pa]);
 				}
 				
-				pesosAnew[ns][pa] = pesosA[ns][pa] + (taxaAprendizado * deltaEscondida[ns] * aux);
+				
 				//System.out.println("ATUALIZACAO PESOS A ->");
-				//System.out.println("pesoaAnovo["+ns+"]["+pa+"] = (pesoaAold["+ns+"]["+pa+"])="+	pesosA[ns][pa]+" - ("+taxaAprendizado+" * "+deltaEscondida[ns]+" * "+aux+" = " + 	pesosAnew[ns][pa]);
+				
 			}
 		}
 		//System.out.println("ATUALIZA PESOS");
 		//Atualiza pesos da classe
 		setPesosA(pesosAnew);
-		/*
+		
 		System.out.println("=========Matriz pesos A Antigos ======");
 		for(int i =0 ; i< pesosA.length; i++){
 			System.out.print("|");
@@ -402,7 +411,7 @@ public class MLP {
 			}
 			System.out.print("|");
 			System.out.println("");
-		}*/
+		}
 	}
 	
 	
