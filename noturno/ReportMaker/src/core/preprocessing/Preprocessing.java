@@ -60,7 +60,6 @@ public class Preprocessing {
 	public static void cleanAtributes(List<Entry> entries) {
 		int[] result = usedColumns(entries);
 		for (int i = 0; i < result.length; i++) {
-			System.out.print(result[i] + " - ");
 			if (result[i] == 0) {
 				for (Entry e : entries)
 					e.clearCol(i);
