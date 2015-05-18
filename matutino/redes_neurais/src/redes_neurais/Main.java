@@ -26,7 +26,7 @@ public class Main {
 		
 		boolean alphaEstatico = false; // Args tbm
 		
-		int maxT = 30; // Args, máximo de épocas que se deve executar
+		int maxT = 10; // Args, máximo de épocas que se deve executar
 		
 		double erroAceitavel = 0.05; //(5% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
 		
@@ -55,7 +55,7 @@ public class Main {
 		
 		
 		
-		//NormalizarDados dadosNormalizados = new NormalizarDados(arquivoTreinamento, arquivoTeste, 0.95); //Pegar a taxa por arg[] mais para frente 
+		NormalizarDados dadosNormalizados = new NormalizarDados(arquivoTreinamento, arquivoTeste, 0.95); //Pegar a taxa por arg[] mais para frente 
 		
 	//	ArrayList<double[]> x = dadosNormalizados.getMatrizesTeste();
 	//	double[] t = x.get(0);
@@ -90,14 +90,14 @@ public class Main {
 		
 		//Passo 0 Inicializa os pesos
 		//TREINAR ENTRADA
-		MLP redeMLP = new MLP(xorProblem, xorClazz, numNeuroniosEscondidosMLP, 
-		commonsRedes.geradorPesosRandomicos(t.length ,numNeuroniosEscondidosMLP), 
-		commonsRedes.geradorPesosRandomicos(numNeuroniosEscondidosMLP, numNeuroniosSaida),
-		numNeuroniosSaida, alpha, alphaEstatico, maxT, erroAceitavel);
-		redeMLP.treinar();
+		//MLP redeMLP = new MLP(xorProblem, xorClazz, numNeuroniosEscondidosMLP, 
+		//commonsRedes.geradorPesosRandomicos(t.length ,numNeuroniosEscondidosMLP), 
+		//commonsRedes.geradorPesosRandomicos(numNeuroniosEscondidosMLP, numNeuroniosSaida),
+		//numNeuroniosSaida, alpha, alphaEstatico, maxT, erroAceitavel);
+		//redeMLP.treinar();
 		
-		//LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(), maxT,2, alpha, erroAceitavel);
-		//teste.testa();
+		LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(), maxT,1, alpha, erroAceitavel);
+		teste.testa();
 		
 		
 		
