@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import core.data_treatment.DataTreatment;
 import core.io.ReadInputFiles;
 import core.neural_network.interfaces.Classifier;
 import core.neural_network.lvq.LVQ;
@@ -31,7 +32,7 @@ public class Main {
 
 	/**
 	 * MÃ©todo de inicializaÃ§Ã£o da aplicaÃ§Ã£o chamada: Main <training_file>
-	 * <test_file> <random:(True|False)> <learningRate> <numero_neuronios> <decaimento da taxa de aprendizado em %> <embaralhar entrada>
+	 * <rede a ser utilizada:(MLP|LVQ)> <test_file> <random:(True|False)> <learningRate> <numero_neuronios> <decaimento da taxa de aprendizado em %> <embaralhar entrada>
 	 * 
 	 * @param args
 	 *            - Recebe os parï¿½metros de inicializaï¿½ï¿½o do programa,
@@ -42,65 +43,53 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		
 		/*
-		 * embaralhar entrada 
-			pq: se n atualiza só uma classe primeiramente... depois as outras
-			e isso pode causar erro na rede (eu tentei te explicar o motivo esses dias mas vc falou q ja sabia)
-			
-			depois do treinamento é bom voce eliminar os neuronios q nunca são ativados ou q são pouco ativados em comparação aos outros
+		 * depois do treinamento é bom voce eliminar os neuronios q nunca são ativados ou q são pouco ativados em comparação aos outros
 		 * */
+		// Criando o set de dados (Soma dos arquivos de treinamento e teste
+		List<double[]> set = ReadInputFiles.sumBothFiles(args[1], args[2]);
 		
-		// Lendo arquivo de entrada e parseando para objetos Entry
-		List<double[]> training_set = ReadInputFiles.readFile(args[0]);
-		List<Entry> training_entries = new ArrayList<Entry>();
-		for (double[] v : training_set)
-			training_entries.add(Entry.fromVector(v));
+		DataTreatment tr = new DataTreatment(set);
+		tr.applyHoldout();
 
-		// Lendo arquivo de entrada e parseando para objetos Entry
-		List<double[]> test_set = ReadInputFiles.readFile(args[1]);
-		List<Entry> test_entries = new ArrayList<Entry>();
-		for (double[] v : test_set)
-			test_entries.add(Entry.fromVector(v));
+		List<Entry> training_entries = tr.getTrainingEntries();
+		List<Entry> test_entries = tr.getTestEntries();
+		List<Entry> validation_entries = tr.getValidationEntries();
+		
+		boolean random = Boolean.parseBoolean(args[3]);
 
-		boolean random = Boolean.parseBoolean(args[2]);
-
-		double learningRate = Double.parseDouble(args[3]);
+		double learningRate = Double.parseDouble(args[4]);
 
 		// criando vetor que indica que todas as classes tem o mesmo numero de
 		// neuronios
-		int nNeurons = Integer.parseInt(args[4]);
+		int nNeurons = Integer.parseInt(args[5]);
 		
 		// Taxa de decaimento da taxa de aprendizado (em %)
-		double decreaseRate = Double.parseDouble(args[5]);
+		double decreaseRate = Double.parseDouble(args[6]);
 		
 		// Embaralhar a entrada
-		int numEpochs = Integer.parseInt(args[6]);
+		int numEpochs = Integer.parseInt(args[7]);
 
-		int[] neuronsByClass = new int[countClasses(training_entries)];
+		int[] neuronsByClass = new int[10];
 
 		// Preprocessando os dados
-		//Preprocessing.normalize(training_entries);
 		Preprocessing.minMaxMethod(training_entries);
 		Preprocessing.cleanAtributes(training_entries);
-		
-		
-		
-		// TODO: utilizar o segundo metodo de pre-processamento.
 
 		for (int i = 0; i < neuronsByClass.length; i++) {
 			neuronsByClass[i] = nNeurons;
 		}
 
-		Classifier lvq = new LVQ(learningRate, neuronsByClass, random, decreaseRate, numEpochs);
-		// normaliza
-		// Preprocessing.normalize(training_entries);
-
-		lvq.training(training_entries, test_entries);
-	}
-
-	private static int countClasses(List<Entry> trainigSet) {
-		Set<Integer> set = new HashSet<Integer>();
-		for (Entry entry : trainigSet)
-			set.add(entry.getClazz());
-		return set.size();
+		// escolhendo a rede a ser utilizada
+		if(args[0].equalsIgnoreCase("lvq"))
+		{
+			Classifier lvq = new LVQ(learningRate, neuronsByClass, random, decreaseRate, numEpochs);
+			lvq.training(training_entries, test_entries);
+		}
+		else
+		{
+			Classifier mlp = null; // TODO: Gordinho <3
+			mlp.training(training_entries, test_entries);
+		}
+		
 	}
 }
