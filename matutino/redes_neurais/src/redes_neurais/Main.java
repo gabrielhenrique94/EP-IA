@@ -96,7 +96,7 @@ public class Main {
 		//numNeuroniosSaida, alpha, alphaEstatico, maxT, erroAceitavel);
 		//redeMLP.treinar();
 		
-		LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(), maxT,1, alpha, erroAceitavel);
+		LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT,1, alpha, erroAceitavel);
 		teste.testa();
 		
 		
