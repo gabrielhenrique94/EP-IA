@@ -81,7 +81,7 @@ public class Main {
 		double[] t = xorProblem.get(0);
 		//TREINAR ENTRADA CLODS
 		/*
-		MLP redeMLP = new MLP(dadosNormalizados.getMatrizesTeste(), dadosNormalizados.getClassesTeste(), numNeuroniosEscondidosMLP, 
+		MLP redeMLP = new MLP(dadosNormalizados.getMatrizesTreinamento(), dadosNormalizados.classificarClasses(dadosNormalizados.getClassesTreinamento()), numNeuroniosEscondidosMLP, 
 		commonsRedes.geradorPesosRandomicos(t.length ,numNeuroniosEscondidosMLP), 
 		commonsRedes.geradorPesosRandomicos(numNeuroniosEscondidosMLP, numNeuroniosSaida),
 		numNeuroniosSaida, alpha, alphaEstatico, maxT, erroAceitavel);

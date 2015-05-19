@@ -46,10 +46,10 @@ public class NormalizarDados {
 		matrizesTreinamento = recriaMatrizSemColunas(matrizesTreinamento);
 		encontraValoresNormalizacao(matrizesTreinamento);
 		this.setMatrizesTreinamento(normalizaColunas(matrizesTreinamento)); 
-		this.setClassesTreinamento(classificarClasses(extrairClasses(arquivoTreinamento)));
+		this.setClassesTreinamento(extrairClasses(arquivoTreinamento));
 		this.setMatrizesTeste(normalizaColunas(recriaMatrizSemColunas(extrairMatrizes(arquivoTeste))));
 
-		this.setClassesTeste(classificarClasses(extrairClasses(arquivoTeste)));
+		this.setClassesTeste(extrairClasses(arquivoTeste));
 		
 		criarArquivoValoresNormalizacao(this.arquivoComplementosNormalizacao);
 		criarArquivoNormalizado(this.arquivoDadosNormalizadosTreinamento, getMatrizesTreinamento(), getClassesTreinamento());
