@@ -26,7 +26,7 @@ public class Main {
 		
 		boolean alphaEstatico = false; // Args tbm
 		
-		int maxT = 1; // Args, máximo de épocas que se deve executar
+		int maxT = 50; // Args, máximo de épocas que se deve executar
 		
 		double erroAceitavel = 0.05; //(5% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
 		
@@ -96,7 +96,7 @@ public class Main {
 		//numNeuroniosSaida, alpha, alphaEstatico, maxT, erroAceitavel);
 		//redeMLP.treinar();
 		
-		LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT,1, alpha, erroAceitavel);
+		LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT,2, alpha, erroAceitavel);
 		teste.testa();
 		
 		

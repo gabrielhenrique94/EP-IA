@@ -201,7 +201,7 @@ public class LVQ {
 				else {
 					//afasta
 					//vetor de peso novo da j-esima unidade saida = vetor peso antigo - alfa(entrada da j-esima unidade - vetor peso antigo)
-					vetorAuxiliar = subtracaoDeVetores(neuronioVencedor, multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor), alfaRotativo));
+					vetorAuxiliar = subtracaoDeVetores( neuronioVencedor, multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor), alfaRotativo));
 					
 				}
 				//vetorPrototipos.remove(index);
@@ -235,11 +235,11 @@ public class LVQ {
 	 * @return
 	 */
 	public double[] somaDeVetores(double[] vetor1, double[] vetor2){
-		int indexClasse = entradas.indexOf(vetor2);
+
 		double[] res = new double[vetor1.length];
 		for(int i = 0 ; i < res.length-1;i++)
 			res[i] = vetor1[i] + vetor2[i];
-		res[res.length-1]=classes.get(indexClasse);
+
 		return res;
 	}
 	
@@ -250,12 +250,13 @@ public class LVQ {
 	 * @return
 	 */
 	public double[] subtracaoDeVetores(double[] vetor1, double[] vetor2){
-		int indexClasse = entradas.indexOf(vetor2);
+
 		double[] res = new double[vetor1.length];
 		System.out.println(res.length);
 		for(int i = 0; i < res.length-1;i++)
 			res[i] = vetor1[i] - vetor2[i];
-		res[res.length-1]=classes.get(indexClasse);
+
+
 		return res;
 	}
 		
@@ -267,11 +268,11 @@ public class LVQ {
 	 * @return
 	 */
 	public double[] multiplicaAlfa(double[] vetor, double alfa){
-		int indexClasse = entradas.indexOf(vetor);
+
 		double res[] = new double[vetor.length];
 		for(int i = 0; i < res.length-1; i++)
 			res[i] = vetor[i] * alfa;
-		res[res.length-1]=classes.get(indexClasse);
+
 		return res;
 	}
 	
