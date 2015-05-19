@@ -56,7 +56,7 @@ public class LVQ implements Classifier, DecreaseRate {
 			// Se a taxa de erro atinge um nivel ruim, breca a execução
 			if(breakByErrorRate())
 				break;
-			
+
 			// Passo 2 - Para cada vetor de entrada executa os passos 3-4
 			for (Entry entry : trainingList) {
 				// Passo 3 - Encontra neuronio mais proximo

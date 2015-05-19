@@ -13,12 +13,12 @@ public class utils {
 					private int actual = 0;
 					@Override
 					public boolean hasNext() {
-						return actual >= nMax;
+						return actual < nMax;
 					}
 
 					@Override
 					public Integer next() {
-						return ++actual;
+						return actual++;
 					}
 
 					@Override

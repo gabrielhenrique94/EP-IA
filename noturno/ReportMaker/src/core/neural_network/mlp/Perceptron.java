@@ -11,16 +11,21 @@ public class Perceptron {
 			@Override
 			public double executeDerivate(double entry) {
 				//do slide da sara
-				return execute(entry)*( 1 - execute(entry));
+				return ( (1 + execute(entry)) * (1 - execute(entry)) )/2;
 			}
 			
 			@Override
 			public double execute(double entry) {
-				return  1 / (1 + Math.exp(-entry));
+				return  (2 / (1 + Math.exp(-entry))) - 1;
 			}
 		};
 	}
-
+	
+	public void applyDeltas(double[] deltas, double bias){
+		for(int a = 0 ; a < deltas.length; a ++)
+			weigths[a] += deltas[a];
+		this.bias += bias;
+	}
 	public static Function getActivationFunction(){
 		return activation; 
 	}
