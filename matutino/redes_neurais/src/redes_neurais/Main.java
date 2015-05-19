@@ -22,11 +22,11 @@ public class Main {
 		
 		int numNeuroniosSaida = 1; // DEPOIS VEMOS O QUE FAZER COM ISSO
 		
-		double alpha = 0.5; //Recer por arg depois - valor que tava escrito como normal
+		double alpha = 0.1; //Recer por arg depois - valor que tava escrito como normal
 		
 		boolean alphaEstatico = false; // Args tbm
 		
-		int maxT = 10; // Args, máximo de épocas que se deve executar
+		int maxT = 1; // Args, máximo de épocas que se deve executar
 		
 		double erroAceitavel = 0.05; //(5% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
 		
@@ -96,7 +96,7 @@ public class Main {
 		//numNeuroniosSaida, alpha, alphaEstatico, maxT, erroAceitavel);
 		//redeMLP.treinar();
 		
-		LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(), maxT,1, alpha, erroAceitavel);
+		LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT,1, alpha, erroAceitavel);
 		teste.testa();
 		
 		
