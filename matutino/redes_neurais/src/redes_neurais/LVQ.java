@@ -308,6 +308,17 @@ public class LVQ {
 		return neurVencedor;//Tem que implementar, ainda não sei que estrutura usar 
 	}
 	
+	/**
+	 * 
+	 */
+	private void confereNeuroniosAtivados(){
+		double[] neurVenc;
+		for(int j=0;j<entradas.size(); j++){
+			neurVenc = pegaNeurVencedor(j);
+			atualizaMatrizBool((int)neurVenc[neurVenc.length-1]);
+		}
+		
+	}
 	
 	/**
 	 * Funcao para atualizar o alfa
