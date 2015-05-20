@@ -51,11 +51,6 @@ public class LVQ {
 	private double alfaRotativo = alfaInicial;
 	
 	/**
-	 * Quantidade total de classes de classificacao
-	 */
-	private int quantidadeClasses = 10;
-	
-	/**
 	* matrizBool e matriz de particao Uh(cxn) 
 	* onde c e o numero de grupos (c=10) 
 	* n e o numero de conjutos de dados (entradas.size)
@@ -65,8 +60,6 @@ public class LVQ {
 	private int[][] matrizBool ;
 	//Cria vetor com valores para multiplicar os anteriores
 
-	public int[] multiplicadores = new int[10]; 
-	// Creio que o tamanho esteja errado, nao entendi muito bem como funciona ainda
 	
 	private static int countTest = 0;
 	
@@ -87,7 +80,7 @@ public class LVQ {
 	 * Funcao de teste
 	 * **/
 	public void testa(){
-		System.out.println("---");
+		//System.out.println("---");
 		//criaVetorPrototipos();
 		double[] vet;
 		for(int i=0; i<numNeur ; i++ ) {
@@ -129,14 +122,14 @@ public class LVQ {
 	 *Cria vetor de prototipos 
 	 **/
 	public void criaVetorPrototipos(){
-		numNeur=numNeurPorClasse *10;
+		numNeur=numNeurPorClasse *2;
 		int cont =0;
 		double[] vetor;
 		for (int i=0; i<=numNeur; i++){
 			vetorPrototipos.add(geraVetorAleatorio()) ;
 		}
 		for (int i=0;i<vetorPrototipos.size();i++){ 
-			if (cont == 10) cont=0;
+			if (cont == 2) cont=0;
 			vetor = vetorPrototipos.get(i);
 			vetor[vetor.length-1]=cont;
 			cont++;
@@ -149,10 +142,10 @@ public class LVQ {
 	 * @return
 	 */
 	public double[] geraVetorAleatorio(){
-		double[] vetor = new double[entradas.get(0).length-1];
+		double[] vetor = new double[entradas.get(0).length+1];//MUDAR PARA -1 quando for o problema normal!!
 		Random rdm = new Random();
 		for(int i=0; i<vetor.length;i++){
-			vetor[i]=rdm.nextDouble() * 2 - 1;
+			vetor[i]=rdm.nextDouble() /* * 2 - 1*/;
 		}
 		return vetor;
 	}
@@ -170,6 +163,15 @@ public class LVQ {
 		 * Inicializando o conjunto de protótipos
 		 */
 		criaVetorPrototipos();
+		double[]vet;
+		for(int i=0; i<numNeur ; i++ ) {
+			vet = vetorPrototipos.get(i);
+			System.out.print(i+" ");
+			for (int j=0;j<vet.length; j++){
+				System.out.print (vet [j] + " "); 
+			}
+			System.out.println();
+		}
 		//	inicializarMatrizBool();
 
 		/**
@@ -178,20 +180,28 @@ public class LVQ {
 		 */
 
 		//nesse caso = numero fixo de iteracoes
-		while(epocas <= max_epocas || alfaRotativo==0.000001){//Perguntar para o prof
+		while(epocas <= max_epocas || alfaRotativo==0.0001){//Perguntar para o prof
 			for(int j=0;j<entradas.size(); j++){
 				
-				double[] vetorAuxiliar;
-				double[] neuronioVencedor = pegaNeurVencedor(j); //tem de encontrar a distancia minima - Iv
+				double[] vetorAuxiliar, vetorAuxiliarX;
+				System.out.println();
 				double[] entradaAtual = entradas.get(j);
-				int index = vetorPrototipos.indexOf(pegaNeurVencedor(j));
+				vetorAuxiliarX = entradaAtual;
+					for (int k=0;k<vetorAuxiliarX.length; k++){
+					System.out.print (vetorAuxiliarX [k] + " "); 
+				}
+					System.out.println();
+				double[] neuronioVencedor = pegaNeurVencedor(j); //tem de encontrar a distancia minima - Iv
+				
+				int index = vetorPrototipos.indexOf(neuronioVencedor);
 				int indexClasse = entradas.indexOf(entradaAtual);
 				System.out.println();
 				vetorAuxiliar = neuronioVencedor;
 					for (int k=0;k<vetorAuxiliar.length; k++){
 					System.out.print (vetorAuxiliar [k] + " "); 
 				}
-					System.out.println(entradaAtual.length + " " + neuronioVencedor.length);
+					System.out.println();
+					//System.out.println(entradaAtual.length + " " + neuronioVencedor.length);
 				if((int)neuronioVencedor[neuronioVencedor.length-1]==classes.get(indexClasse)){
 					//Aproxima
 					//vetor de peso novo da j-esima unidade saida = vetor peso antigo + alfa(entrada da j-esima unidade - vetor peso antigo)
@@ -252,7 +262,6 @@ public class LVQ {
 	public double[] subtracaoDeVetores(double[] vetor1, double[] vetor2){
 
 		double[] res = new double[vetor1.length];
-		System.out.println(res.length);
 		for(int i = 0; i < res.length-1;i++)
 			res[i] = vetor1[i] - vetor2[i];
 
@@ -296,16 +305,15 @@ public class LVQ {
 		double distMin = 100000000;
 		double dist =0;
 		double neurVencedor[]= new double[entradas.get(0).length];
-		for (int i=0; i<vetorPrototipos.size(); i++ ){
+		for (int i=0; i<vetorPrototipos.size()-1; i++ ){
 			dist = calculaDistEuclidiana(entradas.get(j), vetorPrototipos.get(i));
-			System.out.println("TESTE");
 			if (dist <= distMin){
 				distMin = dist;
 				neurVencedor = vetorPrototipos.get(i);
 			}
 		}
-		System.out.println();
-		System.out.println(countTest);
+		//System.out.println();
+		//System.out.println(countTest);
 		return neurVencedor;//Tem que implementar, ainda não sei que estrutura usar 
 	}
 	
@@ -354,7 +362,7 @@ public class LVQ {
 			soma+= Math.pow(vetor[i]-vetorPesos[i], 2);
 		}
 		distancia= Math.pow(soma, (0.5));
-		System.out.println(distancia);
+		 System.out.println(distancia);
 		
 		return distancia;
 	}
