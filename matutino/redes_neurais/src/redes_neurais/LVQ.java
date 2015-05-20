@@ -158,7 +158,7 @@ public class LVQ {
 		/**
 		 * Embaralhando as entradas
 		 */
-		Collections.shuffle(entradas);
+		//Collections.shuffle(entradas);
 		/**
 		 * Inicializando o conjunto de protótipos
 		 */
@@ -201,8 +201,8 @@ public class LVQ {
 					System.out.print (vetorAuxiliar [k] + " "); 
 				}
 					System.out.println();
-					//System.out.println(entradaAtual.length + " " + neuronioVencedor.length);
-				if((int)neuronioVencedor[neuronioVencedor.length-1]==classes.get(indexClasse)){
+					System.out.println(classes.get(j));
+				if((int)neuronioVencedor[neuronioVencedor.length-1]==classes.get(j)){
 					//Aproxima
 					//vetor de peso novo da j-esima unidade saida = vetor peso antigo + alfa(entrada da j-esima unidade - vetor peso antigo)
 					vetorAuxiliar = somaDeVetores(neuronioVencedor, multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor), alfaRotativo));

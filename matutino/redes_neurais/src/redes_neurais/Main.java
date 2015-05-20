@@ -22,7 +22,7 @@ public class Main {
 		
 		int numNeuroniosSaida = 1; // DEPOIS VEMOS O QUE FAZER COM ISSO
 		
-		double alpha = 0.1; //Recer por arg depois - valor que tava escrito como normal
+		double alpha = 0.5; //Recer por arg depois - valor que tava escrito como normal
 		
 		boolean alphaEstatico = false; // Args tbm
 		
