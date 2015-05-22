@@ -4,9 +4,6 @@ import java.util.ArrayList;
 
 public class Main {
 	
-	
-	
-	
 	public static void main(String[] args) {
 		//PRECISA ALTERAR PARA VIR PELOS ARGS DEPOIS
 		
@@ -98,14 +95,10 @@ public class Main {
 		
 		//LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT,2, alpha, erroAceitavel);
 		//teste.testa();
-		
-<<<<<<< HEAD
-		LVQ testeXOR = new LVQ(xorProblem,xorClazz, maxT,50, alpha, erroAceitavel);
-		testeXOR.testa();
-=======
+
 		//LVQ testeXOR = new LVQ(xorProblem,xorClazz, maxT,1, alpha, erroAceitavel);
 		//testeXOR.testa();
->>>>>>> origin/master
+
 		
 		
 		
