@@ -26,7 +26,7 @@ public class Main {
 		
 		boolean alphaEstatico = false; // Args tbm
 		
-		int maxT = 50000; // Args, máximo de épocas que se deve executar
+		int maxT = 1000; // Args, máximo de épocas que se deve executar
 		
 		double erroAceitavel = 0.05; //(5% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
 		
