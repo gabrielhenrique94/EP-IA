@@ -8,9 +8,11 @@ public class LVQ {
 	
 	/**
 	 * Vetores com as classes de classificacao
-	 * Posicao 0 = classe 0 ... 9 = classe 9
+	 * 
 	 */
 	private ArrayList<double[]> vetorPrototipos = new ArrayList<double[]>();
+	
+	private ArrayList<double[]> vetorPrototiposReduzido = new ArrayList<double[]>();
 	
 	private double erroMax;
 	
@@ -19,6 +21,9 @@ public class LVQ {
 	 */
 	private  ArrayList<double[]> entradas;
 	
+	/**
+	 * ArrayList com as classes das entradas
+	 */
 	private ArrayList<Double> classes;
 	
 	/**
@@ -35,7 +40,9 @@ public class LVQ {
 	 * Numero de neuronios total.
 	 */
 	private int numNeur;
-	
+	/**
+	 * Numero de neuronios por classe.
+	 */
 	private int numNeurPorClasse;
 	
 	/**
@@ -48,21 +55,19 @@ public class LVQ {
 	 * Variavel para armazenar as mudancas da taxa de aprendizado
 	 * Inicia em 1 e vai diminuindo
 	 */
-	private double alfaRotativo = alfaInicial;
+	private double alfaRotativo;
 	
 	/**
-	* matrizBool e matriz de particao Uh(cxn) 
-	* onde c e o numero de grupos (c=10) 
-	* n e o numero de conjutos de dados (entradas.size)
-	* indica a associacao de um dado a um grupo
-	* 0 e nao associado e 1 associado
+	* Vetor onde cada posição representa o neuronio de mesma posição da lista de 
+	* vetoresPrototipos, onde em cada posição
+	* existe a quantidade de vezes que aquele neurônio foi ativado
 	**/
-	private int[][] matrizBool ;
-	//Cria vetor com valores para multiplicar os anteriores
+	private int[] vetorNeuroniosAtivados ;
+	
+	private int[][] matrizConfusao ;
+	
 
-	
-	private static int countTest = 0;
-	
+
 	/**
 	 * Construtor do lvq
 	 * **/
@@ -105,16 +110,14 @@ public class LVQ {
 	}
 	
 	/**
-	 * Inicializacao da matriz Uh com todos os elementos = 0
-	 * Quando elemento = 0 - nao pertence
-	 * elemento = 1, pertence
+	 * Inicializacao da vetor para conferencia dos neurônios ativados
 	 **/
-	public void inicializarMatrizBool(){
-		matrizBool = new int[numNeur][entradas.size()];
+	public void inicializarVetorNeurAtivados(){
+		vetorNeuroniosAtivados = new int[vetorPrototipos.size()];
 		for(int i = 0; i < numNeur; i++){
-			for(int j = 0; j < entradas.size(); j++){
-				matrizBool[i][j] = 0;
-			}
+		
+			vetorNeuroniosAtivados[i] = 0;
+
 		}
 	}
 	
@@ -137,15 +140,24 @@ public class LVQ {
 		}
 	}
 	
+	public void inicializaMatrizConfusao(){//linha é a classe esperada e coluna é a que deu
+		matrizConfusao = new int[2][2]; //MUDAR PARA 10 10 QUANDO FOR RODAR OS DADOS CERTOS!!
+		for (int i=0; i<10;i++){
+			for (int j=0; j<10;j++){
+				matrizConfusao[i][j] = 0;
+			}
+		}
+	}
+	
 	/**
 	 * Criando um vetor com valores aleatórios
 	 * @return
 	 */
 	public double[] geraVetorAleatorio(){
-		double[] vetor = new double[entradas.get(0).length+1];//MUDAR PARA -1 quando for o problema normal!!
+		double[] vetor = new double[entradas.get(0).length+1];
 		Random rdm = new Random();
 		for(int i=0; i<vetor.length;i++){
-			vetor[i]=rdm.nextDouble() /* * 2 - 1*/;
+			vetor[i]=rdm.nextDouble() /* * 2 - 1*/; //descomentar os numeros para gerar vetor de -1 a 1!
 		}
 		return vetor;
 	}
@@ -155,14 +167,12 @@ public class LVQ {
 	 * Funcao para treinamento da rede
 	 */
 	public void treinamentoLVQ(){
-		/**
-		 * Embaralhando as entradas
-		 */
-		//Collections.shuffle(entradas);
+
 		/**
 		 * Inicializando o conjunto de protótipos
 		 */
 		criaVetorPrototipos();
+		alfaRotativo=alfaInicial;
 		double[]vet;
 		for(int i=0; i<numNeur ; i++ ) {
 			vet = vetorPrototipos.get(i);
@@ -196,22 +206,26 @@ public class LVQ {
 				int index = vetorPrototipos.indexOf(neuronioVencedor);
 				int indexClasse = entradas.indexOf(entradaAtual);
 				System.out.println();
-				vetorAuxiliar = neuronioVencedor;
-					for (int k=0;k<vetorAuxiliar.length; k++){
-					System.out.print (vetorAuxiliar [k] + " "); 
-				}
+				//vetorAuxiliar = neuronioVencedor;
+				//	for (int k=0;k<vetorAuxiliar.length; k++){
+				//	System.out.print (vetorAuxiliar [k] + " "); 
+				//}
 					System.out.println();
-					System.out.println(classes.get(j));
-				if((int)neuronioVencedor[neuronioVencedor.length-1]==classes.get(j)){
+					System.out.println(" classe esperada: "+classes.get(j) + " classe resultante: "+ neuronioVencedor[neuronioVencedor.length-1]);
+					System.out.println("valor vetor aux Trein ANTES: "+neuronioVencedor[0]+ " " + neuronioVencedor[1]);
+				if((int)neuronioVencedor[neuronioVencedor.length-1]==classes.get(j)){  //CONDIÇÃO OK!
 					//Aproxima
 					//vetor de peso novo da j-esima unidade saida = vetor peso antigo + alfa(entrada da j-esima unidade - vetor peso antigo)
-					vetorAuxiliar = somaDeVetores(neuronioVencedor, multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor), alfaRotativo));
+					vetorAuxiliar = somaDeVetores(neuronioVencedor, multiplicaAlfa(subtracaoDeVetores( entradaAtual, neuronioVencedor, vetorPrototipos.indexOf(neuronioVencedor))));
+					System.out.println("valor vetor aux Trein IF: "+ vetorAuxiliar[0]+ " " + vetorAuxiliar[1]);
+
 					
 				}
 				else {
 					//afasta
 					//vetor de peso novo da j-esima unidade saida = vetor peso antigo - alfa(entrada da j-esima unidade - vetor peso antigo)
-					vetorAuxiliar = subtracaoDeVetores( neuronioVencedor, multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor), alfaRotativo));
+					vetorAuxiliar = subtracaoDeVetores( neuronioVencedor, multiplicaAlfa(subtracaoDeVetores(entradaAtual,neuronioVencedor, vetorPrototipos.indexOf(neuronioVencedor))), vetorPrototipos.indexOf(neuronioVencedor));
+					System.out.println("valor vetor aux Trein ELSE: "+ vetorAuxiliar[0]+ " " + vetorAuxiliar[1]);
 					
 				}
 				//vetorPrototipos.remove(index);
@@ -220,20 +234,28 @@ public class LVQ {
 			/**
 			 * Reduzir a taxa de aprendizado
 			 */
-			atualizaAlfaSimples();
-			//atualizaAlfaMonot(epocas, max_epocas);
+			//atualizaAlfaSimples();
+			System.out.println("VALOR ATUAL ALFA: " + alfaRotativo);
+			atualizaAlfaMonot(epocas, max_epocas);
 			
 			}
 			System.out.println("EPOCAS "+ epocas);
 			epocas++;
 			
 		}
-	
+		confereNeuroniosAtivados();
+		//reduzNeuronios();
+		//montaMatrizConfusao();
+		for (int i=0;i<vetorNeuroniosAtivados.length;i++){
+			System.out.println(vetorNeuroniosAtivados[i] + " ");
+		}
 
 	}
 	
 	public void atualizaVetorPrototipos(double[] vetorAuxiliar, int index){
+	
 		for (int i =0; i<vetorAuxiliar.length;i++){
+			System.out.println("valor vetor aux: "+ vetorAuxiliar[i]);
 			vetorPrototipos.get(index)[i]=vetorAuxiliar[i];
 		}
 	}
@@ -244,11 +266,11 @@ public class LVQ {
 	 * @param vetor2
 	 * @return
 	 */
-	public double[] somaDeVetores(double[] vetor1, double[] vetor2){
+	public double[] somaDeVetores(double[] neuVencedor, double[] entrada){
 
-		double[] res = new double[vetor1.length];
+		double[] res = neuVencedor;
 		for(int i = 0 ; i < res.length-1;i++)
-			res[i] = vetor1[i] + vetor2[i];
+			res[i] = neuVencedor[i] + entrada[i];
 
 		return res;
 	}
@@ -259,13 +281,15 @@ public class LVQ {
 	 * @param vetor2
 	 * @return
 	 */
-	public double[] subtracaoDeVetores(double[] vetor1, double[] vetor2){
-
-		double[] res = new double[vetor1.length];
+	public double[] subtracaoDeVetores(double[] vetor1, double[] vetor2, int index){
+		System.out.println("valor vetor1: "+ vetor1[0]+ " " + vetor1[1]);
+		System.out.println("valor vetor2: "+ vetor2[0]+ " " + vetor2[1]);
+		double[] res = new double[vetorPrototipos.get(index).length];
 		for(int i = 0; i < res.length-1;i++)
 			res[i] = vetor1[i] - vetor2[i];
-
-
+		res[res.length-1]=vetorPrototipos.get(index)[vetorPrototipos.get(index).length-1];
+		System.out.println(vetorPrototipos.get(index)[vetorPrototipos.get(index).length-1]);
+		System.out.println("valor res: "+ res[0]+ " " + res[1]);
 		return res;
 	}
 		
@@ -276,11 +300,11 @@ public class LVQ {
 	 * @param alfa
 	 * @return
 	 */
-	public double[] multiplicaAlfa(double[] vetor, double alfa){
+	public double[] multiplicaAlfa(double[] vetor){
 
-		double res[] = new double[vetor.length];
+		double res[] = vetor;
 		for(int i = 0; i < res.length-1; i++)
-			res[i] = vetor[i] * alfa;
+			res[i] = vetor[i] * alfaRotativo;
 
 		return res;
 	}
@@ -289,10 +313,15 @@ public class LVQ {
 	 * Funcao para atualizar matriz booleana
 	 * @param j
 	 */
-	public void atualizaMatrizBool(int j){
-		double[] neurVencedor = pegaNeurVencedor(j);
-		matrizBool[(int)neurVencedor[neurVencedor.length-1]][j]=1;
-		countTest++;
+	public void atualizaVetorNeurVencedores(int j){
+		inicializarVetorNeurAtivados();
+		double[] neurVencedor = pegaNeurVencedor(j);	
+		int index = vetorPrototipos.indexOf(neurVencedor);
+		System.out.println("neu venc: "+ vetorPrototipos.indexOf(neurVencedor) + " "+ neurVencedor[0]+ " " + neurVencedor[1] + " " + neurVencedor[2]);
+		if (neurVencedor[neurVencedor.length-1]==classes.get(j)){
+			vetorNeuroniosAtivados[index]=vetorNeuroniosAtivados[index]+1;
+			
+		}
 	}
 	
 	/**
@@ -312,23 +341,47 @@ public class LVQ {
 				neurVencedor = vetorPrototipos.get(i);
 			}
 		}
-		//System.out.println();
-		//System.out.println(countTest);
-		return neurVencedor;//Tem que implementar, ainda não sei que estrutura usar 
+
+		return neurVencedor;
 	}
 	
 	/**
 	 * 
 	 */
 	private void confereNeuroniosAtivados(){
-		double[] neurVenc;
 		for(int j=0;j<entradas.size(); j++){
-			neurVenc = pegaNeurVencedor(j);
-			atualizaMatrizBool((int)neurVenc[neurVenc.length-1]);
+			atualizaVetorNeurVencedores(j);
 		}
-		
+	}
+	public void reduzNeuronios(){
+		//Criar função para reduzir quantidade de neuronios!!
+		//Colocar os novos neuronios em vetorPrototiposReduzido!!!
 	}
 	
+	private void montaMatrizConfusao(){
+		inicializaMatrizConfusao();
+		double[] neurVencedor;
+		for(int j=0;j<entradas.size(); j++){
+			neurVencedor = pegaNeurVencedorReduzido(j);
+			matrizConfusao[(int)neurVencedor[neurVencedor.length-1]][(int)entradas.get(j)[entradas.get(j).length-1]] +=1;//linha é a classe esperada e coluna é a que deu
+
+		}
+	}
+	
+	public double[] pegaNeurVencedorReduzido(int j){
+		double distMin = 100000000;
+		double dist =0;
+		double neurVencedor[]= new double[entradas.get(0).length];
+		for (int i=0; i<vetorPrototiposReduzido.size()-1; i++ ){
+			dist = calculaDistEuclidiana(entradas.get(j), vetorPrototiposReduzido.get(i));
+			if (dist <= distMin){
+				distMin = dist;
+				neurVencedor = vetorPrototiposReduzido.get(i);
+			}
+		}
+
+		return neurVencedor;
+	}
 	/**
 	 * Funcao para atualizar o alfa
 	 */

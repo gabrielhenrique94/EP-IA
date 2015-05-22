@@ -22,7 +22,7 @@ public class Main {
 		
 		int numNeuroniosSaida = 1; // DEPOIS VEMOS O QUE FAZER COM ISSO
 		
-		double alpha = 0.5; //Recer por arg depois - valor que tava escrito como normal
+		double alpha = 0.8; //Recer por arg depois - valor que tava escrito como normal
 		
 		boolean alphaEstatico = false; // Args tbm
 		
@@ -99,7 +99,7 @@ public class Main {
 		//LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT,2, alpha, erroAceitavel);
 		//teste.testa();
 		
-		LVQ testeXOR = new LVQ(xorProblem,xorClazz, maxT,1, alpha, erroAceitavel);
+		LVQ testeXOR = new LVQ(xorProblem,xorClazz, maxT,50, alpha, erroAceitavel);
 		testeXOR.testa();
 		
 		
