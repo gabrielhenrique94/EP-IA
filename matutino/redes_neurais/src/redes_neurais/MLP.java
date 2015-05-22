@@ -126,7 +126,7 @@ public class MLP {
 				
 			double[] erro;
 			double[] entrada = this.entradas.get(i);
-			System.out.println("=========EPOCA" +getT()+ "=========");
+			//System.out.println("=========EPOCA" +getT()+ "=========");
 			
 			//Passo 2 - FEEDFORWARD DA REDE
 			double[] saida = processaEntrada(entrada);
@@ -143,7 +143,7 @@ public class MLP {
 			}
 			// Calcula erro Quadratico
 			double erroQuadratico = erroQuadraticoMedio(erro);
-			System.err.println("erroQ:" + erroQuadratico);
+			System.err.println(erroQuadratico);
 			// Se o erro for maior que o aceitavel retropropaga
 			
 			//System.out.println(erroQuadratico > this.erroAceitavel);
@@ -191,7 +191,7 @@ public class MLP {
 			
 			//System.out.print(" "+e);
 		}
-		System.out.println("");
+		//System.out.println("");
 		//Passo 3 - leva o sinal para da camada de entrada para a camada escondida
 		//Calcula dados para camada escondida
 		for (int k = 0; k < numNeuroniosCamadaEscondida; k++) {			
@@ -257,7 +257,7 @@ public class MLP {
 		double[] erro = new double[saida.length];
 		//System.out.println("======CALCULO DO ERRO==========");
 		for (int i = 0; i < saida.length; i++) {
-			//System.out.println("ERRO =" +saidaEsperada+ "- "+  saida[i]);
+			System.out.println("ERRO =" +saidaEsperada+ "- "+  saida[i]);
 			erro[i] = saidaEsperada - saida[i];
 		
 		}
@@ -268,8 +268,7 @@ public class MLP {
 		double seq = 0.0;
 		for(int e = 0; e < erro.length; e++) { 
 			seq += Math.pow(erro[e], 2);
-			seq = seq/2;
-			
+			seq = seq/2;			
 		}
 		return seq/erro.length;
 	}
