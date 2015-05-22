@@ -18,9 +18,9 @@ public class Main {
 		String	arquivoTeste = "src/dados/optdigits_tes.txt";
 		
 		/* Numero de neuronios na camada escondida (para a rede MLP) */
-		int numNeuroniosEscondidosMLP = 2; //Integer.parseInt(args[0]);
+		int numNeuroniosEscondidosMLP = 5; //Integer.parseInt(args[0]);
 		
-		int numNeuroniosSaida = 1; // DEPOIS VEMOS O QUE FAZER COM ISSO
+		int numNeuroniosSaida = 10; // DEPOIS VEMOS O QUE FAZER COM ISSO
 		
 		double alpha = 0.5; //Recer por arg depois - valor que tava escrito como normal
 		
@@ -57,8 +57,8 @@ public class Main {
 		
 		NormalizarDados dadosNormalizados = new NormalizarDados(arquivoTreinamento, arquivoTeste, 0.95); //Pegar a taxa por arg[] mais para frente 
 		
-	//	ArrayList<double[]> x = dadosNormalizados.getMatrizesTeste();
-	//	double[] t = x.get(0);
+		ArrayList<double[]> x = dadosNormalizados.getMatrizesTeste();
+		double[] t = x.get(0);
 		
 	    //XOR mounting
 		ArrayList<double[]> xorProblem = new ArrayList<double[]>();
@@ -78,15 +78,15 @@ public class Main {
 		xorClazz.add(1.0); //entrada 1 0
 		xorClazz.add(1.0); //entrada 0 1
 	  
-		double[] t = xorProblem.get(0);
+		//double[] t = xorProblem.get(0);
 		//TREINAR ENTRADA CLODS
-		/*
+		
 		MLP redeMLP = new MLP(dadosNormalizados.getMatrizesTreinamento(), dadosNormalizados.classificarClasses(dadosNormalizados.getClassesTreinamento()), numNeuroniosEscondidosMLP, 
 		commonsRedes.geradorPesosRandomicos(t.length ,numNeuroniosEscondidosMLP), 
 		commonsRedes.geradorPesosRandomicos(numNeuroniosEscondidosMLP, numNeuroniosSaida),
 		numNeuroniosSaida, alpha, alphaEstatico, maxT, erroAceitavel);
 		redeMLP.treinar();
-		*/
+		
 		
 		//Passo 0 Inicializa os pesos
 		//TREINAR ENTRADA
@@ -99,8 +99,8 @@ public class Main {
 		//LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT,2, alpha, erroAceitavel);
 		//teste.testa();
 		
-		LVQ testeXOR = new LVQ(xorProblem,xorClazz, maxT,1, alpha, erroAceitavel);
-		testeXOR.testa();
+		//LVQ testeXOR = new LVQ(xorProblem,xorClazz, maxT,1, alpha, erroAceitavel);
+		//testeXOR.testa();
 		
 		
 		
