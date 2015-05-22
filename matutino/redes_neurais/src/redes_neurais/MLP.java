@@ -106,7 +106,7 @@ public class MLP {
 //			System.out.println("");
 //		}
 		int i = 0;
-		while (i < this.entradas.size()  && getT() <= this.maxT ) {
+		while (i < this.entradas.size()  && getT() < this.maxT ) {
 			
 			//Passo 1 - Enquanto a condicao de parada for falsa fa�a passo 2 a 9
 			if(getT() < this.maxT){
