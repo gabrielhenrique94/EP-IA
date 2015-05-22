@@ -39,5 +39,78 @@ public class commonsRedes {
 		}
 	}
     
+    /**
+     * Calculo da taxa de aprendizado. Baseado no código em MatLab do professor Clodoaldo A M Lima calc_alpha
+     * @param entrada
+     * @param saidaDesejada
+     * @param pesoA
+     * @param pesoB
+     * @param gradienteA
+     * @param gradienteB
+     * @return
+     */
+    public static double calculaAlpha(double[] entrada, double saidaDesejada, double[][] pesoA,
+    		double[][] pesoB, double[] gradienteA, double[] gradienteB, 
+    		double[] gradienteAnteriorA, double[] gradienteAnteriorB) {
+    	double alphaInferior = 0.0;
+    	double alphaSuperior = 1.0;
+    	double epsilon = 1.0 * Math.E - 3;
+    	
+    	double[] vetorGradienteAnterior = new double[(gradienteAnteriorA.length + gradienteAnteriorB.length)];
+    	int contador = 0;
+    	// Transformando gradiente anterior em vetor
+    	for (int i = 0; i < gradienteAnteriorA.length; i++) {
+    		vetorGradienteAnterior[contador] = gradienteAnteriorA[i] * (-1.0);
+    		contador++;
+    	}
+    	
+    	for (int i = 0; i < gradienteAnteriorB.length; i++) {
+    		vetorGradienteAnterior[contador] = gradienteAnteriorB[i] * (-1.0);
+    		contador++;
+    	}
+    	
+    	double[] vetorGradiente = new double[(gradienteA.length + gradienteB.length)];
+    	contador = 0;
+    	
+    	// Transformando gradiente em vetor
+    	for (int i = 0; i < gradienteA.length; i++) {
+    		vetorGradiente[contador] = gradienteA[i];
+    		contador++;
+    	}
+    	
+    	for (int i = 0; i < gradienteB.length; i++) {
+    		vetorGradiente[contador] = gradienteB[i];
+    		contador++;
+    	}
+    	
+    	// Multiplicação gradientes
+    	
+    	double hl = 0.0;
+    	
+    	for (int i = 0; i < vetorGradiente.length; i++) {
+    		hl += vetorGradiente[i] * vetorGradienteAnterior[i];
+    	}
+    	
+    	// Verifica se HL proximo de 0
+    	if (Math.abs(hl) < (1.0 * Math.E - 8)) {
+    		return alphaSuperior;
+    	}
+    	
+    	// Verifica se HL menor que 0 até que encontre um alfa que torne hl positivo
+    	while (hl < 0) {
+    		alphaSuperior = 2 * alphaSuperior;
+    		// FUCKING BACKPROPATION
+    	}
+    	
+    	
+    	
+    	
+    	
+    		
+    		
+    	return 0.0;
+    			
+    }
+    
 
 }

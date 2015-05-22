@@ -74,6 +74,15 @@ public class MLP {
 	 */
 	private double[] gradienteB;
 
+	/**
+	 * Vetor Gradiente Anterior A
+	 */
+	private double[] gradienteAnteriorA;
+	
+	/**
+	 * Vetor Gradiente Anterior B
+	 */
+	private double[] gradienteAnteriorB;
 	
 	
 	/**
@@ -104,6 +113,8 @@ public class MLP {
 		this.erroAceitavel = erroAceitavel;
 		this.gradienteA = new double[numNeuroniosCamadaEscondida];
 		this.gradienteB = new double[numNeuroniosSaida];
+		this.gradienteAnteriorA = new double[numNeuroniosCamadaEscondida];
+		this.gradienteAnteriorB = new double[numNeuroniosSaida];
 			
 	}
 	
@@ -310,6 +321,7 @@ public class MLP {
 		}
 		
 		//Armazena gradiente dos pesos B
+		setGradienteAnteriorB(getGradienteB());
 		setGradienteB(deltaSaida);
 		
 		// Passo 7 - Retropropaga o erro usando o delta da camada de saida para calcular o delta da camada anterior
@@ -331,6 +343,7 @@ public class MLP {
 		}
 		
 		//Armazena o gradiente para os pesos A
+		setGradienteAnteriorA(getGradienteA());
 		setGradienteA(deltaEscondida);
 		
 		// Passo 7 continuacao  - Calcular a atualizacao de pesos e bias 
@@ -575,6 +588,22 @@ public class MLP {
 
 	public void setGradienteB(double[] gradienteB) {
 		this.gradienteB = gradienteB;
+	}
+
+	public double[] getGradienteAnteriorA() {
+		return gradienteAnteriorA;
+	}
+
+	public void setGradienteAnteriorA(double[] gradienteAnteriorA) {
+		this.gradienteAnteriorA = gradienteAnteriorA;
+	}
+
+	public double[] getGradienteAnteriorB() {
+		return gradienteAnteriorB;
+	}
+
+	public void setGradienteAnteriorB(double[] gradienteAnteriorB) {
+		this.gradienteAnteriorB = gradienteAnteriorB;
 	}
 	
 	
