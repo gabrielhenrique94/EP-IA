@@ -128,10 +128,10 @@ public class MLP {
 		this.alphaEstatico = alphaEstatico;
 		this.maxT = maxT;
 		this.erroAceitavel = erroAceitavel;
-		this.gradienteA = new double[pesosA[0].length-1];
-		this.gradienteB = new double[pesosB[0].length-1];
-		this.gradienteAnteriorA = new double[pesosA[0].length-1];
-		this.gradienteAnteriorB = new double[pesosB[0].length-1];
+		this.gradienteA = new double[pesosA[0].length];
+		this.gradienteB = new double[pesosB[0].length];
+		this.gradienteAnteriorA = new double[pesosA[0].length];
+		this.gradienteAnteriorB = new double[pesosB[0].length];
 			
 	}
 	
@@ -328,7 +328,7 @@ public class MLP {
     	// Verifica se HL proximo de 0
     	if (Math.abs(hl) < (1.0 * Math.pow(10,-8))) {
     		  setAlpha(alphaSuperior);
-    		  return;
+    		   return;
     	}     		  
     		  // Verifica se HL menor que 0 até que encontre um alfa que torne hl positivo
         	while (hl < 0) {
@@ -351,20 +351,22 @@ public class MLP {
         		//calcula hl
         		for (int i = 0; i < vetorGradiente.length; i++) {
             		hl += vetorGradiente[i] * vetorGradienteAnterior[i];
+            		System.out.println("CALCULO DO FOR" + hl +" = "+ vetorGradiente[i] + " *" + vetorGradienteAnterior[i]);
         		}
-        		
+        		  System.out.println("HEEY");
         	}
         
 
     	// Verifica se HL proximo de 0
     	if (Math.abs(hl) < (1.0 * Math.pow(10,-8))) {
     		  setAlpha(alphaSuperior);
-    		  return;
+    		   return;
         }
         	
         	 double numIteracoes = Math.ceil(Math.log(getAlphaSuperior()/getEpsilon()));
         	 int k =0;
         	 while (k<numIteracoes) {
+        		 
         		 k++;
         		 //calcula alpha medio
         		  setAlpha(alphaSuperior+alphaInferior/2);
@@ -393,6 +395,7 @@ public class MLP {
          	     }
          			 
         	 }
+        	 
    }
     	
 
@@ -464,8 +467,8 @@ public class MLP {
 
 		double[][] pesosBnew = new double[pesosB.length][pesosB[0].length];
 		double[][] pesosAnew = new double[pesosA.length][pesosA[0].length];
-		double[] gradienteB = new double[pesosB[0].length-1];
-		double[] gradienteA = new double[pesosA[0].length-1];
+		double[] gradienteB = new double[pesosB[0].length];
+		double[] gradienteA = new double[pesosA[0].length];
 		// Passo 7 continuacao  - Calcular a atualizacao de pesos e bias 
 		// Pesos B
 		// ns = qual neuronio de saida eu estou utilizando
@@ -477,11 +480,11 @@ public class MLP {
 				if (pb == 0) {
 					//ATUALIZA BIAS
 					pesosBnew[ns][pb] = pesosB[ns][pb] - (taxaAprendizado * deltaSaida[ns]);
-					
+					gradienteB[pb] = deltaSaida[ns] * pesosB[ns][0];
 				} else {
 					pesosBnew[ns][pb] = pesosB[ns][pb] - (taxaAprendizado * deltaSaida[ns] * camadaEscondida[pb-1]);
 					//Armazena o gradiente para os pesos B
-	        		gradienteB[pb-1] = deltaSaida[ns] * camadaEscondida[pb-1];
+	        		gradienteB[pb] = deltaSaida[ns] * camadaEscondida[pb-1];
 				}
 			
 			}
@@ -497,10 +500,10 @@ public class MLP {
 				if (pa == 0) {
 					
 					pesosAnew[ns][pa] = pesosA[ns][pa] - (taxaAprendizado * deltaEscondida[ns]);
-					
+					gradienteA[pa]  = deltaEscondida[ns] * pesosA[ns][0];
 				} else {
 					pesosAnew[ns][pa] = pesosA[ns][pa] - (taxaAprendizado * deltaEscondida[ns] * entrada[pa-1]);
-					gradienteA[pa-1]  = deltaEscondida[ns] * entrada[pa-1];
+					gradienteA[pa]  = deltaEscondida[ns] * entrada[pa-1];
 				}
 								
 			}
@@ -528,12 +531,12 @@ public class MLP {
 		double[] vetorGradienteAnterior = new double[(getGradienteAnteriorA().length + getGradienteAnteriorB().length)];
 		// Transformando gradiente anterior em vetor
     	for (int i = 0; i < getGradienteAnteriorA().length; i++) {
-    		vetorGradienteAnterior[contador] = gradienteAnteriorA[i] * (-1.0);
+    		vetorGradienteAnterior[contador] = gradienteAnteriorA[i] ;
     		contador++;
     	}
     	
     	for (int i = 0; i < getGradienteAnteriorB().length; i++) {
-    		vetorGradienteAnterior[contador] = gradienteAnteriorB[i] * (-1.0);
+    		vetorGradienteAnterior[contador] = gradienteAnteriorB[i] ;
     		contador++;
     	}
     	return vetorGradienteAnterior;
