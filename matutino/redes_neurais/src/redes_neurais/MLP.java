@@ -128,10 +128,10 @@ public class MLP {
 		this.alphaEstatico = alphaEstatico;
 		this.maxT = maxT;
 		this.erroAceitavel = erroAceitavel;
-		this.gradienteA = new double[numNeuroniosCamadaEscondida];
-		this.gradienteB = new double[numNeuroniosSaida];
-		this.gradienteAnteriorA = new double[numNeuroniosCamadaEscondida];
-		this.gradienteAnteriorB = new double[numNeuroniosSaida];
+		this.gradienteA = new double[pesosA[0].length-1];
+		this.gradienteB = new double[pesosB[0].length-1];
+		this.gradienteAnteriorA = new double[pesosA[0].length-1];
+		this.gradienteAnteriorB = new double[pesosB[0].length-1];
 			
 	}
 	
@@ -144,8 +144,7 @@ public class MLP {
 		while (i < this.entradas.size() && getT() < this.maxT ) {
 			
 			//Passo 1 - Enquanto a condicao de parada for falsa fa�a passo 2 a 9
-			if(getT() < this.maxT) {
-				
+					
 				double[] erro;
 				double[] entrada = this.entradas.get(i);
 				
@@ -176,7 +175,7 @@ public class MLP {
 				//entao apenas continua a execucao sem usar o backpropag pra proxima entrada
 			
 			
-			}
+			
 			
 			if(i+1 == this.entradas.size()){
 				i = -1;
@@ -300,21 +299,15 @@ public class MLP {
 		double[] deltaSaida = new double[camadaSaida.length];
 		double[] deltaEscondida = new double[camadaEscondida.length];
 	
-		//Passo 6 - Calcula Gradientes
+		//Passo 6 - Calcula Deltas
 		deltaSaida = calculaDeltaSaida(camadaSaida, erro);
-		//Armazena gradiente dos pesos B
-		setGradienteAnteriorB(getGradienteB());
-		setGradienteB(deltaSaida);
 		
 		deltaEscondida = calculaDeltaEscondida(camadaEscondida, getPesosB(), deltaSaida);
-		//Armazena o gradiente para os pesos A
-		setGradienteAnteriorA(getGradienteA());
-		setGradienteA(deltaEscondida);
-		
-		//Passo 7 - Atualiza Pesos
+				
+		//Passo 7 - Atualiza Pesos e Calcula Gradientes
 		atualizaPesos(camadaEscondida, getPesosA(), getPesosB(), deltaSaida, deltaEscondida, taxaAprendizado, entrada);
 		
-		//Atualiza o alpha
+		
 		
 		//Vetoriza Gradientes
     	double[] vetorGradienteAnterior = new double[getGradienteAnteriorA().length + getGradienteAnteriorB().length];
@@ -342,20 +335,14 @@ public class MLP {
         	while (hl < 0) {
         		
         		setAlphaSuperior( 2 * getAlphaSuperior());
+        		//Atualiza Pesos e Gradientes
         		atualizaPesos(camadaEscondida, getPesosA(), getPesosB(), deltaSaida, deltaEscondida, getAlphaSuperior(), entrada);
 
-        		//Calcula gradiente
+        		//Calcula Deltas
         		deltaSaida = calculaDeltaSaida(camadaSaida, erro);
-        		
-        		//Armazena gradiente dos pesos B
-        		setGradienteAnteriorB(getGradienteB());
-        		setGradienteB(deltaSaida);
-        		
+        		        		       		
         		deltaEscondida = calculaDeltaEscondida(camadaEscondida, getPesosB(), deltaSaida);
-        		
-        		//Armazena o gradiente para os pesos A
-        		setGradienteAnteriorA(getGradienteA());
-        		setGradienteA(deltaEscondida);
+        		       		
         		 
         		//Vetoriza gradiente
         		vetorGradienteAnterior = vetorizaGradienteAnterior();
@@ -376,7 +363,7 @@ public class MLP {
         	
         	 double numIteracoes = Math.ceil(Math.log(getAlphaSuperior()/getEpsilon()));
         	 int k =0;
-        	 while(k<numIteracoes){
+        	 while (k<numIteracoes) {
         		 k++;
         		 //calcula alpha medio
         		  setAlpha(alphaSuperior+alphaInferior/2);
@@ -385,13 +372,7 @@ public class MLP {
         		 //calcula gradiente
         		 deltaSaida = calculaDeltaSaida(camadaSaida, erro);
         		 deltaEscondida = calculaDeltaEscondida(camadaEscondida, getPesosB(), deltaSaida);
-        		//Armazena gradiente dos pesos B
-         		setGradienteAnteriorB(getGradienteB());
-         		setGradienteB(deltaSaida);
-         		//Armazena o gradiente para os pesos A
-        		setGradienteAnteriorA(getGradienteA());
-        		setGradienteA(deltaEscondida);
-        		
+       		
         		 
         		 //Vetoriza gradiente
         		 vetorGradienteAnterior = vetorizaGradienteAnterior();
@@ -431,6 +412,7 @@ public class MLP {
 			deltaSaida[i] = camadaSaida[i] * (1 - camadaSaida[i]) * (-1*(erro[i])) ;
 		}
 		return deltaSaida;
+		
 	}
 	
 	/**
@@ -482,6 +464,8 @@ public class MLP {
 
 		double[][] pesosBnew = new double[pesosB.length][pesosB[0].length];
 		double[][] pesosAnew = new double[pesosA.length][pesosA[0].length];
+		double[] gradienteB = new double[pesosB[0].length-1];
+		double[] gradienteA = new double[pesosA[0].length-1];
 		// Passo 7 continuacao  - Calcular a atualizacao de pesos e bias 
 		// Pesos B
 		// ns = qual neuronio de saida eu estou utilizando
@@ -496,14 +480,16 @@ public class MLP {
 					
 				} else {
 					pesosBnew[ns][pb] = pesosB[ns][pb] - (taxaAprendizado * deltaSaida[ns] * camadaEscondida[pb-1]);
-					
+					//Armazena o gradiente para os pesos B
+	        		gradienteB[pb-1] = deltaSaida[ns] * camadaEscondida[pb-1];
 				}
 			
 			}
 		}
+		setGradienteAnteriorB(getGradienteB());
+   		setGradienteB(gradienteB);
 		
-		// Pesos A
-		
+   		// Pesos A
 		for (int ns = 0; ns< camadaEscondida.length; ns++) {
 			for (int pa = 0; pa < pesosA[0].length; pa++) {
 				//novoPesoA = pesoAntigoA - aprendizado*deltaEscondido* entrada recebida pelo neuronio
@@ -513,16 +499,16 @@ public class MLP {
 					pesosAnew[ns][pa] = pesosA[ns][pa] - (taxaAprendizado * deltaEscondida[ns]);
 					
 				} else {
-					pesosAnew[ns][pa] = pesosA[ns][pa] - (taxaAprendizado * deltaEscondida[ns] * entrada[pa-1]);
-					
+					pesosAnew[ns][1] = pesosA[ns][pa] - (taxaAprendizado * deltaEscondida[ns] * entrada[pa-1]);
+					gradienteA[pa-1]  = deltaEscondida[ns] * entrada[pa-1];
 				}
-				
-				
-
-				
+								
 			}
 		}
-
+		
+		setGradienteAnteriorA(getGradienteA());
+ 		setGradienteA(gradienteA);
+   		
 		//Atualiza pesos da classe
 		setPesosA(pesosAnew);
 		setPesosB(pesosBnew);
