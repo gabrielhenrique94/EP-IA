@@ -53,8 +53,8 @@ public class Main {
 		
 		//Chamada do Holdout
 		//Nao alterei nada das outras coisas
-		Holdout hldt = new Holdout (dadosNormalizados.getMatrizesTreinamento(), dadosNormalizados.getClassesTreinamento(),
-				dadosNormalizados.getMatrizesTeste(), dadosNormalizados.getClassesTeste());
+		Holdout hldt = new Holdout (dadosNormalizados.getMatrizesTreinamento(), dadosNormalizados.classificarClasses(dadosNormalizados.getClassesTreinamento()),
+				dadosNormalizados.getMatrizesTeste(), dadosNormalizados.classificarClasses(dadosNormalizados.getClassesTeste()));
 		
 		
 		
