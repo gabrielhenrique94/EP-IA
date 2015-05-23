@@ -93,10 +93,12 @@ public class Main {
 		//numNeuroniosSaida, alpha, alphaEstatico, maxT, erroAceitavel);
 		//redeMLP.treinar();
 		
-		//LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT,2, alpha, erroAceitavel);
-		//teste.testa();
+		//saidas = 10
+		LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT,2, alpha, erroAceitavel, 10);
+		teste.testa();
 
-		//LVQ testeXOR = new LVQ(xorProblem,xorClazz, maxT,1, alpha, erroAceitavel);
+		//saidas = 2
+		//LVQ testeXOR = new LVQ(xorProblem,xorClazz, maxT,1, alpha, erroAceitavel, 2);
 		//testeXOR.testa();
 
 		

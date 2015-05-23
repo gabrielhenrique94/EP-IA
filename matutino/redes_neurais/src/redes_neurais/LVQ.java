@@ -66,18 +66,19 @@ public class LVQ {
 	
 	private int[][] matrizConfusao ;
 	
-
+	private int saidas;
 
 	/**
 	 * Construtor do lvq
 	 * **/
-	public LVQ(ArrayList<double[]>entrada, ArrayList<Double> classes, int epoca, int numNeuronios, double alfa, double erro){
+	public LVQ(ArrayList<double[]>entrada, ArrayList<Double> classes, int epoca, int numNeuronios, double alfa, double erro, int saidas){
 		this.entradas = entrada;
 		this.erroMax=erro;
 		this.max_epocas = epoca;
 		this.numNeurPorClasse = numNeuronios;
 		this.alfaInicial=alfa;
 		this.classes=classes;
+		this.saidas = saidas;
 		
 	}
 
@@ -124,15 +125,15 @@ public class LVQ {
 	/**
 	 *Cria vetor de prototipos 
 	 **/
-	public void criaVetorPrototipos(){
-		this.numNeur = this.numNeurPorClasse *2;
+	public void criaVetorPrototipos(int saidas){
+		this.numNeur = this.numNeurPorClasse * saidas;
 		int cont =0;
 		double[] vetor;
 		for (int i=0; i <= this.numNeur; i++) {
 			this.vetorPrototipos.add(geraVetorAleatorio()) ;
 		}
 		for (int i=0;i < this.vetorPrototipos.size();i++){ 
-			if (cont == 2) cont=0;
+			if (cont == saidas) cont=0;
 			vetor = this.vetorPrototipos.get(i);
 			vetor[vetor.length-1]=cont;
 			cont++;
@@ -171,7 +172,7 @@ public class LVQ {
 		/**
 		 * Inicializando o conjunto de prot�tipos
 		 */
-		criaVetorPrototipos();
+		criaVetorPrototipos(saidas);
 		this.alfaRotativo = this.alfaInicial;
 		double[]vet;
 		for(int i=0; i < this.numNeur ; i++ ) {
