@@ -163,7 +163,6 @@ public class LVQ {
 		return vetor;
 	}
 	
-	
 	/**
 	 * Funcao para treinamento da rede
 	 */
