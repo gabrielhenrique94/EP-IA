@@ -17,9 +17,9 @@ public class Main {
 		/* Numero de neuronios na camada escondida (para a rede MLP) */
 		int numNeuroniosEscondidosMLP = 5; //Integer.parseInt(args[0]);
 		
-		int numNeuroniosSaida = 10; // DEPOIS VEMOS O QUE FAZER COM ISSO
+		int numNeuroniosSaida = 1; // DEPOIS VEMOS O QUE FAZER COM ISSO
 		
-		double alpha = 0.8; //Recer por arg depois - valor que tava escrito como normal
+		double alpha = 0.5; //Recer por arg depois - valor que tava escrito como normal
 		
 		boolean alphaEstatico = false; // Args tbm
 		

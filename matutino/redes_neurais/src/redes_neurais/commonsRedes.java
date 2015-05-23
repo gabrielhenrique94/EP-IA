@@ -54,7 +54,7 @@ public class commonsRedes {
     		double[] gradienteAnteriorA, double[] gradienteAnteriorB) {
     	double alphaInferior = 0.0;
     	double alphaSuperior = 1.0;
-    	double epsilon = 1.0 * Math.E - 3;
+    	double epsilon = 1.0 * Math.pow(10, -3);
     	
     	double[] vetorGradienteAnterior = new double[(gradienteAnteriorA.length + gradienteAnteriorB.length)];
     	int contador = 0;
@@ -92,14 +92,15 @@ public class commonsRedes {
     	}
     	
     	// Verifica se HL proximo de 0
-    	if (Math.abs(hl) < (1.0 * Math.E - 8)) {
+    	if (Math.abs(hl) < (1.0 * Math.pow(10,-8))) {
     		return alphaSuperior;
     	}
     	
     	// Verifica se HL menor que 0 até que encontre um alfa que torne hl positivo
     	while (hl < 0) {
     		alphaSuperior = 2 * alphaSuperior;
-    		// FUCKING BACKPROPATION
+    		
+    		
     	}
     	
     	

@@ -60,6 +60,22 @@ public class MLP {
 	private double alpha;
 	
 	/**
+	 * Limite inferior para atualizacao do alpha
+	 */
+	double alphaInferior = 0.0;
+	
+	/**
+	 * Limite superior para atualizacao do alpha
+	 */
+	double alphaSuperior = 1.0;
+	
+	/**
+	 * Resolucao para numero de itereacoes
+	 */
+   	double epsilon = 1.0 * Math.pow(10, -3);
+	
+	
+	/**
 	 * Erro máximo esperado que o sistema tenha
 	 */
 	private double erroAceitavel;
@@ -309,9 +325,140 @@ public class MLP {
 		
 		double[] deltaSaida = new double[camadaSaida.length];
 		double[] deltaEscondida = new double[camadaEscondida.length];
-		double[][] pesosBnew = new double[pesosB.length][pesosB[0].length];
-		double[][] pesosAnew = new double[pesosA.length][pesosA[0].length];
+	
+		//Passo 6 - Calcula Gradientes
+		deltaSaida = calcGradienteB(camadaSaida, erro);
+		//Armazena gradiente dos pesos B
+		setGradienteAnteriorB(getGradienteB());
+		setGradienteB(deltaSaida);
 		
+		deltaEscondida = calcGradienteA(camadaEscondida, pesosB, deltaSaida);
+		//Armazena o gradiente para os pesos A
+		setGradienteAnteriorA(getGradienteA());
+		setGradienteA(deltaEscondida);
+		
+		//Passo 7 - Atualiza Pesos
+		atualizaPesos(camadaEscondida, pesosA, pesosB, deltaSaida, deltaEscondida, taxaAprendizado, entrada);
+		
+		//Atualiza o alpha
+		
+		//Vetoriza Gradientes
+    	double[] vetorGradienteAnterior = new double[getGradienteAnteriorA().length + getGradienteAnteriorB().length];
+    	double[] vetorGradiente = new double[(getGradienteA().length + getGradienteB().length)];
+    	
+    	vetorGradienteAnterior = vetorizaGradienteAnterior();
+    	vetorGradiente = vetorizaGradiente();
+    	
+    	// Multiplicação gradientes
+    	
+    	double hl = 0.0;
+    
+    	for (int i = 0; i < vetorGradiente.length; i++) {
+    		
+    		hl += vetorGradiente[i] * vetorGradienteAnterior[i];
+    	}
+    	
+    	// Verifica se HL proximo de 0
+    	if (Math.abs(hl) < (1.0 * Math.pow(10,-8))) {
+    		  setAlpha(alphaSuperior);
+        } else {
+        	// Verifica se HL menor que 0 até que encontre um alfa que torne hl positivo
+        	while (hl < 0) {
+        		setAlphaSuperior( 2 * getAlphaSuperior());
+        		atualizaPesos(camadaEscondida, getPesosA(), getPesosB(), deltaSaida, deltaEscondida, getAlphaSuperior(), entrada);
+
+        		//Calcula gradiente
+        		deltaSaida = calcGradienteB(camadaSaida, erro);
+        		
+        		//Armazena gradiente dos pesos B
+        		setGradienteAnteriorB(getGradienteB());
+        		setGradienteB(deltaSaida);
+        		
+        		deltaEscondida = calcGradienteA(camadaEscondida, getPesosB(), deltaSaida);
+        		
+        		//Armazena o gradiente para os pesos A
+        		setGradienteAnteriorA(getGradienteA());
+        		setGradienteA(deltaEscondida);
+        		 
+        		//Vetoriza gradiente
+        		vetorGradienteAnterior = vetorizaGradienteAnterior();
+        		vetorGradiente = vetorizaGradiente();
+        		
+        		
+        		//calcula hl
+        		for (int i = 0; i < vetorGradiente.length; i++) {
+            		hl += vetorGradiente[i] * vetorGradienteAnterior[i];
+            		//System.out.println(vetorGradiente[i]+"*"+vetorGradienteAnterior[i]);
+        		}
+        	}
+        }
+
+    	// Verifica se HL proximo de 0
+    	if (Math.abs(hl) < (1.0 * Math.pow(10,-8))) {
+    		  setAlpha(alphaSuperior);
+        } else {
+        	
+        	 double numIteracoes = Math.ceil(Math.log(getAlphaSuperior()/getEpsilon()));
+        	 int k =0;
+        	 while(k<numIteracoes){
+        		 k++;
+        		 //calcula alpha medio
+        		  setAlpha(alphaSuperior+alphaInferior/2);
+        		 //atualiza pesos
+        		 atualizaPesos(camadaEscondida, pesosA, pesosB, deltaSaida, deltaEscondida, taxaAprendizado, entrada);
+        		 //calcula gradiente
+        		 deltaSaida = calcGradienteB(camadaSaida, erro);
+        		 deltaEscondida = calcGradienteA(camadaEscondida, pesosB, deltaSaida);
+        		//Armazena gradiente dos pesos B
+         		setGradienteAnteriorB(getGradienteB());
+         		setGradienteB(deltaSaida);
+         		//Armazena o gradiente para os pesos A
+        		setGradienteAnteriorA(getGradienteA());
+        		setGradienteA(deltaEscondida);
+        		
+        		 
+        		 //Vetoriza gradiente
+        		 vetorGradienteAnterior = vetorizaGradienteAnterior();
+        	     vetorGradiente = vetorizaGradiente();
+        	     //calcula hl
+         		 for (int i = 0; i < vetorGradiente.length; i++) {
+             		hl += vetorGradiente[i] * vetorGradienteAnterior[i];
+             	 }
+         		 if(hl > 0){
+         			 setAlphaSuperior(getAlpha());
+         		 }
+         	     else if(hl < 0){
+         	    	 setAlphaInferior(getAlpha());
+         	     }
+         	     else{
+         	    	 //quebra o laco (?)
+         	    	 break;
+         	     }
+         			 
+        	 }
+        }
+    	
+    	
+    	// Verifica se HL menor que 0 até que encontre um alfa que torne hl positivo
+    	while (hl < 0) {
+    		alphaSuperior = 2 * alphaSuperior;
+    		
+    		
+    	}
+		
+
+
+}
+
+	/**
+	 * 
+	 * @param camadaSaida
+	 * @param erro
+	 * @return
+	 * Passo 6 - Calcular o gradiente da camada de saida
+	 */
+	public double[] calcGradienteB(double[] camadaSaida, double[] erro){
+		double[] deltaSaida = new double[camadaSaida.length];
 		// Passo 6 Continuacao Calcular os deltas da camada de saida
 		//System.out.println("PASSO 6");
 		for (int i = 0; i < camadaSaida.length; i++) {
@@ -319,33 +466,58 @@ public class MLP {
 			deltaSaida[i] = camadaSaida[i] * (1 - camadaSaida[i]) * (erro[i]) ;
 			//System.out.println("DELTASAIDA : "+camadaSaida[i]+"*"+(1 - camadaSaida[i])  +"*"+(erro[i]) +"="+ deltaSaida[i]);
 		}
-		
-		//Armazena gradiente dos pesos B
-		setGradienteAnteriorB(getGradienteB());
-		setGradienteB(deltaSaida);
-		
+		return deltaSaida;
+	}
+	
+	/**
+	 * 
+	 * @param camadaEscondida
+	 * @param pesosB
+	 * @param deltaSaida
+	 * @return
+	 * Passo 6 - Calcular o gradiente da camada Escondida
+	 */
+	public double[] calcGradienteA(double[] camadaEscondida, double[][] pesosB, double[] deltaSaida){
+		double[] deltaEscondida = new double[camadaEscondida.length];
 		// Passo 7 - Retropropaga o erro usando o delta da camada de saida para calcular o delta da camada anterior
-		//System.out.println("PASSO 7");
-		for (int j = 0; j < camadaEscondida.length; j++) {
-			double somatorio = 0;
-			
-			//calculo somatorio em K de deltaSaida[K] *pesosB[J][K]
-			for (int k = 0; k < deltaSaida.length; k++) {
-				somatorio += deltaSaida[k] * pesosB[k][j];
-			}
-			
-			//deltaEscondida = saida do neuronioE(1-saida do neuronioE) * (somatorio em K de deltaSaida[K] *pesosB[J][K])
-			deltaEscondida[j] = camadaEscondida[j]*(1-camadaEscondida[j]);
-			
-			//System.out.println("DELTA ESCONDIDO CAMADA"+j);
-			deltaEscondida[j] *= somatorio;
-			//System.out.println("DELTA ESCONDIDA : "+" "+camadaEscondida[j]+"*"+(1-camadaEscondida[j])+"*"+somatorio+"*"+deltaEscondida[j]);
-		}
+				//System.out.println("PASSO 7");
+				for (int j = 0; j < camadaEscondida.length; j++) {
+					double somatorio = 0;
+					
+					//calculo somatorio em K de deltaSaida[K] *pesosB[J][K]
+					for (int k = 0; k < deltaSaida.length; k++) {
+						somatorio += deltaSaida[k] * pesosB[k][j];
+					}
+					
+					//deltaEscondida = saida do neuronioE(1-saida do neuronioE) * (somatorio em K de deltaSaida[K] *pesosB[J][K])
+					deltaEscondida[j] = camadaEscondida[j]*(1-camadaEscondida[j]);
+					
+					//System.out.println("DELTA ESCONDIDO CAMADA"+j);
+					deltaEscondida[j] *= somatorio;
+					//System.out.println("DELTA ESCONDIDA : "+" "+camadaEscondida[j]+"*"+(1-camadaEscondida[j])+"*"+somatorio+"*"+deltaEscondida[j]);
+				}
+				
+			return deltaEscondida;				
+	}
 		
-		//Armazena o gradiente para os pesos A
-		setGradienteAnteriorA(getGradienteA());
-		setGradienteA(deltaEscondida);
-		
+
+	/**
+	 * 
+	 * @param camadaEscondida
+	 * @param pesosA
+	 * @param pesosB
+	 * @param deltaSaida
+	 * @param deltaEscondida
+	 * @param taxaAprendizado
+	 * @param entrada
+	 * 
+	 * Passo 7 -Atualiza pesos B e pesos A de acordo com a taxa de aprendizado e os gradientes
+	 */
+	public void atualizaPesos(double camadaEscondida[], double pesosA[][], double pesosB[][], double[] deltaSaida, double[] deltaEscondida,
+			double taxaAprendizado, double[] entrada){
+
+		double[][] pesosBnew = new double[pesosB.length][pesosB[0].length];
+		double[][] pesosAnew = new double[pesosA.length][pesosA[0].length];
 		// Passo 7 continuacao  - Calcular a atualizacao de pesos e bias 
 		// Pesos B
 		// ns = qual neuronio de saida eu estou utilizando
@@ -356,10 +528,10 @@ public class MLP {
 				
 				if (pb == 0) {
 					//ATUALIZA BIAS
-					pesosBnew[ns][pb] = pesosB[ns][pb] + (taxaAprendizado * deltaSaida[ns]);
+					pesosBnew[ns][pb] = pesosB[ns][pb] - (taxaAprendizado * deltaSaida[ns]);
 					////System.out.println("BIASBnovo["+ns+"]["+pb+"] = (BIASold["+ns+"]["+pb+"])="+	pesosB[ns][pb]+" - ("+taxaAprendizado+" * "+deltaSaida[ns]+" = "+ pesosBnew[ns][pb]);
 				} else {
-					pesosBnew[ns][pb] = pesosB[ns][pb] + (taxaAprendizado * deltaSaida[ns] * camadaEscondida[pb-1]);
+					pesosBnew[ns][pb] = pesosB[ns][pb] - (taxaAprendizado * deltaSaida[ns] * camadaEscondida[pb-1]);
 					//System.out.println("pesoaBnovo["+ns+"]["+pb+"] = (pesoaBold["+ns+"]["+pb+"])="+	pesosB[ns][pb]+" - ("+taxaAprendizado+" * "+deltaSaida[ns]+" * "+ camadaEscondida[pb-1]+" = "+ pesosBnew[ns][pb]);
 				}
 			
@@ -374,10 +546,10 @@ public class MLP {
 				
 				if (pa == 0) {
 					
-					pesosAnew[ns][pa] = pesosA[ns][pa] + (taxaAprendizado * deltaEscondida[ns]);
+					pesosAnew[ns][pa] = pesosA[ns][pa] - (taxaAprendizado * deltaEscondida[ns]);
 					//System.out.println("BIAS-A-new["+ns+"]["+pa+"] = (BIASnew["+ns+"]["+pa+"])="+	pesosA[ns][pa]+" - ("+taxaAprendizado+" * "+deltaEscondida[ns]+" * "+entrada[pa]+" = " + 	pesosAnew[ns][pa]);
 				} else {
-					pesosAnew[ns][pa] = pesosA[ns][pa] + (taxaAprendizado * deltaEscondida[ns] * entrada[pa-1]);
+					pesosAnew[ns][pa] = pesosA[ns][pa] - (taxaAprendizado * deltaEscondida[ns] * entrada[pa-1]);
 					//System.out.println("pesoaAnovo["+ns+"]["+pa+"] = (pesoaAold["+ns+"]["+pa+"])="+	pesosA[ns][pa]+" - ("+taxaAprendizado+" * "+deltaEscondida[ns]+" * "+entrada[pa-1]+" = " + 	pesosAnew[ns][pa]);
 				}
 				
@@ -389,54 +561,99 @@ public class MLP {
 		//System.out.println("ATUALIZA PESOS");
 		//Atualiza pesos da classe
 		setPesosA(pesosAnew);
-		
-//		System.out.println("=========Matriz pesos A Antigos ======");
-//		for(int i =0 ; i< pesosA.length; i++){
-//			System.out.print("|");
-//			for(int j = 0; j< pesosA[0].length; j++){
-//				System.out.print(pesosA[i][j]+"  ");
-//			}
-//			System.out.print("|");
-//			System.out.println("");
-//		}
-//		
-//		
-//		System.out.println("=========Matriz pesos A Novos ======");
-//		for(int i =0 ; i< pesosA.length; i++){
-//			System.out.print("|");
-//			for(int j = 0; j< pesosA[0].length; j++){
-//				System.out.print(pesosAnew[i][j]+"  ");
-//			}
-//			System.out.print("|");
-//			System.out.println("");
-//		}
-		
 		setPesosB(pesosBnew);
 		
-//		System.out.println("=========Matriz pesos B Antigos ======");
-//		for(int i =0 ; i< pesosB.length; i++){
-//			System.out.print("|");
-//			for(int j = 0; j< pesosB[0].length; j++){
-//				System.out.print(pesosB[i][j]+"  ");
-//			}
-//			System.out.print("|");
-//			System.out.println("");
-//		}
+/*
 		
 		
-//		System.out.println("=========Matriz pesos B Novos ======");
-//		for(int i =0 ; i< pesosB.length; i++){
-//			System.out.print("|");
-//			for(int j = 0; j< pesosB[0].length; j++){
-//				System.out.print(pesosBnew[i][j]+"  ");
-//			}
-//			System.out.print("|");
-//			System.out.println("");
-//		}
+		System.out.println("=========Matriz pesos A Antigos ======");
+		for(int i =0 ; i< pesosA.length; i++){
+			System.out.print("|");
+			for(int j = 0; j< pesosA[0].length; j++){
+				System.out.print(pesosA[i][j]+"  ");
+			}
+			System.out.print("|");
+			System.out.println("");
+		}
+		
+		
+		System.out.println("=========Matriz pesos A Novos ======");
+		for(int i =0 ; i< pesosA.length; i++){
+			System.out.print("|");
+			for(int j = 0; j< pesosA[0].length; j++){
+				System.out.print(pesosAnew[i][j]+"  ");
+			}
+			System.out.print("|");
+			System.out.println("");
+		}
+		
+		
+		
+		System.out.println("=========Matriz pesos B Antigos ======");
+		for(int i =0 ; i< pesosB.length; i++){
+			System.out.print("|");
+			for(int j = 0; j< pesosB[0].length; j++){
+				System.out.print(pesosB[i][j]+"  ");
+			}
+			System.out.print("|");
+			System.out.println("");
+		}
+		
+	
+		System.out.println("=========Matriz pesos B Novos ======");
+		for(int i =0 ; i< pesosB.length; i++){
+			System.out.print("|");
+			for(int j = 0; j< pesosB[0].length; j++){
+				System.out.print(pesosBnew[i][j]+"  ");
+			}
+			System.out.print("|");
+			System.out.println("");
+		}
+	*/
+	}
+			
+	public double[] vetorizaGradienteAnterior(){
+		double[] gradienteAnteriorA = getGradienteAnteriorA();
+    	double[] gradienteAnteriorB = getGradienteAnteriorB();
+		int contador = 0;
+
+    	
+		double[] vetorGradienteAnterior = new double[(getGradienteAnteriorA().length + getGradienteAnteriorB().length)];
+		// Transformando gradiente anterior em vetor
+    	for (int i = 0; i < getGradienteAnteriorA().length; i++) {
+    		vetorGradienteAnterior[contador] = gradienteAnteriorA[i] * (-1.0);
+    		contador++;
+    	}
+    	
+    	for (int i = 0; i < getGradienteAnteriorB().length; i++) {
+    		vetorGradienteAnterior[contador] = gradienteAnteriorB[i] * (-1.0);
+    		contador++;
+    	}
+    	return vetorGradienteAnterior;
 	}
 	
+	public double[] vetorizaGradiente(){
+		double[] gradienteA = getGradienteA();
+		double[] gradienteB = getGradienteB();
+    	int contador = 0;
+    	
+    	double[] vetorGradiente = new double[(getGradienteA().length + getGradienteB().length)];
+    	contador = 0;
+    	
+    	// Transformando gradiente em vetor
+    	for (int i = 0; i < getGradienteA().length; i++) {
+    		vetorGradiente[contador] = gradienteA[i];
+    		contador++;
+    	}
+    	
+    	for (int i = 0; i < getGradienteB().length; i++) {
+    		vetorGradiente[contador] = gradienteB[i];
+    		contador++;
+    	}
+		
+    	return vetorGradiente;
+	}
 	
-			
 	/**
 	 * Função utilizada para o calculo na rede
 	 * @param valor
@@ -604,6 +821,30 @@ public class MLP {
 
 	public void setGradienteAnteriorB(double[] gradienteAnteriorB) {
 		this.gradienteAnteriorB = gradienteAnteriorB;
+	}
+
+	public double getAlphaInferior() {
+		return alphaInferior;
+	}
+
+	public void setAlphaInferior(double alphaInferior) {
+		this.alphaInferior = alphaInferior;
+	}
+
+	public double getAlphaSuperior() {
+		return alphaSuperior;
+	}
+
+	public void setAlphaSuperior(double alphaSuperior) {
+		this.alphaSuperior = alphaSuperior;
+	}
+
+	public double getEpsilon() {
+		return epsilon;
+	}
+
+	public void setEpsilon(double epsilon) {
+		this.epsilon = epsilon;
 	}
 	
 	
