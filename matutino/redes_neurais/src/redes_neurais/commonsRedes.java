@@ -14,8 +14,8 @@ public class commonsRedes {
     	Random rdm = new Random();
     	for (int i = 0; i < numLinhas; i++) {
     		for (int j = 0; j < (numColunas + 1); j++) {
-    			//pesos[i][j] = rdm.nextDouble() * 2.0 - 1.0;
-    			pesos[i][j] = 0.0;
+    			pesos[i][j] = rdm.nextDouble() * 2.0 - 1.0;
+    			//pesos[i][j] = 0.0;
     		}
     	}
     	

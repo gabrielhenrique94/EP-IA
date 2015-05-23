@@ -305,7 +305,7 @@ public class MLP {
 		deltaEscondida = calculaDeltaEscondida(camadaEscondida, getPesosB(), deltaSaida);
 				
 		//Passo 7 - Atualiza Pesos e Calcula Gradientes
-		atualizaPesos(camadaEscondida, getPesosA(), getPesosB(), deltaSaida, deltaEscondida, taxaAprendizado, entrada);
+		atualizaPesos(camadaEscondida, getPesosA(), getPesosB(), deltaSaida, deltaEscondida, getAlpha(), entrada);
 		
 		
 		
@@ -328,9 +328,8 @@ public class MLP {
     	// Verifica se HL proximo de 0
     	if (Math.abs(hl) < (1.0 * Math.pow(10,-8))) {
     		  setAlpha(alphaSuperior);
-    		  
-    	} else {
-    		  
+    		  return;
+    	}     		  
     		  // Verifica se HL menor que 0 até que encontre um alfa que torne hl positivo
         	while (hl < 0) {
         		
@@ -353,13 +352,15 @@ public class MLP {
         		for (int i = 0; i < vetorGradiente.length; i++) {
             		hl += vetorGradiente[i] * vetorGradienteAnterior[i];
         		}
+        		
         	}
-        }
+        
 
     	// Verifica se HL proximo de 0
     	if (Math.abs(hl) < (1.0 * Math.pow(10,-8))) {
     		  setAlpha(alphaSuperior);
-        } else {
+    		  return;
+        }
         	
         	 double numIteracoes = Math.ceil(Math.log(getAlphaSuperior()/getEpsilon()));
         	 int k =0;
@@ -368,12 +369,11 @@ public class MLP {
         		 //calcula alpha medio
         		  setAlpha(alphaSuperior+alphaInferior/2);
         		 //atualiza pesos
-        		 atualizaPesos(camadaEscondida, getPesosA(), getPesosB(), deltaSaida, deltaEscondida, taxaAprendizado, entrada);
+        		 atualizaPesos(camadaEscondida, getPesosA(), getPesosB(), deltaSaida, deltaEscondida, getAlpha(), entrada);
         		 //calcula gradiente
         		 deltaSaida = calculaDeltaSaida(camadaSaida, erro);
         		 deltaEscondida = calculaDeltaEscondida(camadaEscondida, getPesosB(), deltaSaida);
-       		
-        		 
+       		        		 
         		 //Vetoriza gradiente
         		 vetorGradienteAnterior = vetorizaGradienteAnterior();
         	     vetorGradiente = vetorizaGradiente();
@@ -393,9 +393,9 @@ public class MLP {
          	     }
          			 
         	 }
-        }
+   }
     	
-}
+
 
 	/**
 	 * 
@@ -499,7 +499,7 @@ public class MLP {
 					pesosAnew[ns][pa] = pesosA[ns][pa] - (taxaAprendizado * deltaEscondida[ns]);
 					
 				} else {
-					pesosAnew[ns][1] = pesosA[ns][pa] - (taxaAprendizado * deltaEscondida[ns] * entrada[pa-1]);
+					pesosAnew[ns][pa] = pesosA[ns][pa] - (taxaAprendizado * deltaEscondida[ns] * entrada[pa-1]);
 					gradienteA[pa-1]  = deltaEscondida[ns] * entrada[pa-1];
 				}
 								
