@@ -101,6 +101,7 @@ public class MLP {
 	private double[] gradienteAnteriorB;
 	
 	
+	
 	/**
 	 * Construtor da Rede Neural MLP
 	 * @param entradas
@@ -300,12 +301,12 @@ public class MLP {
 		double[] deltaEscondida = new double[camadaEscondida.length];
 	
 		//Passo 6 - Calcula Gradientes
-		deltaSaida = calcGradienteB(camadaSaida, erro);
+		deltaSaida = calculaDeltaSaida(camadaSaida, erro);
 		//Armazena gradiente dos pesos B
 		setGradienteAnteriorB(getGradienteB());
 		setGradienteB(deltaSaida);
 		
-		deltaEscondida = calcGradienteA(camadaEscondida, getPesosB(), deltaSaida);
+		deltaEscondida = calculaDeltaEscondida(camadaEscondida, getPesosB(), deltaSaida);
 		//Armazena o gradiente para os pesos A
 		setGradienteAnteriorA(getGradienteA());
 		setGradienteA(deltaEscondida);
@@ -344,13 +345,13 @@ public class MLP {
         		atualizaPesos(camadaEscondida, getPesosA(), getPesosB(), deltaSaida, deltaEscondida, getAlphaSuperior(), entrada);
 
         		//Calcula gradiente
-        		deltaSaida = calcGradienteB(camadaSaida, erro);
+        		deltaSaida = calculaDeltaSaida(camadaSaida, erro);
         		
         		//Armazena gradiente dos pesos B
         		setGradienteAnteriorB(getGradienteB());
         		setGradienteB(deltaSaida);
         		
-        		deltaEscondida = calcGradienteA(camadaEscondida, getPesosB(), deltaSaida);
+        		deltaEscondida = calculaDeltaEscondida(camadaEscondida, getPesosB(), deltaSaida);
         		
         		//Armazena o gradiente para os pesos A
         		setGradienteAnteriorA(getGradienteA());
@@ -382,8 +383,8 @@ public class MLP {
         		 //atualiza pesos
         		 atualizaPesos(camadaEscondida, getPesosA(), getPesosB(), deltaSaida, deltaEscondida, taxaAprendizado, entrada);
         		 //calcula gradiente
-        		 deltaSaida = calcGradienteB(camadaSaida, erro);
-        		 deltaEscondida = calcGradienteA(camadaEscondida, getPesosB(), deltaSaida);
+        		 deltaSaida = calculaDeltaSaida(camadaSaida, erro);
+        		 deltaEscondida = calculaDeltaEscondida(camadaEscondida, getPesosB(), deltaSaida);
         		//Armazena gradiente dos pesos B
          		setGradienteAnteriorB(getGradienteB());
          		setGradienteB(deltaSaida);
@@ -413,16 +414,6 @@ public class MLP {
         	 }
         }
     	
-    	
-    	// Verifica se HL menor que 0 até que encontre um alfa que torne hl positivo
-    	while (hl < 0) {
-    		alphaSuperior = 2 * alphaSuperior;
-    		
-    		
-    	}
-		
-
-
 }
 
 	/**
@@ -432,7 +423,7 @@ public class MLP {
 	 * @return
 	 * Passo 6 - Calcular o gradiente da camada de saida
 	 */
-	public double[] calcGradienteB(double[] camadaSaida, double[] erro){
+	public double[] calculaDeltaSaida(double[] camadaSaida, double[] erro){
 		double[] deltaSaida = new double[camadaSaida.length];
 		// Passo 6 Continuacao Calcular os deltas da camada de saida
 		for (int i = 0; i < camadaSaida.length; i++) {
@@ -450,7 +441,7 @@ public class MLP {
 	 * @return
 	 * Passo 6 - Calcular o gradiente da camada Escondida
 	 */
-	public double[] calcGradienteA(double[] camadaEscondida, double[][] pesosB, double[] deltaSaida){
+	public double[] calculaDeltaEscondida(double[] camadaEscondida, double[][] pesosB, double[] deltaSaida){
 		double[] deltaEscondida = new double[camadaEscondida.length];
 		// Passo 7 - Retropropaga o erro usando o delta da camada de saida para calcular o delta da camada anterior
 			
