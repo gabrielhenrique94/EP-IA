@@ -334,9 +334,12 @@ public class MLP {
     	// Verifica se HL proximo de 0
     	if (Math.abs(hl) < (1.0 * Math.pow(10,-8))) {
     		  setAlpha(alphaSuperior);
-        } else {
-        	// Verifica se HL menor que 0 até que encontre um alfa que torne hl positivo
+    		  
+    	} else {
+    		  
+    		  // Verifica se HL menor que 0 até que encontre um alfa que torne hl positivo
         	while (hl < 0) {
+        		
         		setAlphaSuperior( 2 * getAlphaSuperior());
         		atualizaPesos(camadaEscondida, getPesosA(), getPesosB(), deltaSaida, deltaEscondida, getAlphaSuperior(), entrada);
 
@@ -377,10 +380,10 @@ public class MLP {
         		 //calcula alpha medio
         		  setAlpha(alphaSuperior+alphaInferior/2);
         		 //atualiza pesos
-        		 atualizaPesos(camadaEscondida, pesosA, pesosB, deltaSaida, deltaEscondida, taxaAprendizado, entrada);
+        		 atualizaPesos(camadaEscondida, getPesosA(), getPesosB(), deltaSaida, deltaEscondida, taxaAprendizado, entrada);
         		 //calcula gradiente
         		 deltaSaida = calcGradienteB(camadaSaida, erro);
-        		 deltaEscondida = calcGradienteA(camadaEscondida, pesosB, deltaSaida);
+        		 deltaEscondida = calcGradienteA(camadaEscondida, getPesosB(), deltaSaida);
         		//Armazena gradiente dos pesos B
          		setGradienteAnteriorB(getGradienteB());
          		setGradienteB(deltaSaida);
@@ -433,8 +436,8 @@ public class MLP {
 		double[] deltaSaida = new double[camadaSaida.length];
 		// Passo 6 Continuacao Calcular os deltas da camada de saida
 		for (int i = 0; i < camadaSaida.length; i++) {
-			//deltaSaida = Saida do neuronio * ( 1 - saida do neuronio)(saida esperada - saida do neuronio)
-			deltaSaida[i] = camadaSaida[i] * (1 - camadaSaida[i]) * (erro[i]) ;
+			//deltaSaida = Saida do neuronio * ( 1 - saida do neuronio)* -(saida esperada - saida do neuronio)
+			deltaSaida[i] = camadaSaida[i] * (1 - camadaSaida[i]) * (-1*(erro[i])) ;
 		}
 		return deltaSaida;
 	}
