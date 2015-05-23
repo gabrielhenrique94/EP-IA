@@ -82,12 +82,13 @@ public class Main {
 		//double[] t = xorProblem.get(0);
 		//TREINAR ENTRADA CLODS
 		
+		/*
 		MLP redeMLP = new MLP(dadosNormalizados.getMatrizesTreinamento(), dadosNormalizados.classificarClasses(dadosNormalizados.getClassesTreinamento()), numNeuroniosEscondidosMLP, 
 		commonsRedes.geradorPesosRandomicos(t.length ,numNeuroniosEscondidosMLP), 
 		commonsRedes.geradorPesosRandomicos(numNeuroniosEscondidosMLP, numNeuroniosSaida),
 		numNeuroniosSaida, alpha, alphaEstatico, maxT, erroAceitavel);
 		redeMLP.treinar();
-		
+		*/
 		
 		//Passo 0 Inicializa os pesos
 		//TREINAR ENTRADA
@@ -98,9 +99,11 @@ public class Main {
 		//redeMLP.treinar();
 		
 		//saidas = 10
+		/*
 		LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT,2, alpha, erroAceitavel, 10);
 		teste.testa();
-
+		*/
+		
 		//saidas = 2
 		//LVQ testeXOR = new LVQ(xorProblem,xorClazz, maxT,1, alpha, erroAceitavel, 2);
 		//testeXOR.testa();

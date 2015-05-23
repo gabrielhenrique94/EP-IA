@@ -41,48 +41,55 @@ public class Holdout {
 	 */
 	private ArrayList<double[]> entradasComClasses;
 	
-	/**
-	 * ArrayList que contem as entradas do treinamento e teste ja juntas e embaralhadas
-	 */
-	private ArrayList<double[]> entradasFinais;
-	
-	/**
-	 * ArrayList que contem as classes do treinamento e teste ja juntas e embaralhadas
-	 */
-	private ArrayList<Double> classesFinais;
-	
 	//ArrayList que receberao dados separados apos aplicacao do holdout 
 	//Entradas
 	/**
-	 * ArrayList apos holdout - treinamento
+	 * ArrayList apos holdout antes separacao- treinamento
 	 */
 	private ArrayList<double[]> entradasHoldoutTreinamento;
 	
 	/**
-	 * ArrayList apos holdout - teste
+	 * ArrayList apos holdout antes separacao - teste
 	 */
 	private ArrayList<double[]> entradasHoldoutTeste;
 	
 	/**
-	 * ArrayList apos holdout - teste
+	 * ArrayList apos holdout antes separacao- teste
 	 */
 	private ArrayList<double[]> entradasHoldoutValidacao;
 	
+	//Apos Separacao
+	//Entradas
+	
+	/**
+	 * ArrayList apos holdout depois separacao- treinamento
+	 */
+	private ArrayList<double[]> entradasFinaisTreinamento;
+	
+	/**
+	 * ArrayList apos holdout depois separacao - teste
+	 */
+	private ArrayList<double[]> entradasFinaisTeste;
+	
+	/**
+	 * ArrayList apos holdout depois separacao- teste
+	 */
+	private ArrayList<double[]> entradasFinaisValidacao;
 	//Classes
 	/**
-	 * ArrayList apos holdout - treinamento
+	 * ArrayList apos holdout e separacao- treinamento
 	 */
-	private ArrayList<double[]> classesHoldoutTreinamento;
+	private ArrayList<Double> classesFinaisTreinamento;
 	
 	/**
-	 * ArrayList apos holdout - teste
+	 * ArrayList apos holdout e separacao- teste
 	 */
-	private ArrayList<double[]> classesHoldoutTeste;
+	private ArrayList<Double> classesFinaisTeste;
 	
 	/**
-	 * ArrayList apos holdout - teste
+	 * ArrayList apos holdout e separacao - validacao
 	 */
-	private ArrayList<double[]> classesHoldoutValidacao;
+	private ArrayList<Double> classesFinaisValidacao;
 	
 	/**
 	 * Construtor
@@ -154,37 +161,156 @@ public class Holdout {
 	}
 	
 	/**
-	 * Funcao para separar entradas e classes em ArrayLists diferentes pois esta sendo utilizado assim na LVQ e MLP
-	 */
-	public void SeparaArrayList(){
-		//entradasFinais
-		//classesFinais
-		double[] auxiliar = new double[entradasComClasses.get(0).length-1];
-		Double classe;
-		for(int j = 0; j < entradasComClasses.size(); j++){
-			for(int i = 0; i < auxiliar.length; i++){
-				auxiliar[i] = entradasComClasses.get(j)[i];
-			}
-			classe = entradasComClasses.get(j)[auxiliar.length];
-			classesFinais.add(classe);
-			entradasFinais.add(auxiliar);
-		}
-	}
-	
-	/**
-	 * Funcao para realizar separacao 
+	 * Holdout Entradas
 	 * 60 treinamento
 	 * 20 teste
 	 * 20 validacao
 	 */
-	public void FazendoHoldout(){
+	public void HoldoutEntradasClasses(){
 		
+		//numero de ocorrencias de cada classe
+		int[] numeroOcorrencias = new int[10];
+
+		for (int i = 0; i < entradasComClasses.size(); i++){
+			int a = (int)entradasComClasses.get(i)[entradasComClasses.get(i).length-1];
+			numeroOcorrencias[a]++;
+		}
+		
+		int[] tamanhoTreinamento = new int[10];
+		int[] tamanhoTeste = new int[10];
+		int[] tamanhoValidacao = new int[10];
+		for (int i = 0; i < 10; i++){
+			tamanhoTreinamento[i] = (numeroOcorrencias[i] * 6)/10;
+			tamanhoTeste[i] = tamanhoValidacao[i] = (numeroOcorrencias[i] * 2)/10;
+		}
+		
+		for (int i = 0; i < entradasComClasses.size(); i++){
+			int rotulo = (int)entradasComClasses.get(i)[entradasComClasses.get(i).length-1];
+			if (tamanhoTreinamento[rotulo] > 0){
+				entradasHoldoutTreinamento.add(entradasComClasses.get(i));
+				tamanhoTreinamento[rotulo]--;
+			}
+			if  (tamanhoTreinamento[rotulo] == 0 && tamanhoTeste [rotulo] > 0){
+				entradasHoldoutTeste.add(entradasComClasses.get(i));
+				tamanhoTeste[rotulo]--;
+			}
+			else
+			entradasHoldoutValidacao.add(entradasComClasses.get(i));
+		}	
+		
+		int tamanhoFinal = entradasHoldoutTreinamento.size() + entradasHoldoutTeste.size() + entradasHoldoutValidacao.size();
+	
+		for(int i = tamanhoFinal; i < entradasComClasses.size();){
+			entradasHoldoutTreinamento.add(entradasComClasses.get(i));
+			i++;
+			if (i < entradasComClasses.size()){
+				entradasHoldoutTeste.add(entradasComClasses.get(i));
+				i++;
+			}
+			else{
+				entradasHoldoutValidacao.add(entradasComClasses.get(i));
+				i++;
+			}
+		}
 	}
 	
 	/**
-	 * Holdout Entradas
+	 * Funcao para separar entradas e classes em ArrayLists diferentes pois esta sendo utilizado assim na LVQ e MLP
 	 */
-	public void HoldoutEntradas(){
+	public void SeparaArrayListTreinamento(){
 		
+		double[] auxiliar = new double[entradasHoldoutTreinamento.get(0).length-1];
+		Double classe;
+		for(int j = 0; j < entradasHoldoutTreinamento.size(); j++){
+			for(int i = 0; i < auxiliar.length; i++){
+				auxiliar[i] = entradasHoldoutTreinamento.get(j)[i];
+			}
+			classe = entradasHoldoutTreinamento.get(j)[auxiliar.length];
+			classesFinaisTreinamento.add(classe);
+			entradasFinaisTreinamento.add(auxiliar);
+		}
 	}
+	
+	/**
+	 * Funcao para separar entradas e classes em ArrayLists diferentes pois esta sendo utilizado assim na LVQ e MLP
+	 */
+	public void SeparaArrayListTeste(){
+		
+		double[] auxiliar = new double[entradasHoldoutTeste.get(0).length-1];
+		Double classe;
+		for(int j = 0; j < entradasHoldoutTeste.size(); j++){
+			for(int i = 0; i < auxiliar.length; i++){
+				auxiliar[i] = entradasHoldoutTeste.get(j)[i];
+			}
+			classe = entradasHoldoutTeste.get(j)[auxiliar.length];
+			classesFinaisTeste.add(classe);
+			entradasFinaisTeste.add(auxiliar);
+		}
+	}
+	
+	/**
+	 * Funcao para separar entradas e classes em ArrayLists diferentes pois esta sendo utilizado assim na LVQ e MLP
+	 */
+	public void SeparaArrayListValidacao(){
+		
+		double[] auxiliar = new double[entradasHoldoutValidacao.get(0).length-1];
+		Double classe;
+		for(int j = 0; j < entradasHoldoutValidacao.size(); j++){
+			for(int i = 0; i < auxiliar.length; i++){
+				auxiliar[i] = entradasHoldoutValidacao.get(j)[i];
+			}
+			classe = entradasHoldoutValidacao.get(j)[auxiliar.length];
+			classesFinaisValidacao.add(classe);
+			entradasFinaisValidacao.add(auxiliar);
+		}
+	}
+	
+	/**
+	 * retorna matriz de entrada de treinamento
+	 * @return
+	 */
+	public ArrayList<double[]> getentradasFinaisTreinamento() {
+		return entradasFinaisTreinamento;
+	}
+	
+	/**
+	 * retorna matriz de entrada de teste
+	 * @return
+	 */
+	public ArrayList<double[]> getentradasFinaisTeste() {
+		return entradasFinaisTeste;
+	}
+	
+	/**
+	 * retorna matriz de entrada de validacao
+	 * @return
+	 */
+	public ArrayList<double[]> getentradasFinaisValidacao() {
+		return entradasFinaisValidacao;
+	}
+	
+	/**
+	 * retorna matriz de classe de treinamento
+	 * @return
+	 */
+	public ArrayList<Double> getclassesFinaisTreinamento(){
+		return classesFinaisTreinamento;
+	}
+	
+	/**
+	 * retorna matriz de classe de teste
+	 * @return
+	 */
+	public ArrayList<Double> getclassesFinaisTeste(){
+		return classesFinaisTeste;
+	}
+	
+	/**
+	 * retorna matriz de classe de validacao
+	 * @return
+	 */
+	public ArrayList<Double> getclassesFinaisValidacao(){
+		return classesFinaisValidacao;
+	}
+	
 }
