@@ -22,4 +22,21 @@ public class commonsRedes {
     	return pesos; 
     }
     
-  }
+	/**
+	 * Calcula taxa de aprendizado não fixa
+	 * @param taxaFixa
+	 * @param taxaAprendizado
+	 * @param epoca
+	 * @param maxEpocas
+	 * @return
+	 */
+	public static double calculaTaxaAprendizado(boolean taxaFixa, double taxaAprendizado, int epoca, int maxEpocas) {
+		if (taxaFixa) {
+			return taxaAprendizado;
+	} else {
+		// fonte: http://seer.ufrgs.br/index.php/rita/article/view/rita_v19_n1_p120/18115
+			return taxaAprendizado*(1.0 -(((double)epoca)/maxEpocas));
+		}
+	}
+    
+}
