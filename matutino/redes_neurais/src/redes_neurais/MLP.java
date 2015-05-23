@@ -166,7 +166,7 @@ public class MLP {
 				if (erroQuadratico > this.erroAceitavel) {
 						
 						//Passo 6 - Retropropaga 
-					backpropagation(saida, getZ(), entrada, getPesosA(), getPesosB(), erro, getAlpha());
+					backpropagation(saida, getZ(), entrada, erro, getAlpha());
 			
 				} 
 				//AQUI seria um else para concluir o treinamento se o erro fosse pouco
@@ -284,8 +284,7 @@ public class MLP {
 	 * @param erro
 	 * @param taxaAprendizado
 	 */
-	public void backpropagation (double[] camadaSaida, double[] camadaEscondida, double[] entrada, double[][] pesosA, 
-		double[][] pesosB, double[] erro, double taxaAprendizado) {
+	public void backpropagation (double[] camadaSaida, double[] camadaEscondida, double[] entrada, double[] erro, double taxaAprendizado) {
 		
 		System.out.println("BACKPROPAGATION");
 		
@@ -306,13 +305,13 @@ public class MLP {
 		setGradienteAnteriorB(getGradienteB());
 		setGradienteB(deltaSaida);
 		
-		deltaEscondida = calcGradienteA(camadaEscondida, pesosB, deltaSaida);
+		deltaEscondida = calcGradienteA(camadaEscondida, getPesosB(), deltaSaida);
 		//Armazena o gradiente para os pesos A
 		setGradienteAnteriorA(getGradienteA());
 		setGradienteA(deltaEscondida);
 		
 		//Passo 7 - Atualiza Pesos
-		atualizaPesos(camadaEscondida, pesosA, pesosB, deltaSaida, deltaEscondida, taxaAprendizado, entrada);
+		atualizaPesos(camadaEscondida, getPesosA(), getPesosB(), deltaSaida, deltaEscondida, taxaAprendizado, entrada);
 		
 		//Atualiza o alpha
 		
