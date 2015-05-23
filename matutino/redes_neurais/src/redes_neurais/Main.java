@@ -56,7 +56,7 @@ public class Main {
 		Holdout hldt = new Holdout (dadosNormalizados.getMatrizesTreinamento(), dadosNormalizados.classificarClasses(dadosNormalizados.getClassesTreinamento()),
 				dadosNormalizados.getMatrizesTeste(), dadosNormalizados.classificarClasses(dadosNormalizados.getClassesTeste()));
 		
-		
+		hldt.AplicaHoldout();
 		
 		ArrayList<double[]> x = dadosNormalizados.getMatrizesTeste();
 		double[] t = x.get(0);
@@ -105,12 +105,9 @@ public class Main {
 		*/
 		
 		//saidas = 2
-		//LVQ testeXOR = new LVQ(xorProblem,xorClazz, maxT,1, alpha, erroAceitavel, 2);
-		//testeXOR.testa();
+		LVQ testeXOR = new LVQ(xorProblem,xorClazz, maxT,1, alpha, erroAceitavel, 2);
+		testeXOR.testa();
 
-		
-		
-		
 	}
 
 }
