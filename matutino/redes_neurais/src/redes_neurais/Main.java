@@ -49,10 +49,14 @@ public class Main {
 		/* Nome do arquivo que sera gerado com os dados da saida*/
 		//String saida = args[7]; 
 		
-		
-		
-		
 		NormalizarDados dadosNormalizados = new NormalizarDados(arquivoTreinamento, arquivoTeste, 0.95); //Pegar a taxa por arg[] mais para frente 
+		
+		//Chamada do Holdout
+		//Nao alterei nada das outras coisas
+		Holdout hldt = new Holdout (dadosNormalizados.getMatrizesTreinamento(), dadosNormalizados.getClassesTreinamento(),
+				dadosNormalizados.getMatrizesTeste(), dadosNormalizados.getClassesTeste());
+		
+		
 		
 		ArrayList<double[]> x = dadosNormalizados.getMatrizesTeste();
 		double[] t = x.get(0);
