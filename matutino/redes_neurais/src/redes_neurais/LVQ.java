@@ -187,7 +187,7 @@ public class LVQ {
 	/**
 	 * Funcao para treinamento da rede
 	 */
-	/*
+	
 	public void treinamentoLVQ() {
 		 //Inicializando o conjunto de prototipos
 		criaVetorPrototipos(saidas, tipoVetor);
@@ -261,91 +261,6 @@ public class LVQ {
 		confereNeuroniosAtivados();
 		// reduzNeuronios();
 		// montaMatrizConfusao();
-		for (int i = 0; i < this.vetorNeuroniosAtivados.length; i++) {
-			System.out.println(vetorNeuroniosAtivados[i] + " ");
-		}
-
-	}
-	*/
-	
-	public void treinamentoLVQ() {
-		 //Inicializando o conjunto de prototipos
-		criaVetorPrototipos(saidas, tipoVetor);
-		this.alfaRotativo = this.alfaInicial;
-			
-		//fazendo o teste sem ser com o xor as classes resultantes dao em seguida sempre a mesma
-		
-		//Determinacacao de condicao de parada Numero Fixo de iteracoes
-		//(max_Epocas) ou valor minimo taxa de aprendizado(alfaRotativo)
-		while (this.epocas <= this.max_epocas) {								
-			for (int j = 0; j < this.entradas.size(); j++) {
-				double[] entradaAtual = this.entradas.get(j);
-				//Imprimindo entradaAtual
-				System.out.print("Imprimindo Entrada Atual: ");
-				for (int k = 0; k < entradaAtual.length; k++) {
-					System.out.print(entradaAtual[k] + " ");
-				}
-				System.out.println();
-				double[] neuronioVencedor = pegaNeurVencedor(entradas.get(j)); 
-				int index = this.vetorPrototipos.indexOf(neuronioVencedor);
-				
-				System.out.println("Classe esperada: " + classes.get(j) + " Classe resultante: " + neuronioVencedor[neuronioVencedor.length - 1]);
-				System.out.println("Coordenadas do neuronio vencedor antes da atualizacao: " + neuronioVencedor[0] + " " + neuronioVencedor[1]);
-				double[] vetorAuxiliar;
-				
-			//O QUE TA DANDO ERRADO se faz assim
-			//MUDAR
-			//Nao importa se usa distancia euclidiana ou de manhattan, a tendencia e dar os mesmo resultados
-			//o alfa nao simples esta estourando
-			//so funciona com o alfa nao simples
-			//as coordenadas usando o alfa nao simples dao absurdamentes grandes
-			//com o alfa nao simples acerta na maioria das vezes, com o simples sempre erra = ou da 0000 ou 1111
-			 /*
-				if ((int) neuronioVencedor[neuronioVencedor.length - 1] == this.classes.get(j)) { 
-					// Aproxima
-					// vetor de peso novo da j-esima unidade saida = vetor peso antigo + alfa(entrada da j-esima unidade - vetor peso antigo)
-					vetorAuxiliar = somaDeVetores(neuronioVencedor, multiplicaAlfa(subtracaoDeVetoresSemIndex(entradaAtual, neuronioVencedor)));
-				} else {
-					// afasta
-					// vetor de peso novo da j-esima unidade saida = vetor peso antigo - alfa(entrada da j-esima unidade - vetor peso antigo)
-					vetorAuxiliar = subtracaoDeVetoresSemIndex(neuronioVencedor, multiplicaAlfa(subtracaoDeVetoresSemIndex(entradaAtual, neuronioVencedor)));
-				}
-				*/
-				
-				//quando inicia os vetores zerados, só pega o vetor da classe 0 se alfa simples
-				//quando inicia os vetores zerados, só pega o vetor da classe 1 se alfa n simples mono
-				//quando inicia os vetores zerados, da 0110 se alga n simples monot
-				//alfa simples = sempre da 0110
-				//alfa nao simples = 1001 / 0110 
-			
-				
-				if ((int) neuronioVencedor[neuronioVencedor.length - 1] == this.classes.get(j)) { 
-					// Aproxima
-					// vetor de peso novo da j-esima unidade saida = vetor peso antigo + alfa(entrada da j-esima unidade - vetor peso antigo)
-					vetorAuxiliar = somaDeVetores(neuronioVencedor,multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor, vetorPrototipos.indexOf(neuronioVencedor))));
-				} else {
-					// afasta
-					// vetor de peso novo da j-esima unidade saida = vetor peso antigo - alfa(entrada da j-esima unidade - vetor peso antigo)
-					vetorAuxiliar = subtracaoDeVetores(neuronioVencedor, multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor,vetorPrototipos.indexOf(neuronioVencedor))),vetorPrototipos.indexOf(neuronioVencedor));
-				}
-				
-				neuronioVencedor = vetorAuxiliar;
-				atualizaVetorPrototipos(neuronioVencedor, index);
-				System.out.println("Coordenadas do neuronio vencedor apos atualizacao: " + neuronioVencedor[0] + " " + neuronioVencedor[1]);
-				//Reduzir a taxa de aprendizado
-				
-				//atualizaAlfaSimples();
-				atualizaAlfaMonot(this.epocas, this.max_epocas);
-				//atualizaAlfaMono(this.epocas, this.max_epocas);
-				System.out.println("Valor Atual do Alfa: " + alfaRotativo);
-				System.out.println();
-			}
-			System.out.println("EPOCAS " + epocas);
-			this.epocas++;
-		}
-		
-		System.out.println("Neuronios Ativados: (deveriam ser 0011)");
-		confereNeuroniosAtivados();
 		for (int i = 0; i < this.vetorNeuroniosAtivados.length; i++) {
 			System.out.println(vetorNeuroniosAtivados[i] + " ");
 		}

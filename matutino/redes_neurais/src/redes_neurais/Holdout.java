@@ -141,13 +141,10 @@ public class Holdout {
 	 */
 	public void JuntandoVetoresDeEntradas() {
 		
-		int tamanhoEntradasTreinamento = entradasTreinamento.size();
-		int tamanhoEntradasTeste = entradasTeste.size();
-
-		for (int i = 0; i < tamanhoEntradasTreinamento; i++) {
+		for (int i = 0; i < entradasTreinamento.size(); i++) {
 			entradas.add(entradasTreinamento.get(i));
 		}
-		for (int j = 0; j < tamanhoEntradasTeste; j++) {
+		for (int j = 0; j < entradasTeste.size(); j++) {
 			entradas.add(entradasTeste.get(j));
 		}
 	}
@@ -158,13 +155,10 @@ public class Holdout {
 	 */
 	public void JuntandoVetoresDeClasses() {
 		
-		int tamanhoClassesTreinamento = classesTreinamento.size();
-		int tamanhoClassesTeste = classesTeste.size();
-
-		for (int i = 0; i < tamanhoClassesTreinamento; i++) {
+		for (int i = 0; i < classesTreinamento.size(); i++) {
 			classes.add(classesTreinamento.get(i));
 		}
-		for (int j = 0; j < tamanhoClassesTeste; j++) {
+		for (int j = 0; j < classesTeste.size(); j++) {
 			classes.add(classesTeste.get(j));
 		}
 	}
