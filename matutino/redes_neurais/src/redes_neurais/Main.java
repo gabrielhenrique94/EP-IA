@@ -104,14 +104,16 @@ public class Main {
 		//saidas = 10
 		/*
 		LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), 10,2, alpha, erroAceitavel, 10);
-		teste.testa();
+		teste.treinamentoLVQ();
 		*/
 		
 		
 		//saidas = 2
 		LVQ testeXOR = new LVQ(xorProblem, xorClazz, maxT, 1, alpha, erroAceitavel, 2);
-		testeXOR.testa();
-		
+		testeXOR.treinamentoLVQ();
+		//xorProblem matrizes treinamento
+		for(int i = 0; i < xorProblem.size(); i++)
+		System.out.println(testeXOR.Classificador(xorProblem.get(i)));
 	}
 
 }

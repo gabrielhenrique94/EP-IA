@@ -82,7 +82,7 @@ public class LVQ {
 	}
 
 	/**
-	 * Funcao de teste
+	 * Funcao de treinamento
 	 * **/
 	public void testa() {
 		// System.out.println("---");
@@ -101,12 +101,16 @@ public class LVQ {
 		}
 		System.out.println();
 		treinamentoLVQ();
-		/*
-		 * for(int i = 0; i < numNeur; i++){ for(int j = 0; j < entradas.size();
-		 * j++){ System.out.print(matrizBool[i][j] ); } System.out.println(); }
-		 */
 	}
-
+	
+	/**
+	 * Funcao para classificacao de uma entrada
+	 */
+	public double Classificador(double[] entradasTeste) {
+			double[] neuronioVencedor = pegaNeurVencedor(entradasTeste);
+			//retorna a classe, que esta na ultima posicao do vetor
+			return neuronioVencedor[neuronioVencedor.length-1];
+	}
 	/**
 	 * Inicializacao da vetor para conferencia dos neuronios ativados
 	 **/
@@ -426,6 +430,23 @@ public class LVQ {
 		for (int i = 0; i < this.vetorPrototipos.size(); i++) {
 			dist = calculaDistEuclidiana(this.entradas.get(j),
 					this.vetorPrototipos.get(i));
+			if (dist <= distMin) {
+				distMin = dist;
+				neurVencedor = this.vetorPrototipos.get(i);
+			}
+		}
+		return neurVencedor;
+	}
+	
+	/**
+	 * Funcao que calcula o neuronio mais proximo
+	 */
+	public double[] pegaNeurVencedor(double[] entrada) {
+		double distMin = 100000000;
+		double dist = 0;
+		double neurVencedor[] = new double[this.entradas.get(0).length];
+		for (int i = 0; i < this.vetorPrototipos.size(); i++) {
+			dist = calculaDistEuclidiana(entrada, this.vetorPrototipos.get(i));
 			if (dist <= distMin) {
 				distMin = dist;
 				neurVencedor = this.vetorPrototipos.get(i);
