@@ -179,6 +179,7 @@ public class LVQ {
 		}
 		
 		//O QUE TA DANDO ERRADO
+		//MUDAR
 		// quando faz a subtracao para afastar, por algum motivo subliminar n ta atualizando
 		//quando distancia maior que 1, n atualiza tb - talvez esteja definido para n atualizar em caso assim, irei conferir
 
