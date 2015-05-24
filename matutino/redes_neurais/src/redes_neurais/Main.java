@@ -23,7 +23,7 @@ public class Main {
 		
 		boolean alphaEstatico = false; // Args tbm
 		
-		int maxT = 1000; // Args, maximo de epocas que se deve executar
+		int maxT = 5000; // Args, maximo de epocas que se deve executar
 		
 		double erroAceitavel = 0.05; //(5% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
 		
@@ -53,13 +53,13 @@ public class Main {
 		
 		//Chamada do Holdout
 		//Nao alterei nada das outras coisas
-		/*
+		
 		Holdout hldt = new Holdout (dadosNormalizados.getMatrizesTreinamento(), dadosNormalizados.classificarClasses
 				(dadosNormalizados.getClassesTreinamento()), dadosNormalizados.getMatrizesTeste(),
 				dadosNormalizados.classificarClasses(dadosNormalizados.getClassesTeste()));
 		
 		hldt.AplicaHoldout();
-		*/
+		
 		
 		ArrayList<double[]> x = dadosNormalizados.getMatrizesTeste();
 		double[] t = x.get(0);
@@ -108,14 +108,15 @@ public class Main {
 		teste.treinamentoLVQ();
 		*/
 		
-		
+		/*
 		//saidas = 2
 		//tipoVetor = 0 vetores zerado - = 1 vetores aleatorios
-		LVQ testeXOR = new LVQ(xorProblem, xorClazz, maxT, 1, alpha, erroAceitavel, 2, 0);
+		LVQ testeXOR = new LVQ(xorProblem, xorClazz, maxT, 1, alpha, erroAceitavel, 2, 1);
 		testeXOR.treinamentoLVQ();
 		//xorProblem matrizes treinamento
 		for(int i = 0; i < xorProblem.size(); i++)
 		System.out.println(testeXOR.Classificador(xorProblem.get(i)));
+		*/
 	}
 
 }

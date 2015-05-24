@@ -132,6 +132,7 @@ public class Holdout {
 		SeparaArrayListTreinamento();
 		SeparaArrayListTeste();
 		SeparaArrayListValidacao();
+		System.out.println("Holdout funcionou!");
 	}
 
 	/**
@@ -139,8 +140,7 @@ public class Holdout {
 	 * entradas de Treinamento e o que estava as entradas de Teste
 	 */
 	public void JuntandoVetoresDeEntradas() {
-		this.entradasTreinamento = new ArrayList<double[]>();
-		this.entradasTeste = new ArrayList<double[]>();
+		
 		int tamanhoEntradasTreinamento = entradasTreinamento.size();
 		int tamanhoEntradasTeste = entradasTeste.size();
 
@@ -157,8 +157,7 @@ public class Holdout {
 	 * classes de Treinamento e o que estava as classes de Teste
 	 */
 	public void JuntandoVetoresDeClasses() {
-		this.classesTreinamento = new ArrayList<Double>();
-		this.classesTeste = new ArrayList<Double>();
+		
 		int tamanhoClassesTreinamento = classesTreinamento.size();
 		int tamanhoClassesTeste = classesTeste.size();
 
@@ -176,8 +175,6 @@ public class Holdout {
 	 */
 	public void Juncao(ArrayList<double[]> entradas) {
 		// entradasComClasses
-		JuntandoVetoresDeEntradas();
-		JuntandoVetoresDeClasses();
 		int t = entradas.get(0).length;
 		double[] auxiliar = new double[t + 1];
 		for (int j = 0; j < entradas.size(); j++) {

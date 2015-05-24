@@ -337,8 +337,8 @@ public class LVQ {
 				System.out.println("Coordenadas do neuronio vencedor apos atualizacao: " + neuronioVencedor[0] + " " + neuronioVencedor[1]);
 				//Reduzir a taxa de aprendizado
 				
-				atualizaAlfaSimples();
-				//atualizaAlfaMonot(this.epocas, this.max_epocas);
+				//atualizaAlfaSimples();
+				atualizaAlfaMonot(this.epocas, this.max_epocas);
 				//atualizaAlfaMono(this.epocas, this.max_epocas);
 				System.out.println("Valor Atual do Alfa: " + alfaRotativo);
 				System.out.println();
