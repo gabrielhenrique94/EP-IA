@@ -178,6 +178,10 @@ public class LVQ {
 			System.out.println();
 		}
 		
+		//O QUE TA DANDO ERRADO
+		// quando faz a subtracao para afastar, por algum motivo subliminar n ta atualizando
+		//quando distancia maior que 1, n atualiza tb - talvez esteja definido para n atualizar em caso assim, irei conferir
+
 		//Determinacacao de condicao de parada Numero Fixo de iteracoes
 		//(max_Epocas) ou valor minimo taxa de aprendizado(alfaRotativo)
 		while (this.epocas <= this.max_epocas || this.alfaRotativo == 0.0001) {								
@@ -210,7 +214,7 @@ public class LVQ {
 					// antigo)
 					vetorAuxiliar = somaDeVetores(neuronioVencedor,multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor,
 									vetorPrototipos.indexOf(neuronioVencedor))));
-					System.out.println("valor vetor aux Trein IF: "+ vetorAuxiliar[0] + " " + vetorAuxiliar[1]);
+					System.out.println("valor vetor aux Trein IF: "+ neuronioVencedor[0] + " " + neuronioVencedor[1]);
 
 				} else {
 					// afasta
@@ -219,11 +223,11 @@ public class LVQ {
 					// antigo)
 					vetorAuxiliar = subtracaoDeVetores(neuronioVencedor, multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor,
 							vetorPrototipos.indexOf(neuronioVencedor))),vetorPrototipos.indexOf(neuronioVencedor));
-					System.out.println("valor vetor aux Trein ELSE: " + vetorAuxiliar[0] + " " + vetorAuxiliar[1]);
+					System.out.println("valor vetor aux Trein ELSE: " + neuronioVencedor[0] + " " + neuronioVencedor[1]);
 				}
 				// vetorPrototipos.remove(index);
 				// vetorPrototipos.add(vetorAuxiliar);
-				atualizaVetorPrototipos(vetorAuxiliar, index);
+				atualizaVetorPrototipos(neuronioVencedor, index);
 				/**
 				 * Reduzir a taxa de aprendizado
 				 */
