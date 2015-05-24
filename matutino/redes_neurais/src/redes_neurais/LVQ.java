@@ -129,7 +129,8 @@ public class LVQ {
 		int cont = 0;
 		double[] vetor;
 		for (int i = 0; i < this.numNeur; i++) {
-			this.vetorPrototipos.add(geraVetorAleatorio());
+			//this.vetorPrototipos.add(geraVetorAleatorio());
+			this.vetorPrototipos.add(geraVetorZerado());
 		}
 		for (int i = 0; i < this.vetorPrototipos.size(); i++) {
 			if (cont == saidas)
@@ -164,7 +165,17 @@ public class LVQ {
 		}
 		return vetor;
 	}
+	
+	/**
+	 * 
+	 * Criando um vetor inicializando por 0s
+	 */
 
+	public double[] geraVetorZerado() {
+		double[] vetor = new double[this.entradas.get(0).length + 1];
+		return vetor;
+	}
+	
 	/**
 	 * Funcao para treinamento da rede
 	 */
@@ -271,7 +282,7 @@ public class LVQ {
 				int index = this.vetorPrototipos.indexOf(neuronioVencedor);
 				
 				System.out.println("Classe esperada: " + classes.get(j) + " Classe resultante: " + neuronioVencedor[neuronioVencedor.length - 1]);
-				System.out.println("Coordenadas do neurônio vencedor antes da atualização: " + neuronioVencedor[0] + " " + neuronioVencedor[1]);
+				System.out.println("Coordenadas do neurï¿½nio vencedor antes da atualizaï¿½ï¿½o: " + neuronioVencedor[0] + " " + neuronioVencedor[1]);
 				double[] vetorAuxiliar;
 				/*
 				 *
@@ -306,7 +317,7 @@ public class LVQ {
 				}
 				neuronioVencedor = vetorAuxiliar;
 				atualizaVetorPrototipos(neuronioVencedor, index);
-				System.out.println("Coordenadas do neurônio vencedor após atualização: " + neuronioVencedor[0] + " " + neuronioVencedor[1]);
+				System.out.println("Coordenadas do neurï¿½nio vencedor apï¿½s atualizaï¿½ï¿½o: " + neuronioVencedor[0] + " " + neuronioVencedor[1]);
 				//Reduzir a taxa de aprendizado
 				
 				atualizaAlfaSimples();
@@ -318,7 +329,7 @@ public class LVQ {
 			this.epocas++;
 		}
 		
-		System.out.println("Neurônios Ativados: (deveriam ser 0011)");
+		System.out.println("Neurï¿½nios Ativados: (deveriam ser 0011)");
 		confereNeuroniosAtivados();
 		for (int i = 0; i < this.vetorNeuroniosAtivados.length; i++) {
 			System.out.println(vetorNeuroniosAtivados[i] + " ");
