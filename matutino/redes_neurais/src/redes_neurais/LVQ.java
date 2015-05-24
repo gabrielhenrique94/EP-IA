@@ -210,24 +210,21 @@ public class LVQ {
 						+ neuronioVencedor[0] + " " + neuronioVencedor[1]);
 				if ((int) neuronioVencedor[neuronioVencedor.length - 1] == this.classes.get(j)) { 
 					// Aproxima
-					// vetor de peso novo da j-esima unidade saida = vetor peso
-					// antigo + alfa(entrada da j-esima unidade - vetor peso
-					// antigo)
+					// vetor de peso novo da j-esima unidade saida = vetor peso antigo + alfa(entrada da j-esima unidade - vetor peso antigo)
 					vetorAuxiliar = somaDeVetores(neuronioVencedor,multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor,
 									vetorPrototipos.indexOf(neuronioVencedor))));
-					System.out.println("valor vetor aux Trein IF: "+ neuronioVencedor[0] + " " + neuronioVencedor[1]);
+					//System.out.println("valor vetor aux Trein IF: "+ neuronioVencedor[0] + " " + neuronioVencedor[1]);
 
 				} else {
 					// afasta
-					// vetor de peso novo da j-esima unidade saida = vetor peso
-					// antigo - alfa(entrada da j-esima unidade - vetor peso
-					// antigo)
+					// vetor de peso novo da j-esima unidade saida = vetor peso antigo - alfa(entrada da j-esima unidade - vetor peso antigo)
 					vetorAuxiliar = subtracaoDeVetores(neuronioVencedor, multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor,
 							vetorPrototipos.indexOf(neuronioVencedor))),vetorPrototipos.indexOf(neuronioVencedor));
-					System.out.println("valor vetor aux Trein ELSE: " + neuronioVencedor[0] + " " + neuronioVencedor[1]);
+					//System.out.println("valor vetor aux Trein ELSE: " + neuronioVencedor[0] + " " + neuronioVencedor[1]);
 				}
 				// vetorPrototipos.remove(index);
 				// vetorPrototipos.add(vetorAuxiliar);
+				neuronioVencedor = vetorAuxiliar;
 				atualizaVetorPrototipos(neuronioVencedor, index);
 				/**
 				 * Reduzir a taxa de aprendizado
@@ -286,6 +283,20 @@ public class LVQ {
 		res[res.length - 1] = this.vetorPrototipos.get(index)[this.vetorPrototipos.get(index).length - 1];
 		System.out.println(this.vetorPrototipos.get(index)[this.vetorPrototipos.get(index).length - 1]);
 		System.out.println("valor res: " + res[0] + " " + res[1]);
+		return res;
+	}
+	
+	/**
+	 * Funcao de subtracao de vetores que sera utilizada no treinamento dentro
+	 * da atualizacao dos pesos sinapticos - funcao auxiliar
+	 * @param vetor1
+	 * @param vetor2
+	 * @return
+	 */
+	public double[] subtracaoDeVetoresSemIndex(double[] vetor1, double[] vetor2) {
+		double[] res = vetor1;
+		for (int i = 0; i < res.length - 1; i++)
+			res[i] = vetor1[i] - vetor2[i];
 		return res;
 	}
 

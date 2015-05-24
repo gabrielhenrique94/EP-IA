@@ -19,11 +19,11 @@ public class Main {
 		
 		int numNeuroniosSaida = 1; // DEPOIS VEMOS O QUE FAZER COM ISSO
 		
-		double alpha = 0.5; //Recer por arg depois - valor que tava escrito como normal
+		double alpha = 0.9; //Recer por arg depois - valor que tava escrito como normal
 		
 		boolean alphaEstatico = false; // Args tbm
 		
-		int maxT = 1000; // Args, máximo de épocas que se deve executar
+		int maxT = 3000; // Args, maximo de epocas que se deve executar
 		
 		double erroAceitavel = 0.05; //(5% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
 		
