@@ -124,7 +124,7 @@ public class LVQ {
 		this.numNeur = this.numNeurPorClasse * saidas;
 		int cont = 0;
 		double[] vetor;
-		for (int i = 0; i <= this.numNeur; i++) {
+		for (int i = 0; i < this.numNeur; i++) {
 			this.vetorPrototipos.add(geraVetorAleatorio());
 		}
 		for (int i = 0; i < this.vetorPrototipos.size(); i++) {
@@ -423,7 +423,7 @@ public class LVQ {
 		double distMin = 100000000;
 		double dist = 0;
 		double neurVencedor[] = new double[this.entradas.get(0).length];
-		for (int i = 0; i < this.vetorPrototipos.size() - 1; i++) {
+		for (int i = 0; i < this.vetorPrototipos.size(); i++) {
 			dist = calculaDistEuclidiana(this.entradas.get(j),
 					this.vetorPrototipos.get(i));
 			if (dist <= distMin) {
