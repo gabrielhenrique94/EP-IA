@@ -126,7 +126,7 @@ public class Holdout {
 	public void AplicaHoldout() {
 		JuntandoVetoresDeEntradas();
 		JuntandoVetoresDeClasses();
-		Juncao();
+		Juncao(entradas);
 		Random();
 		HoldoutEntradasClasses();
 		SeparaArrayListTreinamento();
@@ -174,9 +174,12 @@ public class Holdout {
 	 * Funcao para juntar num unico ArrayList as entradas e classes para
 	 * futuramente poder dar um random sem comprometer os dados
 	 */
-	public void Juncao() {
+	public void Juncao(ArrayList<double[]> entradas) {
 		// entradasComClasses
-		double[] auxiliar = new double[entradas.get(0).length + 1];
+		JuntandoVetoresDeEntradas();
+		JuntandoVetoresDeClasses();
+		int t = entradas.get(0).length;
+		double[] auxiliar = new double[t + 1];
 		for (int j = 0; j < entradas.size(); j++) {
 			for (int i = 0; i < auxiliar.length - 1; i++) {
 				auxiliar[i] = entradas.get(j)[i];

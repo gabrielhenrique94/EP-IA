@@ -136,7 +136,7 @@ public class LVQ {
 		}
 	}
 	
-	//linha e a classe esperad,a coluna a que deu
+	//linha e a classe esperada, coluna a que deu
 	//mudar para 10 10 quando for rodas os dados certos
 	public void inicializaMatrizConfusao() {
 		this.matrizConfusao = new int[2][2]; 				
@@ -199,9 +199,8 @@ public class LVQ {
 				// System.out.print (vetorAuxiliar [k] + " ");
 				// }
 				System.out.println();
-				System.out.println(" classe esperada: " + classes.get(j)
-						+ " classe resultante: "
-						+ neuronioVencedor[neuronioVencedor.length - 1]);
+				System.out.println(" classe esperada: " + classes.get(j) + " classe resultante: " 
+				+ neuronioVencedor[neuronioVencedor.length - 1]);
 				System.out.println("valor vetor aux Trein ANTES: "
 						+ neuronioVencedor[0] + " " + neuronioVencedor[1]);
 				if ((int) neuronioVencedor[neuronioVencedor.length - 1] == this.classes.get(j)) { 
@@ -209,28 +208,18 @@ public class LVQ {
 					// vetor de peso novo da j-esima unidade saida = vetor peso
 					// antigo + alfa(entrada da j-esima unidade - vetor peso
 					// antigo)
-					vetorAuxiliar = somaDeVetores(
-							neuronioVencedor,
-							multiplicaAlfa(subtracaoDeVetores(entradaAtual,
-									neuronioVencedor,
+					vetorAuxiliar = somaDeVetores(neuronioVencedor,multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor,
 									vetorPrototipos.indexOf(neuronioVencedor))));
-					System.out.println("valor vetor aux Trein IF: "
-							+ vetorAuxiliar[0] + " " + vetorAuxiliar[1]);
+					System.out.println("valor vetor aux Trein IF: "+ vetorAuxiliar[0] + " " + vetorAuxiliar[1]);
 
 				} else {
 					// afasta
 					// vetor de peso novo da j-esima unidade saida = vetor peso
 					// antigo - alfa(entrada da j-esima unidade - vetor peso
 					// antigo)
-					vetorAuxiliar = subtracaoDeVetores(
-							neuronioVencedor,
-							multiplicaAlfa(subtracaoDeVetores(entradaAtual,
-									neuronioVencedor,
-									vetorPrototipos.indexOf(neuronioVencedor))),
-							vetorPrototipos.indexOf(neuronioVencedor));
-					System.out.println("valor vetor aux Trein ELSE: "
-							+ vetorAuxiliar[0] + " " + vetorAuxiliar[1]);
-
+					vetorAuxiliar = subtracaoDeVetores(neuronioVencedor, multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor,
+							vetorPrototipos.indexOf(neuronioVencedor))),vetorPrototipos.indexOf(neuronioVencedor));
+					System.out.println("valor vetor aux Trein ELSE: " + vetorAuxiliar[0] + " " + vetorAuxiliar[1]);
 				}
 				// vetorPrototipos.remove(index);
 				// vetorPrototipos.add(vetorAuxiliar);
@@ -238,9 +227,9 @@ public class LVQ {
 				/**
 				 * Reduzir a taxa de aprendizado
 				 */
-				// atualizaAlfaSimples();
+				atualizaAlfaSimples();
 				System.out.println("VALOR ATUAL ALFA: " + alfaRotativo);
-				atualizaAlfaMonot(this.epocas, this.max_epocas);
+				//atualizaAlfaMonot(this.epocas, this.max_epocas);
 
 			}
 			System.out.println("EPOCAS " + epocas);
