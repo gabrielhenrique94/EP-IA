@@ -164,6 +164,7 @@ public class LVQ {
 	/**
 	 * Funcao para treinamento da rede
 	 */
+	/*
 	public void treinamentoLVQ() {
 		 //Inicializando o conjunto de prototipos
 		criaVetorPrototipos(saidas);
@@ -182,7 +183,7 @@ public class LVQ {
 		//MUDAR
 		// quando faz a subtracao para afastar, por algum motivo subliminar n ta atualizando
 		//quando distancia maior que 1, n atualiza tb - talvez esteja definido para n atualizar em caso assim, irei conferir
-
+	
 		//Determinacacao de condicao de parada Numero Fixo de iteracoes
 		//(max_Epocas) ou valor minimo taxa de aprendizado(alfaRotativo)
 		while (this.epocas <= this.max_epocas || this.alfaRotativo == 0.0001) {								
@@ -204,31 +205,29 @@ public class LVQ {
 				// System.out.print (vetorAuxiliar [k] + " ");
 				// }
 				System.out.println();
-				System.out.println(" classe esperada: " + classes.get(j) + " classe resultante: " 
-				+ neuronioVencedor[neuronioVencedor.length - 1]);
+				System.out.println(" classe esperada: " + classes.get(j) + " classe resultante: " + neuronioVencedor[neuronioVencedor.length - 1]);
 				System.out.println("valor vetor aux Trein ANTES: "
 						+ neuronioVencedor[0] + " " + neuronioVencedor[1]);
 				if ((int) neuronioVencedor[neuronioVencedor.length - 1] == this.classes.get(j)) { 
 					// Aproxima
 					// vetor de peso novo da j-esima unidade saida = vetor peso antigo + alfa(entrada da j-esima unidade - vetor peso antigo)
-					vetorAuxiliar = somaDeVetores(neuronioVencedor,multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor,
-									vetorPrototipos.indexOf(neuronioVencedor))));
+					vetorAuxiliar = somaDeVetores(neuronioVencedor,multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor, vetorPrototipos.indexOf(neuronioVencedor))));
 					//System.out.println("valor vetor aux Trein IF: "+ neuronioVencedor[0] + " " + neuronioVencedor[1]);
-
+	
 				} else {
 					// afasta
 					// vetor de peso novo da j-esima unidade saida = vetor peso antigo - alfa(entrada da j-esima unidade - vetor peso antigo)
-					vetorAuxiliar = subtracaoDeVetores(neuronioVencedor, multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor,
-							vetorPrototipos.indexOf(neuronioVencedor))),vetorPrototipos.indexOf(neuronioVencedor));
+					vetorAuxiliar = subtracaoDeVetores(neuronioVencedor, multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor,vetorPrototipos.indexOf(neuronioVencedor))),vetorPrototipos.indexOf(neuronioVencedor));
 					//System.out.println("valor vetor aux Trein ELSE: " + neuronioVencedor[0] + " " + neuronioVencedor[1]);
+					
 				}
 				// vetorPrototipos.remove(index);
 				// vetorPrototipos.add(vetorAuxiliar);
 				neuronioVencedor = vetorAuxiliar;
 				atualizaVetorPrototipos(neuronioVencedor, index);
-				/**
-				 * Reduzir a taxa de aprendizado
-				 */
+				
+				//Reduzir a taxa de aprendizado
+				
 				atualizaAlfaSimples();
 				System.out.println("VALOR ATUAL ALFA: " + alfaRotativo);
 				//atualizaAlfaMonot(this.epocas, this.max_epocas);
@@ -245,10 +244,72 @@ public class LVQ {
 		}
 
 	}
+	*/
+	
+	public void treinamentoLVQ() {
+		 //Inicializando o conjunto de prototipos
+		criaVetorPrototipos(saidas);
+		this.alfaRotativo = this.alfaInicial;
+		double[] vet;
+		
+		//O QUE TA DANDO ERRADO
+		//MUDAR
+		// quando faz a subtracao para afastar, por algum motivo subliminar n ta atualizando
+		//quando distancia maior que 1, n atualiza tb - talvez esteja definido para n atualizar em caso assim, irei conferir
+	
+		//Determinacacao de condicao de parada Numero Fixo de iteracoes
+		//(max_Epocas) ou valor minimo taxa de aprendizado(alfaRotativo)
+		while (this.epocas <= this.max_epocas) {								
+			for (int j = 0; j < this.entradas.size(); j++) {
+				double[] vetorAuxiliar;
+				double[] entradaAtual = this.entradas.get(j);
+				//Imprimindo entradaAtual
+				System.out.print("Imprimindo Entrada Atual: ");
+				for (int k = 0; k < entradaAtual.length; k++) {
+					System.out.print(entradaAtual[k] + " ");
+				}
+				System.out.println();
+				double[] neuronioVencedor = pegaNeurVencedor(j); 
+				int index = this.vetorPrototipos.indexOf(neuronioVencedor);
+				
+				System.out.println("Classe esperada: " + classes.get(j) + " Classe resultante: " + neuronioVencedor[neuronioVencedor.length - 1]);
+				System.out.println("Coordenadas do neurônio vencedor antes da atualização: " + neuronioVencedor[0] + " " + neuronioVencedor[1]);
+				
+				if ((int) neuronioVencedor[neuronioVencedor.length - 1] == this.classes.get(j)) { 
+					// Aproxima
+					// vetor de peso novo da j-esima unidade saida = vetor peso antigo + alfa(entrada da j-esima unidade - vetor peso antigo)
+					neuronioVencedor = somaDeVetores(neuronioVencedor, multiplicaAlfa(subtracaoDeVetoresSemIndex(entradaAtual, neuronioVencedor)));
+				} else {
+					// afasta
+					// vetor de peso novo da j-esima unidade saida = vetor peso antigo - alfa(entrada da j-esima unidade - vetor peso antigo)
+					neuronioVencedor = subtracaoDeVetoresSemIndex(neuronioVencedor, multiplicaAlfa(subtracaoDeVetoresSemIndex(entradaAtual, neuronioVencedor)));
+				}
+				atualizaVetorPrototipos(neuronioVencedor, index);
+				System.out.println("Coordenadas do neurônio vencedor após atualização: " + neuronioVencedor[0] + " " + neuronioVencedor[1]);
+				//Reduzir a taxa de aprendizado
+				
+				//atualizaAlfaSimples();
+				System.out.println("Valor Atual do Alfa: " + alfaRotativo);
+				atualizaAlfaMonot(this.epocas, this.max_epocas);
+				System.out.println();
+			}
+			System.out.println("EPOCAS " + epocas);
+			this.epocas++;
+		}
+		
+		System.out.println("Neurônios Ativados: (deveriam ser 0011)");
+		confereNeuroniosAtivados();
+		for (int i = 0; i < this.vetorNeuroniosAtivados.length; i++) {
+			System.out.println(vetorNeuroniosAtivados[i] + " ");
+		}
+		
+
+	}
+	
 
 	public void atualizaVetorPrototipos(double[] vetorAuxiliar, int index) {
 		for (int i = 0; i < vetorAuxiliar.length; i++) {
-			System.out.println("valor vetor aux: " + vetorAuxiliar[i]);
+			//System.out.println("valor vetor aux: " + vetorAuxiliar[i]);
 			this.vetorPrototipos.get(index)[i] = vetorAuxiliar[i];
 		}
 	}
@@ -419,14 +480,14 @@ public class LVQ {
 	public double calculaDistEuclidiana(double[] vetor, double[] vetorPesos) {
 		double distancia;
 		double soma = 0;
-		System.out.println("TESTE DIST");
+	//	System.out.println("TESTE DIST");
 
 		// Calcular a parte do somatorio da funcao
 		for (int i = 0; i < vetor.length - 1; i++) { 
 			soma += Math.pow(vetor[i] - vetorPesos[i], 2);
 		}
 		distancia = Math.pow(soma, (0.5));
-		System.out.println(distancia);
+	//	System.out.println(distancia);
 
 		return distancia;
 	}
