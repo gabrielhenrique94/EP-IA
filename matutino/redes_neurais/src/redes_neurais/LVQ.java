@@ -250,7 +250,6 @@ public class LVQ {
 		criaVetorPrototipos(saidas);
 		this.alfaRotativo = this.alfaInicial;
 			
-		
 		//fazendo o teste sem ser com o xor as classes resultantes dao em seguida sempre a mesma
 		
 		//Determinacacao de condicao de parada Numero Fixo de iteracoes
@@ -269,13 +268,13 @@ public class LVQ {
 				
 				System.out.println("Classe esperada: " + classes.get(j) + " Classe resultante: " + neuronioVencedor[neuronioVencedor.length - 1]);
 				System.out.println("Coordenadas do neurônio vencedor antes da atualização: " + neuronioVencedor[0] + " " + neuronioVencedor[1]);
-				
+				double[] vetorAuxiliar;
 				/*
 				 *
 			//O QUE TA DANDO ERRADO se faz assim
 			//MUDAR
 			//Nao importa se usa distancia euclidiana ou de manhattan, a tendencia e dar os mesmo resultados
-			//o alfa nao simles esta estourando
+			//o alfa nao simples esta estourando
 			//so funciona com o alfa nao simples
 			//as coordenadas usando o alfa nao simples dao absurdamentes grandes
 			//com o alfa nao simples acerta na maioria das vezes, com o simples sempre erra = ou da 0000 ou 1111
@@ -295,19 +294,20 @@ public class LVQ {
 				if ((int) neuronioVencedor[neuronioVencedor.length - 1] == this.classes.get(j)) { 
 					// Aproxima
 					// vetor de peso novo da j-esima unidade saida = vetor peso antigo + alfa(entrada da j-esima unidade - vetor peso antigo)
-					neuronioVencedor = somaDeVetores(neuronioVencedor,multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor, vetorPrototipos.indexOf(neuronioVencedor))));
+					vetorAuxiliar = somaDeVetores(neuronioVencedor,multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor, vetorPrototipos.indexOf(neuronioVencedor))));
 				} else {
 					// afasta
 					// vetor de peso novo da j-esima unidade saida = vetor peso antigo - alfa(entrada da j-esima unidade - vetor peso antigo)
-					neuronioVencedor = subtracaoDeVetores(neuronioVencedor, multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor,vetorPrototipos.indexOf(neuronioVencedor))),vetorPrototipos.indexOf(neuronioVencedor));
+					vetorAuxiliar = subtracaoDeVetores(neuronioVencedor, multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor,vetorPrototipos.indexOf(neuronioVencedor))),vetorPrototipos.indexOf(neuronioVencedor));
 				}
+				neuronioVencedor = vetorAuxiliar;
 				atualizaVetorPrototipos(neuronioVencedor, index);
 				System.out.println("Coordenadas do neurônio vencedor após atualização: " + neuronioVencedor[0] + " " + neuronioVencedor[1]);
 				//Reduzir a taxa de aprendizado
 				
-				//atualizaAlfaSimples();
+				atualizaAlfaSimples();
 				System.out.println("Valor Atual do Alfa: " + alfaRotativo);
-				atualizaAlfaMonot(this.epocas, this.max_epocas);
+				//atualizaAlfaMonot(this.epocas, this.max_epocas);
 				System.out.println();
 			}
 			System.out.println("EPOCAS " + epocas);
@@ -480,7 +480,7 @@ public class LVQ {
 	 * Funcao para atualizar o alfa 
 	 */
 	public void atualizaAlfaSimples() {
-		this.alfaRotativo = this.alfaRotativo * 0.999; 
+		this.alfaRotativo = this.alfaRotativo * 0.9; 
 	}
 
 	/**
