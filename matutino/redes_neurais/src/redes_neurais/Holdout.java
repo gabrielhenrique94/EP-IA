@@ -106,6 +106,18 @@ public class Holdout {
 		this.classesTreinamento = classesTreinamento;
 		this.entradasTeste = entradasTeste;
 		this.classesTeste = classesTeste;
+		this.classes = new ArrayList<Double>();
+		this.entradas = new ArrayList<double[]>();
+		this.entradasComClasses = new ArrayList<double[]>();
+		this.entradasHoldoutTreinamento = new ArrayList<double[]>();
+		this.entradasHoldoutTeste = new ArrayList<double[]>();
+		this.entradasHoldoutValidacao = new ArrayList<double[]>();
+		this.entradasFinaisTreinamento = new ArrayList<double[]>();
+		this.entradasFinaisTeste = new ArrayList<double[]>();
+		this.entradasFinaisValidacao = new ArrayList<double[]>();
+		this.classesFinaisTreinamento = new ArrayList<Double>();
+		this.classesFinaisTeste = new ArrayList<Double>();
+		this.classesFinaisValidacao = new ArrayList<Double>();
 	}
 	
 	/**
@@ -127,6 +139,8 @@ public class Holdout {
 	 * entradas de Treinamento e o que estava as entradas de Teste
 	 */
 	public void JuntandoVetoresDeEntradas() {
+		this.entradasTreinamento = new ArrayList<double[]>();
+		this.entradasTeste = new ArrayList<double[]>();
 		int tamanhoEntradasTreinamento = entradasTreinamento.size();
 		int tamanhoEntradasTeste = entradasTeste.size();
 
@@ -143,6 +157,8 @@ public class Holdout {
 	 * classes de Treinamento e o que estava as classes de Teste
 	 */
 	public void JuntandoVetoresDeClasses() {
+		this.classesTreinamento = new ArrayList<Double>();
+		this.classesTeste = new ArrayList<Double>();
 		int tamanhoClassesTreinamento = classesTreinamento.size();
 		int tamanhoClassesTeste = classesTeste.size();
 

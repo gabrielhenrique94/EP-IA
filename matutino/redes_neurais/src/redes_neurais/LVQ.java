@@ -204,8 +204,7 @@ public class LVQ {
 						+ neuronioVencedor[neuronioVencedor.length - 1]);
 				System.out.println("valor vetor aux Trein ANTES: "
 						+ neuronioVencedor[0] + " " + neuronioVencedor[1]);
-				if ((int) neuronioVencedor[neuronioVencedor.length - 1] == this.classes
-						.get(j)) { // CONDI��O OK!
+				if ((int) neuronioVencedor[neuronioVencedor.length - 1] == this.classes.get(j)) { 
 					// Aproxima
 					// vetor de peso novo da j-esima unidade saida = vetor peso
 					// antigo + alfa(entrada da j-esima unidade - vetor peso
@@ -246,7 +245,6 @@ public class LVQ {
 			}
 			System.out.println("EPOCAS " + epocas);
 			this.epocas++;
-
 		}
 		confereNeuroniosAtivados();
 		// reduzNeuronios();
@@ -281,7 +279,6 @@ public class LVQ {
 	/**
 	 * Funcao de subtracao de vetores que sera utilizada no treinamento dentro
 	 * da atualizacao dos pesos sinapticos - funcao auxiliar
-	 * 
 	 * @param vetor1
 	 * @param vetor2
 	 * @return
@@ -361,8 +358,8 @@ public class LVQ {
 	}
 
 	public void reduzNeuronios() {
-		// Criar fun��o para reduzir quantidade de neuronios!!
-		// Colocar os novos neuronios em vetorPrototiposReduzido!!!
+		// Criar funcao para reduzir quantidade de neuronios
+		// Colocar os novos neuronios em vetorPrototiposReduzido
 	}
 
 	private void montaMatrizConfusao() {
@@ -387,7 +384,6 @@ public class LVQ {
 				neurVencedor = this.vetorPrototiposReduzido.get(i);
 			}
 		}
-
 		return neurVencedor;
 	}
 
@@ -395,7 +391,7 @@ public class LVQ {
 	 * Funcao para atualizar o alfa
 	 */
 	public void atualizaAlfaSimples() {
-		this.alfaRotativo = this.alfaRotativo * 0.9; // verificar
+		this.alfaRotativo = this.alfaRotativo * 0.9; 
 	}
 
 	/**
@@ -405,9 +401,7 @@ public class LVQ {
 	 * @param interacaoMax
 	 */
 	public void atualizaAlfaMonot(int interacao, int interacaoMax) {
-		this.alfaRotativo = this.alfaInicial * (1.0 - ((double) interacao))
-				/ ((double) interacaoMax); // Confirmar funcao!!
-
+		this.alfaRotativo = this.alfaInicial * (1.0 - ((double) interacao))/ ((double) interacaoMax); 
 	}
 
 	/**
@@ -444,9 +438,7 @@ public class LVQ {
 		double distancia = 0;
 		//VERIFICAR
 		for (int i = 0; i < vetor.length - 1; i++) {
-			// Math.abs(x1-x2) + Math.abs(y1-y2)
-			// usa o valor absoluto (modulo), assim nao precisa elevar ao
-			// quadrado como na distancia euclidiana nem tirar a raiz
+			// usa o valor absoluto (modulo)
 			distancia += (Math.abs(vetor[i] - vetorPesos[i]));
 		}
 		System.out.println(distancia);
