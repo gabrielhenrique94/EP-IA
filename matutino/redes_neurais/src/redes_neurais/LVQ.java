@@ -88,8 +88,6 @@ public class LVQ {
 	 * Funcao de treinamento
 	 * **/
 	public void testa() {
-		// System.out.println("---");
-		// criaVetorPrototipos();
 		double[] vet;
 		for (int i = 0; i < this.numNeur; i++) {
 			vet = this.vetorPrototipos.get(i);
@@ -133,7 +131,6 @@ public class LVQ {
 		double[] vetor;
 		if (tipoVetor == 0){
 			for (int i = 0; i < this.numNeur; i++) {
-				//this.vetorPrototipos.add(geraVetorAleatorio());
 				this.vetorPrototipos.add(geraVetorZerado());
 			}
 		}
