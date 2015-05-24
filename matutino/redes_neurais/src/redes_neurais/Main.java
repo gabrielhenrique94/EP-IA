@@ -23,7 +23,7 @@ public class Main {
 		
 		boolean alphaEstatico = false; // Args tbm
 		
-		int maxT = 10; // Args, maximo de epocas que se deve executar
+		int maxT = 1000; // Args, maximo de epocas que se deve executar
 		
 		double erroAceitavel = 0.05; //(5% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
 		
@@ -102,14 +102,16 @@ public class Main {
 		//redeMLP.treinar();
 		
 		//saidas = 10
+		//tipoVetor = 0 vetores zerado - = 1 vetores aleatorios
 		/*
-		LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), 10,2, alpha, erroAceitavel, 10);
+		LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), 10,2, alpha, erroAceitavel, 10, 0);
 		teste.treinamentoLVQ();
 		*/
 		
 		
 		//saidas = 2
-		LVQ testeXOR = new LVQ(xorProblem, xorClazz, maxT, 1, alpha, erroAceitavel, 2);
+		//tipoVetor = 0 vetores zerado - = 1 vetores aleatorios
+		LVQ testeXOR = new LVQ(xorProblem, xorClazz, maxT, 1, alpha, erroAceitavel, 2, 0);
 		testeXOR.treinamentoLVQ();
 		//xorProblem matrizes treinamento
 		for(int i = 0; i < xorProblem.size(); i++)
