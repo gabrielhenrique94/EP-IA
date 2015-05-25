@@ -149,7 +149,7 @@ public class Holdout {
 		}
 		for (int j = 0; j < entradasTeste.size(); j++) {
 			entradas.add(entradasTeste.get(j));
-		}
+		}		
 	}
 
 	/**
@@ -254,10 +254,9 @@ public class Holdout {
 	 * sendo utilizado assim na LVQ e MLP
 	 */
 	public void SeparaArrayListTreinamento() {
-
-		double[] auxiliar = new double[entradasHoldoutTreinamento.get(0).length - 1];
 		Double classe;
 		for (int j = 0; j < entradasHoldoutTreinamento.size(); j++) {
+			double[] auxiliar = new double[entradasHoldoutTreinamento.get(0).length - 1];
 			for (int i = 0; i < auxiliar.length; i++) {
 				auxiliar[i] = entradasHoldoutTreinamento.get(j)[i];
 			}
@@ -268,7 +267,7 @@ public class Holdout {
 		for(int i = 0; i < classesFinaisTreinamento.size(); i++){
 			//System.out.println(classesFinaisTreinamento.get(i));
 		}
-		
+
 	}
 
 	/**
@@ -277,9 +276,10 @@ public class Holdout {
 	 */
 	public void SeparaArrayListTeste() {
 
-		double[] auxiliar = new double[entradasHoldoutTeste.get(0).length - 1];
+		
 		Double classe;
 		for (int j = 0; j < entradasHoldoutTeste.size(); j++) {
+			double[] auxiliar = new double[entradasHoldoutTeste.get(0).length - 1];
 			for (int i = 0; i < auxiliar.length; i++) {
 				auxiliar[i] = entradasHoldoutTeste.get(j)[i];
 			}
@@ -291,6 +291,7 @@ public class Holdout {
 		for(int i = 0; i < classesFinaisTeste.size(); i++){
 		//	System.out.println(classesFinaisTeste.get(i));
 		}
+
 	}
 
 	/**
@@ -299,9 +300,9 @@ public class Holdout {
 	 */
 	public void SeparaArrayListValidacao() {
 
-		double[] auxiliar = new double[entradasHoldoutValidacao.get(0).length - 1];
 		Double classe;
 		for (int j = 0; j < entradasHoldoutValidacao.size(); j++) {
+			double[] auxiliar = new double[entradasHoldoutValidacao.get(0).length - 1];
 			for (int i = 0; i < auxiliar.length; i++) {
 				auxiliar[i] = entradasHoldoutValidacao.get(j)[i];
 			}
