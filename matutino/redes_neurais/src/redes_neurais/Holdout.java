@@ -169,14 +169,24 @@ public class Holdout {
 	 */
 	public void Juncao() {
 		// entradasComClasses
+		Double a = 0.0;
 		int t = entradas.get(0).length;
 		double[] auxiliar = new double[t + 1];
 		for (int j = 0; j < entradas.size(); j++) {
 			for (int i = 0; i < auxiliar.length - 1; i++) {
 				auxiliar[i] = entradas.get(j)[i];
 			}
+			a = classes.get(j);
 			auxiliar[auxiliar.length - 1] = classes.get(j);
+			System.out.println(auxiliar[auxiliar.length - 1]);
+			System.out.println(auxiliar[auxiliar.length - 2]);
 			entradasComClasses.add(auxiliar);
+			System.out.println("ROTULOS ANTES DA SEPARACAO E HOLDOUT:" + entradasComClasses.get(j)[entradasComClasses.get(j).length-1]);
+			for(int i = 1; i < 2; i++){
+				System.out.println("EntradasComClasses: ");
+				for(int k = 0; k < entradasComClasses.get(i).length; k++)
+				System.out.println(entradasComClasses.get(i)[k]);
+			}
 		}
 	}
 
@@ -192,6 +202,9 @@ public class Holdout {
 	 * Holdout EntradascomClasses 60% treinamento 20% teste 20% validacao
 	 */
 	public void HoldoutEntradasClasses() {
+		for(int i = 0; i < entradasComClasses.size(); i++){
+			//System.out.println("ROTULOS ANTES DA SEPARACAO E HOLDOUT:" + entradasComClasses.get(i)[entradasComClasses.get(i).length - 1]);
+		}
 
 		// numero de ocorrencias de cada classe
 		int[] numeroOcorrencias = new int[10];
@@ -219,8 +232,12 @@ public class Holdout {
 			if (tamanhoTreinamento[rotulo] == 0 && tamanhoTeste[rotulo] > 0) {
 				entradasHoldoutTeste.add(entradasComClasses.get(i));
 				tamanhoTeste[rotulo]--;
-			} else
+			} 
+			if(tamanhoTreinamento[rotulo] == 0 && tamanhoTeste[rotulo] == 00 && tamanhoValidacao[rotulo] > 0){
 				entradasHoldoutValidacao.add(entradasComClasses.get(i));
+				tamanhoValidacao[rotulo]--;
+			}
+		
 		}
 
 		int tamanhoFinal = entradasHoldoutTreinamento.size()
@@ -255,6 +272,10 @@ public class Holdout {
 			classesFinaisTreinamento.add(classe);
 			entradasFinaisTreinamento.add(auxiliar);
 		}
+		for(int i = 0; i < classesFinaisTreinamento.size(); i++){
+			//System.out.println(classesFinaisTreinamento.get(i));
+		}
+		
 	}
 
 	/**
@@ -272,6 +293,10 @@ public class Holdout {
 			classe = entradasHoldoutTeste.get(j)[auxiliar.length];
 			classesFinaisTeste.add(classe);
 			entradasFinaisTeste.add(auxiliar);
+		}
+		System.out.println("Classes Finais Teste");
+		for(int i = 0; i < classesFinaisTeste.size(); i++){
+		//	System.out.println(classesFinaisTeste.get(i));
 		}
 	}
 

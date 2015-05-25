@@ -23,7 +23,7 @@ public class Main {
 		
 		boolean alphaEstatico = false; // Args tbm
 		
-		int maxT = 100; // Args, maximo de epocas que se deve executar
+		int maxT = 1000; // Args, maximo de epocas que se deve executar
 		
 		double erroAceitavel = 0.05; //(5% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
 		
@@ -100,29 +100,28 @@ public class Main {
 		//numNeuroniosSaida, alpha, alphaEstatico, maxT, erroAceitavel);
 		//redeMLP.treinar();
 		
+		/*
 		//saidas = 10
 		//tipoVetor = 0 vetores zerado - = 1 vetores aleatorios
-		
-		LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), 10,2, alpha, erroAceitavel, 10, 0);
-		teste.treinamentoLVQ();
-		
-		
-		/*
-		
-		//LVQ holdout
-		LVQ teste = new LVQ(hldt.getentradasFinaisTreinamento(),hldt.getclassesFinaisTreinamento(), 10, 10, alpha, erroAceitavel, 10, 0);
+		LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT, 50, alpha, erroAceitavel, 10, 0);
 		teste.treinamentoLVQ();
 		*/
 		
 		/*
+		//LVQ holdout
+		LVQ teste = new LVQ(hldt.getentradasFinaisTreinamento(),hldt.getclassesFinaisTreinamento(), maxT, 10, alpha, erroAceitavel, 10, 0);
+		teste.treinamentoLVQ();
+		*/
+		/*
 		//saidas = 2
 		//tipoVetor = 0 vetores zerado - = 1 vetores aleatorios
-		LVQ testeXOR = new LVQ(xorProblem, xorClazz, maxT, 1, alpha, erroAceitavel, 2, 1);
+		LVQ testeXOR = new LVQ(xorProblem, xorClazz, maxT, 50, alpha, erroAceitavel, 2, 1);
 		testeXOR.treinamentoLVQ();
 		//xorProblem matrizes treinamento
 		for(int i = 0; i < xorProblem.size(); i++)
 		System.out.println(testeXOR.Classificador(xorProblem.get(i)));
 		*/
+		
 	}
 
 }
