@@ -1,5 +1,8 @@
 package redes_neurais;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -171,22 +174,16 @@ public class Holdout {
 		// entradasComClasses
 		Double a = 0.0;
 		int t = entradas.get(0).length;
-		double[] auxiliar = new double[t + 1];
 		for (int j = 0; j < entradas.size(); j++) {
+			double[] auxiliar = new double[t + 1];
 			for (int i = 0; i < auxiliar.length - 1; i++) {
 				auxiliar[i] = entradas.get(j)[i];
 			}
-			a = classes.get(j);
+
 			auxiliar[auxiliar.length - 1] = classes.get(j);
-			System.out.println(auxiliar[auxiliar.length - 1]);
-			System.out.println(auxiliar[auxiliar.length - 2]);
 			entradasComClasses.add(auxiliar);
-			System.out.println("ROTULOS ANTES DA SEPARACAO E HOLDOUT:" + entradasComClasses.get(j)[entradasComClasses.get(j).length-1]);
-			for(int i = 1; i < 2; i++){
-				System.out.println("EntradasComClasses: ");
-				for(int k = 0; k < entradasComClasses.get(i).length; k++)
-				System.out.println(entradasComClasses.get(i)[k]);
-			}
+		
+		
 		}
 	}
 
@@ -194,7 +191,6 @@ public class Holdout {
 	 * Funcao para embaralhar ArrayList que contem entradas + classes
 	 */
 	public void Random() {
-
 		Collections.shuffle(entradasComClasses);
 	}
 
@@ -202,10 +198,6 @@ public class Holdout {
 	 * Holdout EntradascomClasses 60% treinamento 20% teste 20% validacao
 	 */
 	public void HoldoutEntradasClasses() {
-		for(int i = 0; i < entradasComClasses.size(); i++){
-			//System.out.println("ROTULOS ANTES DA SEPARACAO E HOLDOUT:" + entradasComClasses.get(i)[entradasComClasses.get(i).length - 1]);
-		}
-
 		// numero de ocorrencias de cada classe
 		int[] numeroOcorrencias = new int[10];
 
@@ -249,7 +241,8 @@ public class Holdout {
 			if (i < entradasComClasses.size()) {
 				entradasHoldoutTeste.add(entradasComClasses.get(i));
 				i++;
-			} else {
+			}
+			if(i < entradasComClasses.size()){
 				entradasHoldoutValidacao.add(entradasComClasses.get(i));
 				i++;
 			}
