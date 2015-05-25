@@ -23,7 +23,7 @@ public class Main {
 		
 		boolean alphaEstatico = false; // Args tbm
 		
-		int maxT = 1000; // Args, maximo de epocas que se deve executar
+		int maxT = 1; // Args, maximo de epocas que se deve executar
 		
 		double erroAceitavel = 0.05; //(5% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
 		
@@ -110,12 +110,12 @@ public class Main {
 		hldt.getclassesFinaisValidacao();- matrizes de entrada de validacao
 		*/
 		
-		/*
+		
 		//saidas = 10
 		//tipoVetor = 0 vetores zerado - = 1 vetores aleatorios
 		LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT, 50, alpha, erroAceitavel, 10, 0);
 		teste.treinamentoLVQ();
-		*/
+		
 		
 		/*
 		//LVQ holdout

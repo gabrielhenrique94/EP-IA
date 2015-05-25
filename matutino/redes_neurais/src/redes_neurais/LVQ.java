@@ -103,6 +103,14 @@ public class LVQ {
 		}
 		System.out.println();
 		treinamentoLVQ();
+		for (int i = 0; i < this.numNeur; i++) {
+			vet = this.vetorPrototipos.get(i);
+			System.out.print(i + " ");
+			for (int j = 0; j < vet.length; j++) {
+				System.out.print(vet[j] + " ");
+			}
+			System.out.println();
+		}
 	}
 	
 	/**
@@ -168,7 +176,7 @@ public class LVQ {
 		Random rdm = new Random();
 		for (int i = 0; i < vetor.length; i++) {
 			//descomentar os numeros para gerar vetor de - 1 a 1
-			vetor[i] = rdm.nextDouble() /* * 2 - 1 */; 
+			vetor[i] = rdm.nextDouble()  * 2 - 1 ; 
 		}
 		return vetor;
 	}
@@ -210,14 +218,14 @@ public class LVQ {
 		//(max_Epocas) ou valor minimo taxa de aprendizado(alfaRotativo)
 		while (this.epocas <= this.max_epocas || this.alfaRotativo >= 0.0001) {								
 			for (int j = 0; j < this.entradas.size(); j++) {
-				double[] vetorAuxiliar, vetorAuxiliarX;
+				double[] vetorAuxiliar= new double [entradas.get(j).length+1];
 				System.out.println();
 				double[] entradaAtual = this.entradas.get(j);
-				vetorAuxiliarX = entradaAtual;
-				for (int k = 0; k < vetorAuxiliarX.length; k++) {
-					System.out.print(vetorAuxiliarX[k] + " ");
+				
+				for (int k = 0; k < entradaAtual.length; k++) {
+					System.out.print(entradaAtual[k] + " ");
 				}
-				System.out.println();
+
 				double[] neuronioVencedor = pegaNeurVencedor(j); 
 				int index = this.vetorPrototipos.indexOf(neuronioVencedor);
 				System.out.println();
@@ -232,24 +240,26 @@ public class LVQ {
 				if ((int) neuronioVencedor[neuronioVencedor.length - 1] == this.classes.get(j)) { 
 					// Aproxima
 					// vetor de peso novo da j-esima unidade saida = vetor peso antigo + alfa(entrada da j-esima unidade - vetor peso antigo)
-					vetorAuxiliar = somaDeVetores(neuronioVencedor,multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor, vetorPrototipos.indexOf(neuronioVencedor))));
+					vetorAuxiliar = somaDeVetores(neuronioVencedor,multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor)));
 					System.out.println("valor vetor aux Trein IF: "+ neuronioVencedor[0] + " " + neuronioVencedor[1]);
 	
 				} else {
 					// afasta
 					// vetor de peso novo da j-esima unidade saida = vetor peso antigo - alfa(entrada da j-esima unidade - vetor peso antigo)
-					vetorAuxiliar = subtracaoDeVetores(neuronioVencedor, multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor,vetorPrototipos.indexOf(neuronioVencedor))),vetorPrototipos.indexOf(neuronioVencedor));
+					vetorAuxiliar = subtracaoDeVetores(multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor)),neuronioVencedor);
 					System.out.println("valor vetor aux Trein ELSE: " + neuronioVencedor[0] + " " + neuronioVencedor[1]);
 				}
 
+				vetorAuxiliar[vetorAuxiliar.length-1]=neuronioVencedor[neuronioVencedor.length-1];
 				neuronioVencedor = vetorAuxiliar;
+				
 				atualizaVetorPrototipos(neuronioVencedor, index);
 				
 				//Reduzir a taxa de aprendizado
 				
 				//atualizaAlfaSimples();
 				
-
+			
 			}
 			System.out.println("VALOR ATUAL ALFA: " + alfaRotativo);
 			atualizaAlfaMonot(this.epocas, this.max_epocas);
@@ -262,7 +272,7 @@ public class LVQ {
 		for (int i = 0; i < this.vetorNeuroniosAtivados.length; i++) {
 			System.out.print(vetorNeuroniosAtivados[i] + " ");
 		}
-		System.out.println();
+
 	}
 	
 	/**
@@ -285,8 +295,8 @@ public class LVQ {
 	 * @return
 	 */
 	public double[] somaDeVetores(double[] neuVencedor, double[] entrada) {
-		double[] res = neuVencedor;
-		for (int i = 0; i < res.length - 1; i++)
+		double[] res = new double[vetorPrototipos.get(0).length];
+		for (int i = 0; i < res.length-1; i++)
 			res[i] = neuVencedor[i] + entrada[i];
 		return res;
 	}
@@ -298,15 +308,12 @@ public class LVQ {
 	 * @param vetor2
 	 * @return
 	 */
-	public double[] subtracaoDeVetores(double[] vetor1, double[] vetor2,int index) {
-	//	System.out.println("valor vetor1: " + vetor1[0] + " " + vetor1[1]);
-		//System.out.println("valor vetor2: " + vetor2[0] + " " + vetor2[1]);
-		double[] res = new double[this.vetorPrototipos.get(index).length];
-		for (int i = 0; i < res.length - 1; i++)
+	public double[] subtracaoDeVetores(double[] vetor1, double[] vetor2) {
+
+		double[] res = new double[vetorPrototipos.get(0).length];
+		for (int i = 0; i < res.length-1; i++)
 			res[i] = vetor1[i] - vetor2[i];
-		res[res.length - 1] = this.vetorPrototipos.get(index)[this.vetorPrototipos.get(index).length - 1];
-	//	System.out.println(this.vetorPrototipos.get(index)[this.vetorPrototipos.get(index).length - 1]);
-		//System.out.println("valor res: " + res[0] + " " + res[1]);
+		
 		return res;
 	}
 	
@@ -319,7 +326,7 @@ public class LVQ {
 	 */
 	public double[] subtracaoDeVetoresSemIndex(double[] vetor1, double[] vetor2) {
 		double[] res = vetor1;
-		for (int i = 0; i < res.length - 1; i++)
+		for (int i = 0; i < res.length-1 ; i++)
 			res[i] = vetor1[i] - vetor2[i];
 		return res;
 	}
@@ -334,7 +341,7 @@ public class LVQ {
 	 */
 	public double[] multiplicaAlfa(double[] vetor) {
 		double res[] = vetor;
-		for (int i = 0; i < res.length - 1; i++)
+		for (int i = 0; i < res.length ; i++)
 			res[i] = vetor[i] * this.alfaRotativo;
 
 		return res;
@@ -346,7 +353,7 @@ public class LVQ {
 	 */
 	public void atualizaVetorNeurVencedores(int j) {
 		inicializarVetorNeurAtivados();
-		double[] neurVencedor = pegaNeurVencedor(j);
+		double[] neurVencedor = pegaNeurVencedorV2(j);
 		int index = this.vetorPrototipos.indexOf(neurVencedor);
 		System.out.println("neu venc: "
 				+ this.vetorPrototipos.indexOf(neurVencedor) + " "
@@ -377,6 +384,26 @@ public class LVQ {
 		}
 		return neurVencedor;
 	}
+	/**
+	 * Funcao que calcula o arg min retorna o vetor prototipo mais proximo do dado
+	 * @param j
+	 * @return
+	 */
+	public double[] pegaNeurVencedorV2(int j) {
+		double distMin = 100000000;
+		double dist = 0;
+		double neurVencedor[] = new double[this.entradas.get(0).length];
+
+		for (int i = 0; i < this.vetorPrototipos.size(); i++) {
+			
+			dist = calculaDistEuclidiana(this.entradas.get(j), this.vetorPrototipos.get(i));
+			if (dist < distMin) {
+				distMin = dist;
+				neurVencedor = this.vetorPrototipos.get(i);
+			}
+		}
+		return neurVencedor;
+	}
 	
 	/**
 	 * Funcao que calcula o neuronio mais proximo
@@ -394,6 +421,7 @@ public class LVQ {
 		}
 		return neurVencedor;
 	}
+	
 
 	/**
 	 * Confere quais neuronios sao ativados
@@ -450,7 +478,7 @@ public class LVQ {
 	 * @param interacaoMax
 	 */
 	public void atualizaAlfaMonot(int interacao, int interacaoMax) {
-		this.alfaRotativo = this.alfaInicial * (1.0 - (double)((double) interacao)/ (double) interacaoMax); 
+		this.alfaRotativo = this.alfaInicial * (1.0 - (double)(((double) interacao)/ (double) interacaoMax)); 
 	}
 	
 
@@ -462,13 +490,13 @@ public class LVQ {
 	 * @return
 	 */
 	public double calculaDistEuclidiana(double[] vetor, double[] vetorPesos) {
-		double distancia;
+		double distancia=0;
 		double soma = 0;
 	//	System.out.println("TESTE DIST");
 
 		// Calcular a parte do somatorio da funcao
-		for (int i = 0; i < vetor.length - 1; i++) { 
-			soma += Math.pow(vetor[i] - vetorPesos[i], 2);
+		for (int i = 0; i < vetorPesos.length - 1; i++) { 
+			soma += Math.pow((vetor[i] - vetorPesos[i]), 2);
 		}
 		distancia = Math.pow(soma, (0.5));
 	//	System.out.println(distancia);
