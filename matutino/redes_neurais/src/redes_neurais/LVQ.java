@@ -8,7 +8,7 @@ import java.util.Random;
 public class LVQ {
 
 	/**
-	 * Vetores com as classesTreinamento de classificacao
+	 * Vetores com as classes de classificacao
 	 * 
 	 */
 	private ArrayList<double[]> vetorPrototipos = new ArrayList<double[]>();
@@ -93,11 +93,30 @@ public class LVQ {
 	private int tipoVetor;
 
 	/**
-	 * Construtor do lvq
-	 * **/
-	public LVQ(ArrayList<double[]> entradasTreinamento, ArrayList<Double> classesTreinamento,
+	 * Construtor LVQ que utiliza Treinamento, Teste e Validacao
+	 * @param entradasTreinamento
+	 * @param classesTreinamento
+	 * @param entradasTeste
+	 * @param classesTeste
+	 * @param entradasValidacao
+	 * @param classesValidacao
+	 * @param epoca
+	 * @param numNeuronios
+	 * @param alfa
+	 * @param erro
+	 * @param saidas
+	 * @param tipoVetor
+	 * @param neuSaidas
+	 */
+	public LVQ(ArrayList<double[]> entradasTreinamento, ArrayList<Double> classesTreinamento, 
+			ArrayList<double[]> entradasTeste, ArrayList<Double> classesTeste, 
+			ArrayList<double[]> entradasValidacao, ArrayList<Double> classesValidacao, 
 			int epoca, int numNeuronios, double alfa, double erro, int saidas, int tipoVetor, int neuSaidas) {
 		this.entradasTreinamento = entradasTreinamento;
+		this.entradasTeste = entradasTeste;
+		this.classesTeste = classesTeste;
+		this.entradasValidacao = entradasValidacao;
+		this.classesValidacao = classesValidacao;
 		this.erroMax = erro;
 		this.max_epocas = epoca;
 		this.numNeurPorClasse = numNeuronios;
@@ -106,6 +125,32 @@ public class LVQ {
 		this.saidas = saidas;
 		this.tipoVetor = tipoVetor;
 		this.neuSaidas = neuSaidas;
+	}
+	
+	/**
+	 * Construtor LVQ que utiliza apenas um tipo de entrada
+	 * @param entradasTreinamento
+	 * @param classesTreinamento
+	 * @param epoca
+	 * @param numNeuronios
+	 * @param alfa
+	 * @param erro
+	 * @param saidas
+	 * @param tipoVetor
+	 * @param neuSaidas
+	 */
+	public LVQ(
+		ArrayList<double[]> entradasTreinamento, ArrayList<Double> classesTreinamento,  
+		int epoca, int numNeuronios, double alfa, double erro, int saidas, int tipoVetor, int neuSaidas) {
+	this.entradasTreinamento = entradasTreinamento;
+	this.erroMax = erro;
+	this.max_epocas = epoca;
+	this.numNeurPorClasse = numNeuronios;
+	this.alfaInicial = alfa;
+	this.classesTreinamento = classesTreinamento;
+	this.saidas = saidas;
+	this.tipoVetor = tipoVetor;
+	this.neuSaidas = neuSaidas;
 	}
 
 	/**
@@ -137,7 +182,7 @@ public class LVQ {
 	}
 	
 	/**
-	 * Funcao para classificacao de uma entrada
+	 * Funcao para classificacao de uma entrada teste
 	 */
 	public double Classificador(double[] entradasTeste) {
 			double[] neuronioVencedor = pegaNeurVencedor(entradasTeste);
@@ -256,8 +301,12 @@ public class LVQ {
 				}
 				System.out.println();
 			
+				/*
 				//Chama funcao que calcula o erro
-				//taxaErro(entradasTreinamentoTeste, classesTreinamentoTeste);
+				//calculo do erro sera usado porque dependendo do nivel do erro execucao sera parada
+				double erroAtual = taxaErro(entradasTeste, classesTeste);
+				if (erroAtual < this.erroMax) break;
+				*/
 				
 				if ((int) neuronioVencedor[neuronioVencedor.length - 1] == this.classesTreinamento.get(j)) { 
 					// Aproxima
@@ -572,12 +621,12 @@ public class LVQ {
 	/**
 	 * Funcao para o calculo do erro da LVQ
 	 */
-	public double taxaErro(ArrayList<double[]> teste, ArrayList<Double> classesTeste){
-		double numeroDeTestes = teste.size();
+	public double taxaErro(ArrayList<double[]> entradasTeste, ArrayList<Double> classesTeste){
+		double numeroDeTestes = entradasTeste.size();
 		double numeroDeErros = 0, numeroDeAcertos = 0, classeAtual = 0, classeGanhadora;
-		for(int i = 0; i < teste.size(); i++){
+		for(int i = 0; i < entradasTeste.size(); i++){
 			classeAtual = classesTeste.get(i);
-			classeGanhadora = Classificador(teste.get(i));
+			classeGanhadora = Classificador(entradasTeste.get(i));
 			if (classeAtual == classeGanhadora){
 				numeroDeAcertos++;
 			} else{
@@ -586,5 +635,13 @@ public class LVQ {
 		}
 		return (numeroDeErros * 100) / numeroDeTestes;
 	}
+	
+	/**
+	 * Validacao da LVQ
+	*/
+	public void validacao(ArrayList<double[]> entradasValidacao, ArrayList<Double> classesValidacao){
+		System.out.println("Erro da lista de validação: " + this.taxaErro(entradasValidacao, classesValidacao));
+	}
+	 
 	
 }
