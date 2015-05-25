@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import core.neural_network.objects.Entry;
-
 public class LVQ {
 
 	/**
