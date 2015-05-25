@@ -80,7 +80,7 @@ public class Main {
 		xorClazz.add(0.0); //entrada 1 1
 		xorClazz.add(1.0); //entrada 1 0
 		xorClazz.add(1.0); //entrada 0 1
-	  
+		
 		//double[] t = xorProblem.get(0);
 		//TREINAR ENTRADA CLODS
 		
@@ -99,6 +99,16 @@ public class Main {
 		//commonsRedes.geradorPesosRandomicos(numNeuroniosEscondidosMLP, numNeuroniosSaida),
 		//numNeuroniosSaida, alpha, alphaEstatico, maxT, erroAceitavel);
 		//redeMLP.treinar();
+			
+		/*EXPLICACAO DE COMO PEGAR OS DADOS DO HOLDOUT
+		hldt.getentradasFinaisTreinamento(); - matrizes de entrada de treinamento
+		hldt.getentradasFinaisTeste();- matrizes de entrada de teste
+		hldt.getentradasFinaisValidacao();- matrizes de entrada de validacao
+		as respectivas classes delas
+		hldt.getclassesFinaisTreinamento(); - matrizes de entrada de treinamento
+		hldt.getclassesFinaisTeste();- matrizes de entrada de teste
+		hldt.getclassesFinaisValidacao();- matrizes de entrada de validacao
+		*/
 		
 		/*
 		//saidas = 10
@@ -109,9 +119,10 @@ public class Main {
 		
 		/*
 		//LVQ holdout
-		LVQ teste = new LVQ(hldt.getentradasFinaisTreinamento(),hldt.getclassesFinaisTreinamento(), maxT, 10, alpha, erroAceitavel, 10, 0);
+		LVQ teste = new LVQ(hldt.getentradasFinaisTreinamento(),hldt.getclassesFinaisTreinamento(), 100, 10, alpha, erroAceitavel, 10, 0);
 		teste.treinamentoLVQ();
 		*/
+		
 		/*
 		//saidas = 2
 		//tipoVetor = 0 vetores zerado - = 1 vetores aleatorios
