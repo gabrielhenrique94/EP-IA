@@ -110,29 +110,29 @@ public class Main {
 		hldt.getclassesFinaisValidacao();- matrizes de entrada de validacao
 		*/
 		
-		
-		//saidas = 10
+		//LVQ
+		//(ArrayList<double[]> entrada, ArrayList<Double> classes, int epoca, int numNeuronios, double alfa, double erro, int saidas, int tipoVetor, int neuSaidas)
 		//tipoVetor = 0 vetores zerado - = 1 vetores aleatorios
-		//LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT, 10, alpha, erroAceitavel, 10, 1);
-		//teste.treinamentoLVQ();
+		//saidas = 10 sempre, numero de classes - 2 quando for xor
+		//neuSaidas = neuronios finais na saida por classe
 		
+		//LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT, 10, alpha, erroAceitavel, 10, 1, 2);
+		//teste.treinamentoLVQ();
 		
 		/*
 		//LVQ holdout
-		LVQ teste = new LVQ(hldt.getentradasFinaisTreinamento(),hldt.getclassesFinaisTreinamento(), 100, 10, alpha, erroAceitavel, 10, 0);
+		LVQ teste = new LVQ(hldt.getentradasFinaisTreinamento(),hldt.getclassesFinaisTreinamento(), 100, 10, alpha, erroAceitavel, 10, 0, 2);
 		teste.treinamentoLVQ();
 		*/
 		
-		
-		//saidas = 2
-		//tipoVetor = 0 vetores zerado - = 1 vetores aleatorios
-		LVQ testeXOR = new LVQ(xorProblem, xorClazz, maxT, 50, alpha, erroAceitavel, 2, 1, 3); //neuronios finais na saida (3) por classe
+		//Teste XOR - teste mais simples para verificar se a rede está convergindo
+		//Rede converge tanto com vetores iniciados em 0 como aleatoriamente
+		LVQ testeXOR = new LVQ(xorProblem, xorClazz, maxT, 50, alpha, erroAceitavel, 2, 0, 3); //neuronios finais na saida (3) por classe
 		testeXOR.treinamentoLVQ();
 		//xorProblem matrizes treinamento
 		for(int i = 0; i < xorProblem.size(); i++)
 		System.out.println(testeXOR.Classificador(xorProblem.get(i)));
-		
-		
+				
 	}
 
 }

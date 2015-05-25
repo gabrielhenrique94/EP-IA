@@ -2,12 +2,15 @@ package redes_neurais;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
+
+import core.neural_network.objects.Entry;
 
 public class LVQ {
 
 	/**
-	 * Vetores com as classes de classificacao
+	 * Vetores com as classesTreinamento de classificacao
 	 * 
 	 */
 	private ArrayList<double[]> vetorPrototipos = new ArrayList<double[]>();
@@ -17,15 +20,34 @@ public class LVQ {
 	private double erroMax;
 
 	/**
-	 * Array de vetores de entrada
+	 * Array de vetores de entrada de treinamento
 	 */
-	private ArrayList<double[]> entradas;
+	private ArrayList<double[]> entradasTreinamento;
 
 	/**
-	 * ArrayList com as classes das entradas
+	 * ArrayList com as classesTreinamento das entradasTreinamento
 	 */
-	private ArrayList<Double> classes;
+	private ArrayList<Double> classesTreinamento;
+	
+	/**
+	 * Array de vetores de entrada de teste
+	 */
+	private ArrayList<double[]> entradasTeste;
 
+	/**
+	 * ArrayList com as classesTreinamento das entradasTreinamento
+	 */
+	private ArrayList<Double> classesTeste;
+
+	/**
+	 * Array de vetores de entrada de treinamento
+	 */
+	private ArrayList<double[]> entradasValidacao;
+
+	/**
+	 * ArrayList com as classesTreinamento das entradasTreinamento
+	 */
+	private ArrayList<Double> classesValidacao;
 	/**
 	 * Epocas
 	 */
@@ -75,14 +97,14 @@ public class LVQ {
 	/**
 	 * Construtor do lvq
 	 * **/
-	public LVQ(ArrayList<double[]> entrada, ArrayList<Double> classes,
+	public LVQ(ArrayList<double[]> entradasTreinamento, ArrayList<Double> classesTreinamento,
 			int epoca, int numNeuronios, double alfa, double erro, int saidas, int tipoVetor, int neuSaidas) {
-		this.entradas = entrada;
+		this.entradasTreinamento = entradasTreinamento;
 		this.erroMax = erro;
 		this.max_epocas = epoca;
 		this.numNeurPorClasse = numNeuronios;
 		this.alfaInicial = alfa;
-		this.classes = classes;
+		this.classesTreinamento = classesTreinamento;
 		this.saidas = saidas;
 		this.tipoVetor = tipoVetor;
 		this.neuSaidas = neuSaidas;
@@ -101,8 +123,8 @@ public class LVQ {
 			}
 			System.out.println();
 		}
-		for (int i = 0; i < this.classes.size(); i++) {
-			System.out.println(this.classes.get(i));
+		for (int i = 0; i < this.classesTreinamento.size(); i++) {
+			System.out.println(this.classesTreinamento.get(i));
 		}
 		System.out.println();
 		treinamentoLVQ();
@@ -150,7 +172,6 @@ public class LVQ {
 				this.vetorPrototipos.add(geraVetorAleatorio());
 			}
 		}
-			
 		for (int i = 0; i < this.vetorPrototipos.size(); i++) {
 			if (cont == saidas)
 				cont = 0;
@@ -159,8 +180,11 @@ public class LVQ {
 		}
 	}
 	
-	//linha e a classe esperada, coluna a que deu
-	//mudar para 10 10 quando for rodas os dados certos
+	/**
+	 * Funcao para inicializacao da Matriz de Confusao
+	 * Linha e a classe esperada
+	 * Coluna e a classe resultante
+	 */
 	public void inicializaMatrizConfusao() {
 		this.matrizConfusao = new int[this.saidas][this.saidas]; 				
 		for (int i = 0; i < this.saidas; i++) {
@@ -171,11 +195,11 @@ public class LVQ {
 	}
 
 	/**
-	 * Criando um vetor com valores aleatiorios
+	 * Criando um vetor com valores aleatorios
 	 * @return
 	 */
 	public double[] geraVetorAleatorio() {
-		double[] vetor = new double[this.entradas.get(0).length + 1];
+		double[] vetor = new double[this.entradasTreinamento.get(0).length + 1];
 		Random rdm = new Random();
 		for (int i = 0; i < vetor.length; i++) {
 			//descomentar os numeros para gerar vetor de - 1 a 1
@@ -188,16 +212,14 @@ public class LVQ {
 	 * 
 	 * Criando um vetor inicializando por 0s
 	 */
-
 	public double[] geraVetorZerado() {
-		double[] vetor = new double[this.entradas.get(0).length + 1];
+		double[] vetor = new double[this.entradasTreinamento.get(0).length + 1];
 		return vetor;
 	}
 	
 	/**
 	 * Funcao para treinamento da rede
 	 */
-	
 	public void treinamentoLVQ() {
 		 //Inicializando o conjunto de prototipos
 		criaVetorPrototipos(saidas, tipoVetor);
@@ -211,19 +233,14 @@ public class LVQ {
 			}
 			System.out.println();
 		}
-		
-		//O QUE TA DANDO ERRADO
-		//MUDAR
-		// quando faz a subtracao para afastar, por algum motivo subliminar n ta atualizando
-		//quando distancia maior que 1, n atualiza tb - talvez esteja definido para n atualizar em caso assim, irei conferir
-	
+			
 		//Determinacacao de condicao de parada Numero Fixo de iteracoes
 		//(max_Epocas) ou valor minimo taxa de aprendizado(alfaRotativo)
 		while (this.epocas <= this.max_epocas || this.alfaRotativo >= 0.0001) {								
-			for (int j = 0; j < this.entradas.size(); j++) {
-				double[] vetorAuxiliar= new double [entradas.get(j).length+1];
+			for (int j = 0; j < this.entradasTreinamento.size(); j++) {
+				double[] vetorAuxiliar= new double [entradasTreinamento.get(j).length+1];
 				System.out.println();
-				double[] entradaAtual = this.entradas.get(j);
+				double[] entradaAtual = this.entradasTreinamento.get(j);
 				
 				for (int k = 0; k < entradaAtual.length; k++) {
 					System.out.print(entradaAtual[k] + " ");
@@ -232,32 +249,28 @@ public class LVQ {
 				double[] neuronioVencedor = pegaNeurVencedor(j); 
 				int index = this.vetorPrototipos.indexOf(neuronioVencedor);
 				System.out.println();
-				// vetorAuxiliar = neuronioVencedor;
-				// for (int k=0;k<vetorAuxiliar.length; k++){
-				// System.out.print (vetorAuxiliar [k] + " ");
-				// }
+			
 				System.out.println();
-				System.out.println(" classe esperada: " + classes.get(j) + " classe resultante: " + neuronioVencedor[neuronioVencedor.length - 1]);
-				System.out.print("valor vetor aux Trein ANTES: "
-						);
+				System.out.println(" classe esperada: " + classesTreinamento.get(j) + " classe resultante: " + neuronioVencedor[neuronioVencedor.length - 1]);
+				System.out.print("valor vetor aux Trein ANTES: " );
 				for (int k = 0; k < entradaAtual.length; k++) {
-		
-					System.out.print(
-							+ neuronioVencedor[k] + " ");
+					System.out.print(+ neuronioVencedor[k] + " ");
 				}
 				System.out.println();
 			
-				if ((int) neuronioVencedor[neuronioVencedor.length - 1] == this.classes.get(j)) { 
+				//Chama funcao que calcula o erro
+				//taxaErro(entradasTreinamentoTeste, classesTreinamentoTeste);
+				
+				if ((int) neuronioVencedor[neuronioVencedor.length - 1] == this.classesTreinamento.get(j)) { 
 					// Aproxima
 					// vetor de peso novo da j-esima unidade saida = vetor peso antigo + alfa(entrada da j-esima unidade - vetor peso antigo)
 					vetorAuxiliar = somaDeVetores(neuronioVencedor,multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor)));
 					
 					System.out.print("valor vetor aux Trein IF: "  + " ");
-				for (int k = 0; k < entradaAtual.length; k++) {
-
-					System.out.print(vetorAuxiliar[k] + " ");
-				}
-				System.out.println();
+					for (int k = 0; k < entradaAtual.length; k++) {
+						System.out.print(vetorAuxiliar[k] + " ");
+					}
+					System.out.println();
 	
 				} else {
 					// afasta
@@ -265,34 +278,24 @@ public class LVQ {
 					vetorAuxiliar = subtracaoDeVetores(neuronioVencedor, multiplicaAlfa(subtracaoDeVetores(entradaAtual, neuronioVencedor)));
 					System.out.print("valor vetor aux Trein ELSE: "  + " ");
 					for (int k = 0; k < entradaAtual.length; k++) {
-						System.out.print(vetorAuxiliar[k] + " ");
-						
+						System.out.print(vetorAuxiliar[k] + " ");	
 					}
 					System.out.println();
-
 				}
-
 				vetorAuxiliar[vetorAuxiliar.length-1]=neuronioVencedor[neuronioVencedor.length-1];
 				neuronioVencedor = vetorAuxiliar;
-				
 				atualizaVetorPrototipos(neuronioVencedor, index);
-				
-				//Reduzir a taxa de aprendizado
-				
-				
-				
-			
 			}
+			//Reduzir a taxa de aprendizado
 			atualizaAlfaSimples();
-			System.out.println("VALOR ATUAL ALFA: " + alfaRotativo);
 			//atualizaAlfaMonot(this.epocas, this.max_epocas);
+			System.out.println("VALOR ATUAL ALFA: " + alfaRotativo);
 			System.out.println("EPOCAS " + epocas);
 			this.epocas++;
 		}
 		inicializarVetorNeurAtivados();
 		confereNeuroniosAtivados();
 		reduzNeuronios();
-		
 		inicializaMatrizConfusao();
 		montaMatrizConfusao();
 		for (int i = 0; i < this.vetorNeuroniosAtivados.length; i++) {
@@ -335,15 +338,12 @@ public class LVQ {
 	 * @return
 	 */
 	public double[] subtracaoDeVetores(double[] vetor1, double[] vetor2) {
-
 		double[] res = new double[vetorPrototipos.get(0).length];
 		for (int i = 0; i < res.length-1; i++)
 			res[i] = vetor1[i] - vetor2[i];
-		
 		return res;
 	}
 	
-
 	/**
 	 * Funcao de multiplicacao de alfa (taxa de aprendizado) por vetores que
 	 * sera utilizada no treinamento dentro da atualizacao dos pesos sinapticos
@@ -372,7 +372,7 @@ public class LVQ {
 				+ this.vetorPrototipos.indexOf(neurVencedor) + " "
 				+ neurVencedor[0] + " " + neurVencedor[1] + " "
 				+ neurVencedor[2]);
-		if (neurVencedor[neurVencedor.length - 1] == this.classes.get(j)) {
+		if (neurVencedor[neurVencedor.length - 1] == this.classesTreinamento.get(j)) {
 			this.vetorNeuroniosAtivados[index] = this.vetorNeuroniosAtivados[index] + 1;
 		}
 	}
@@ -385,11 +385,11 @@ public class LVQ {
 	public double[] pegaNeurVencedor(int j) {
 		double distMin = 99999999;
 		double dist = 0;
-		double neurVencedor[] = new double[this.entradas.get(0).length];
+		double neurVencedor[] = new double[this.entradasTreinamento.get(0).length];
 		Collections.shuffle(vetorPrototipos);
 		for (int i = 0; i < this.vetorPrototipos.size(); i++) {
 			
-			dist = calculaDistEuclidiana(this.entradas.get(j), this.vetorPrototipos.get(i));
+			dist = calculaDistEuclidiana(this.entradasTreinamento.get(j), this.vetorPrototipos.get(i));
 
 
 			if (dist < distMin) {
@@ -405,14 +405,15 @@ public class LVQ {
 	 * @param j
 	 * @return
 	 */
+	@SuppressWarnings("finally")
 	public double[] pegaNeurVencedorV2(int j) {
 		double distMin = 999999999;
 		double dist = 0;
-		double neurVencedor[] = new double[this.entradas.get(0).length];
+		double neurVencedor[] = new double[this.entradasTreinamento.get(0).length];
 		try{
 		for (int i = 0; i < this.vetorPrototipos.size(); i++) {
 			
-			dist = calculaDistEuclidiana(this.entradas.get(j), this.vetorPrototipos.get(i));
+			dist = calculaDistEuclidiana(this.entradasTreinamento.get(j), this.vetorPrototipos.get(i));
 			if (dist < distMin) {
 				distMin = dist;
 				neurVencedor = this.vetorPrototipos.get(i);
@@ -426,12 +427,12 @@ public class LVQ {
 	}
 	
 	/**
-	 * Funcao que calcula o neuronio mais proximo
+	 * Funcao que calcula o neuronio mais proximo passando como parametro um vetor
 	 */
 	public double[] pegaNeurVencedor(double[] entrada) {
 		double distMin = 100000000;
 		double dist = 0;
-		double neurVencedor[] = new double[this.entradas.get(0).length];
+		double neurVencedor[] = new double[this.entradasTreinamento.get(0).length];
 		for (int i = 0; i < this.vetorPrototipos.size(); i++) {
 			dist = calculaDistEuclidiana(entrada, this.vetorPrototipos.get(i));
 			if (dist <= distMin) {
@@ -442,27 +443,25 @@ public class LVQ {
 		return neurVencedor;
 	}
 	
-
 	/**
 	 * Confere quais neuronios sao ativados
 	 */
 	private void confereNeuroniosAtivados() {
-		for (int j = 0; j < this.entradas.size(); j++) {
+		for (int j = 0; j < this.entradasTreinamento.size(); j++) {
 			atualizaVetorNeurVencedores(j);
 		}
 	}
 
+	/**
+	 * Funcao para reducao dos neuronios nao ativados
+	 */
 	public void reduzNeuronios() {
 		double[] auxiliar = new double[vetorNeuroniosAtivados.length];
 		for (int i=0; i<vetorNeuroniosAtivados.length;i++){
 			if (vetorNeuroniosAtivados[i] != 0){
 				vetorPrototiposReduzido.add(vetorPrototipos.get(i));
-				
 			}
 		}
-		
-		
-
 		for (int k=0; k<vetorPrototiposReduzido.size();k++){
 			System.out.println();
 			System.out.print("Neuronio reduzido: ");
@@ -481,9 +480,9 @@ public class LVQ {
 	private void montaMatrizConfusao() {
 
 		double[] neurVencedor;
-		for (int j = 0; j < this.entradas.size(); j++) {
+		for (int j = 0; j < this.entradasTreinamento.size(); j++) {
 			neurVencedor = pegaNeurVencedorReduzido(j);
-			int classe =(int)(double) classes.get(j);
+			int classe =(int)(double) classesTreinamento.get(j);
 			//linha e a classe esperada e coluna a que deu
 			this.matrizConfusao[(int) neurVencedor[neurVencedor.length - 1]][classe] += 1;
 		}
@@ -500,12 +499,17 @@ public class LVQ {
 		System.out.println();
 	}
 
+	/**
+	 * Funcao para pegar o neuronio vencedor reduzido 
+	 * @param j
+	 * @return
+	 */
 	public double[] pegaNeurVencedorReduzido(int j) {
 		double distMin = 100000000;
 		double dist = 0;
-		double neurVencedor[] = new double[this.entradas.get(0).length];
+		double neurVencedor[] = new double[this.entradasTreinamento.get(0).length];
 		for (int i = 0; i < this.vetorPrototiposReduzido.size() ; i++) {
-			dist = calculaDistEuclidiana(this.entradas.get(j),
+			dist = calculaDistEuclidiana(this.entradasTreinamento.get(j),
 					this.vetorPrototiposReduzido.get(i));
 			if (dist <= distMin) {
 				distMin = dist;
@@ -531,26 +535,22 @@ public class LVQ {
 		this.alfaRotativo = this.alfaInicial * (1.0 - (double)(((double) interacao)/ (double) interacaoMax)); 
 	}
 	
-
 	/**
 	 * Calcula a distancia pela medida Distancia Euclidiana
-	 * 
 	 * @param vetor
 	 * @param vetorPesos
 	 * @return
 	 */
 	public double calculaDistEuclidiana(double[] vetor, double[] vetorPesos) {
-		double distancia=0;
+		double distancia = 0;
 		double soma = 0;
 	//	System.out.println("TESTE DIST");
-
 		// Calcular a parte do somatorio da funcao
 		for (int i = 0; i < vetorPesos.length - 1; i++) { 
 			soma += Math.pow((vetor[i] - vetorPesos[i]), 2);
 		}
 		distancia = Math.pow(soma, (0.5));
 	//	System.out.println(distancia);
-
 		return distancia;
 	}
 
@@ -562,9 +562,7 @@ public class LVQ {
 	 * @return
 	 */
 	public double calculaDistManhattan(double[] vetor, double[] vetorPesos) {
-		// completar
 		double distancia = 0;
-		//VERIFICAR
 		for (int i = 0; i < vetor.length - 1; i++) {
 			// usa o valor absoluto (modulo)
 			distancia += (Math.abs(vetor[i] - vetorPesos[i]));
@@ -572,5 +570,23 @@ public class LVQ {
 		System.out.println(distancia);
 		return distancia;
 	}
-
+	
+	/**
+	 * Funcao para o calculo do erro da LVQ
+	 */
+	public double taxaErro(ArrayList<double[]> teste, ArrayList<Double> classesTeste){
+		double numeroDeTestes = teste.size();
+		double numeroDeErros = 0, numeroDeAcertos = 0, classeAtual = 0, classeGanhadora;
+		for(int i = 0; i < teste.size(); i++){
+			classeAtual = classesTeste.get(i);
+			classeGanhadora = Classificador(teste.get(i));
+			if (classeAtual == classeGanhadora){
+				numeroDeAcertos++;
+			} else{
+				numeroDeErros++;
+			}
+		}
+		return (numeroDeErros * 100) / numeroDeTestes;
+	}
+	
 }
