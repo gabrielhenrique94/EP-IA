@@ -19,11 +19,11 @@ public class Main {
 		
 		int numNeuroniosSaida = 1; // DEPOIS VEMOS O QUE FAZER COM ISSO
 		
-		double alpha = 0.9; //Recer por arg depois - valor que tava escrito como normal
+		double alpha = 0.1; //Recer por arg depois - valor que tava escrito como normal
 		
 		boolean alphaEstatico = false; // Args tbm
 		
-		int maxT = 1; // Args, maximo de epocas que se deve executar
+		int maxT = 100; // Args, maximo de epocas que se deve executar
 		
 		double erroAceitavel = 0.05; //(5% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
 		
@@ -113,8 +113,8 @@ public class Main {
 		
 		//saidas = 10
 		//tipoVetor = 0 vetores zerado - = 1 vetores aleatorios
-		LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT, 50, alpha, erroAceitavel, 10, 0);
-		teste.treinamentoLVQ();
+		//LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT, 10, alpha, erroAceitavel, 10, 1);
+		//teste.treinamentoLVQ();
 		
 		
 		/*
@@ -123,15 +123,15 @@ public class Main {
 		teste.treinamentoLVQ();
 		*/
 		
-		/*
+		
 		//saidas = 2
 		//tipoVetor = 0 vetores zerado - = 1 vetores aleatorios
-		LVQ testeXOR = new LVQ(xorProblem, xorClazz, maxT, 50, alpha, erroAceitavel, 2, 1);
+		LVQ testeXOR = new LVQ(xorProblem, xorClazz, maxT, 50, alpha, erroAceitavel, 2, 1, 3); //neuronios finais na saida (3) por classe
 		testeXOR.treinamentoLVQ();
 		//xorProblem matrizes treinamento
 		for(int i = 0; i < xorProblem.size(); i++)
 		System.out.println(testeXOR.Classificador(xorProblem.get(i)));
-		*/
+		
 		
 	}
 
