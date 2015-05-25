@@ -7,15 +7,18 @@ public class commonsRedes {
 	/**
      * Inicializa pesos no intervalo de -1.0 e 1.0
      */
-    public static double[][] geradorPesosRandomicos(int numColunas, int numLinhas) {
+    public static double[][] geradorPesosRandomicos(int numColunas, int numLinhas, int randomico) {
         
        //So para comitar a outra parte
     	double[][] pesos = new double[numLinhas][numColunas+1];
     	Random rdm = new Random();
     	for (int i = 0; i < numLinhas; i++) {
     		for (int j = 0; j < (numColunas + 1); j++) {
-    			pesos[i][j] = rdm.nextDouble() * 2.0 - 1.0;
-    			//pesos[i][j] = 0.0;
+    			if (randomico == 1) {
+    				pesos[i][j] = rdm.nextDouble() * 2.0 - 1.0;
+    			} else if (randomico == 0) {
+    				pesos[i][j] = 0.0;
+    			}
     		}
     	}
     	

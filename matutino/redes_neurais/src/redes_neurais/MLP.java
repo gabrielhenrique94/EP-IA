@@ -48,11 +48,6 @@ public class MLP {
 	 * Número máximo de épocas desejadas
 	 */
 	private int maxT;
-
-	/**
-	 * Checa se a taxa de aprendiado � fixo ou variavel
-	 */
-	private boolean alphaEstatico = true;
 	
 	/**
 	 * Valor da taxa de aprendizado
@@ -111,12 +106,11 @@ public class MLP {
 	 * @param pesosB
 	 * @param numNeuroniosSaida
 	 * @param alpha
-	 * @param alphaEstatico
 	 * @param maxT
 	 * @param erroAceitavel
 	 */
 	public MLP(ArrayList<double[]> entradas, ArrayList<Double> saidasDesejadas, int numNeuroniosCamadaEscondida, 
-		double[][] pesosA, double[][] pesosB, int numNeuroniosSaida, double alpha, boolean alphaEstatico, int maxT, double erroAceitavel) {
+		double[][] pesosA, double[][] pesosB, int numNeuroniosSaida, double alpha, int maxT, double erroAceitavel) {
 		
 		this.entradas = entradas;
 		this.numNeuroniosCamadaEscondida = numNeuroniosCamadaEscondida;
@@ -125,7 +119,6 @@ public class MLP {
 		this.numNeuroniosSaida = numNeuroniosSaida;
 		this.saidasDesejadas = saidasDesejadas;
 		this.alpha = alpha;
-		this.alphaEstatico = alphaEstatico;
 		this.maxT = maxT;
 		this.erroAceitavel = erroAceitavel;
 		this.gradienteA = new double[pesosA[0].length];
@@ -667,14 +660,6 @@ public class MLP {
 
 	public void setZ(double[] z) {
 		Z = z;
-	}
-
-	public boolean isAlphaEstatico() {
-		return alphaEstatico;
-	}
-
-	public void setAlphaEstatico(boolean alphaEstatico) {
-		this.alphaEstatico = alphaEstatico;
 	}
 
 	public double getAlpha() {
