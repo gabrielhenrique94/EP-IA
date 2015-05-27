@@ -660,15 +660,15 @@ public class LVQ {
 	 */
 	public void teste(){
 		double erroAtual = CalculaErro(entradasTeste, classesTeste);
-		if(erroAtual > erroMax){
-			System.out.println("Após treinamento, o erro final é maior que erro esperado no momento de validar: " + erroAtual );
+		if(erroAtual < erroMax){
+			System.out.println("Após treinamento, o erro final é menor que erro esperado no momento de validar: " + erroAtual );
 			System.out.println("O número total de épocas foi: " + max_epocas);
 		} else{
-			System.out.println("Após treinamento, o erro final é menor que erro esperado no momento de validar: " + erroAtual );
+			System.out.println("Após treinamento, o erro final é maior que erro esperado no momento de validar: " + erroAtual );
 			System.out.println("Já foi treinado " + treinouDeNovo + "vezes a mais após primeira validação. Treinando novamente.");
 			this.max_epocas = this.epocas + 100;
-			this.treinouDeNovo++;
-			treinamentoLVQ(true);
+		//	this.treinouDeNovo++;
+		//	treinamentoLVQ(true);
 		}
 	}
 }
