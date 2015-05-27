@@ -287,7 +287,19 @@ public class LVQ {
 			
 		//Determinacacao de condicao de parada Numero Fixo de iteracoes
 		//(max_Epocas) ou valor minimo taxa de aprendizado(alfaRotativo)
-		while (this.epocas <= this.max_epocas || this.alfaRotativo >= 0.0001) {								
+		while (this.epocas <= this.max_epocas || this.alfaRotativo >= 0.0001) {	
+			
+			//Chama funcao que calcula o erro
+			//calculo do erro sera usado porque dependendo do nivel do erro execucao sera parada
+			if (temTeste){
+				double erroAtual = Erro(entradasValidacao, classesValidacao);
+				if (erroAtual > this.erroMax) {
+					System.out.println("Ultrapassou o erro máximo esperado. Erro: " + erroAtual);
+					System.out.println("Época na qual parou: " + epocas);
+					break;
+				}
+			}
+			
 			for (int j = 0; j < this.entradasTreinamento.size(); j++) {
 				double[] vetorAuxiliar= new double [entradasTreinamento.get(j).length+1];
 				System.out.println();
@@ -308,18 +320,6 @@ public class LVQ {
 					System.out.print(+ neuronioVencedor[k] + " ");
 				}
 				System.out.println();
-			
-				
-				//Chama funcao que calcula o erro
-				//calculo do erro sera usado porque dependendo do nivel do erro execucao sera parada
-				if (temTeste){
-					double erroAtual = Erro(entradasValidacao, classesValidacao);
-					if (erroAtual > this.erroMax) {
-						System.out.println("Ultrapassou o erro máximo esperado. Erro: " + erroAtual);
-						System.out.println("Época na qual parou: " + epocas);
-						break;
-					}
-				}
 				
 				if ((int) neuronioVencedor[neuronioVencedor.length - 1] == this.classesTreinamento.get(j)) { 
 					// Aproxima
