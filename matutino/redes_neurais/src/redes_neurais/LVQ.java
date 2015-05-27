@@ -33,17 +33,17 @@ public class LVQ {
 	private ArrayList<double[]> entradasTeste;
 
 	/**
-	 * ArrayList com as classesTreinamento das entradasTreinamento
+	 * ArrayList com as classesTeste das entradasTeste
 	 */
 	private ArrayList<Double> classesTeste;
 
 	/**
-	 * Array de vetores de entrada de treinamento
+	 * Array de vetores de entrada de validacao
 	 */
 	private ArrayList<double[]> entradasValidacao;
 
 	/**
-	 * ArrayList com as classesTreinamento das entradasTreinamento
+	 * ArrayList com as classesValidcao das entradasValidacao
 	 */
 	private ArrayList<Double> classesValidacao;
 	/**
@@ -182,11 +182,11 @@ public class LVQ {
 	}
 	
 	/**
-	 * Funcao que chama treinamento com teste e validacao
+	 * Funcao que chama treinamento com validacao e posteriormente feito teste
 	 */
 	public void TreinTestVal(){
 		treinamentoLVQ(true);
-		validacao();
+		teste();
 	}
 	
 	/**
@@ -313,9 +313,10 @@ public class LVQ {
 				//Chama funcao que calcula o erro
 				//calculo do erro sera usado porque dependendo do nivel do erro execucao sera parada
 				if (temTeste){
-					double erroAtual = taxaErro(entradasTeste, classesTeste);
-					if (erroAtual < this.erroMax) {
-						System.out.println("Ultrapassou o erro máximo esperado.");
+					double erroAtual = Erro(entradasValidacao, classesValidacao);
+					if (erroAtual > this.erroMax) {
+						System.out.println("Ultrapassou o erro máximo esperado. Erro: " + erroAtual);
+						System.out.println("Época na qual parou: " + epocas);
 						break;
 					}
 				}
@@ -633,27 +634,21 @@ public class LVQ {
 	/**
 	 * Funcao para o calculo do erro da LVQ
 	 */
-	public double taxaErro(ArrayList<double[]> entradasTeste, ArrayList<Double> classesTeste){
-		double numeroDeTestes = entradasTeste.size();
-		double numeroDeErros = 0, numeroDeAcertos = 0, classeAtual = 0, classeGanhadora;
-		for(int i = 0; i < entradasTeste.size(); i++){
-			classeAtual = classesTeste.get(i);
-			classeGanhadora = Classificador(entradasTeste.get(i));
-			if (classeAtual == classeGanhadora){
-				numeroDeAcertos++;
-			} else{
+	public double Erro(ArrayList<double[]> entradasValidacao, ArrayList<Double> classesValidacao){
+		double tamanhoVal = entradasValidacao.size();
+		double numeroDeErros = 0, classeAtual = 0, classeGanhadora;
+		for(int i = 0; i < entradasValidacao.size(); i++){
+			classeAtual = classesValidacao.get(i);
+			classeGanhadora = Classificador(entradasValidacao.get(i));
+			if (classeAtual != classeGanhadora){
 				numeroDeErros++;
-			}
-		}
-		return (numeroDeErros * 100) / numeroDeTestes;
+			} 
+		}			
+		return (numeroDeErros) / tamanhoVal;
 	}
 	
-	/**
-	 * Validacao da LVQ
-	*/
-	public void validacao(){
-		System.out.println("Erro da lista de validação: " + this.taxaErro(this.entradasValidacao, this.classesValidacao));
+	public void teste(){
+		System.out.println("Erro da lista de teste: " + Erro(entradasTeste, classesTeste));
 	}
-	 
 	
 }

@@ -133,22 +133,6 @@ public class Holdout {
 		SeparaArrayListTreinamento();
 		SeparaArrayListTeste();
 		SeparaArrayListValidacao();
-		/*
-		System.out.println("Classes Finais Treinamento: ");
-		for(int i = 0; i < classesFinaisTreinamento.size(); i++){
-			System.out.println(classesFinaisTreinamento.get(i));
-		}
-		
-		System.out.println("Classes Finais Teste: ");
-		for(int i = 0; i < classesFinaisTeste.size(); i++){
-			System.out.println(classesFinaisTeste.get(i));
-		}
-		
-		System.out.println("Classes Finais Validacao: ");
-		for(int i = 0; i < classesFinaisValidacao.size(); i++){
-			System.out.println(classesFinaisValidacao.get(i));
-		}
-		*/
 	}
 
 	/**

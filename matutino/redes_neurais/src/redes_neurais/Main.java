@@ -23,11 +23,11 @@ public class Main {
 		
 		boolean alphaEstatico = false; // Args tbm
 		
-		int maxT = 5000; // Args, maximo de epocas que se deve executar
+		int maxT = 1000; // Args, maximo de epocas que se deve executar
 		
-		double erroAceitavel = 0.05; //(5% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
+		double erroAceitavel = 0.5; //(50% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
 		
-		int tipoVetor = 0; //variavel na qual usuario passara tipo de vetor a ser inicializado na lvq - 0 vetor erado - 1 vetor random
+		int tipoVetor = 0; //variavel na qual usuario passara tipo de vetor a ser inicializado na lvq - 0 vetor zerado - 1 vetor random
 		
 		/* Nome do arquivo do conjunto de dados de teste */
 		//String	dadosTeste = args[2];
@@ -131,17 +131,10 @@ public class Main {
 		Holdout hldt = new Holdout (dadosNormalizados.getMatrizesTreinamento(), dadosNormalizados.getClassesTreinamento(), dadosNormalizados.getMatrizesTeste(),
 					dadosNormalizados.getClassesTeste());
 		hldt.AplicaHoldout();
-		/*
-		ArrayList<Double> a = hldt.getclassesFinaisTeste();
-		for(int i = 0; i < a.size(); i++){
-			System.out.println(a.get(i));
-		}
-		*/
 		
 		LVQ lvq = new LVQ(hldt.getentradasFinaisTreinamento(), hldt.getclassesFinaisTreinamento(), hldt.getentradasFinaisTeste(), hldt.getclassesFinaisTeste(),
-				hldt.getentradasFinaisValidacao(), hldt.getclassesFinaisValidacao(), maxT, 50, alpha, erroAceitavel, 10, tipoVetor, 2);
+				hldt.getentradasFinaisValidacao(), hldt.getclassesFinaisValidacao(), maxT, 3, alpha, erroAceitavel, 10, tipoVetor, 2);
 		 lvq.TreinTestVal();	
-		 
-		 
+ 
 	}
 }
