@@ -2,7 +2,6 @@ package redes_neurais;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 
 public class LVQ {
@@ -15,6 +14,9 @@ public class LVQ {
 
 	private ArrayList<double[]> vetorPrototiposReduzido = new ArrayList<double[]>();
 
+	/**
+	 * Variavel que recebera o erro maximo, sendo 1 100% e 0 0% 
+	 */
 	private double erroMax;
 
 	/**
@@ -62,34 +64,41 @@ public class LVQ {
 	 * Numero de neuronios total.
 	 */
 	private int numNeur;
+	
 	/**
 	 * Numero de neuronios por classe.
 	 */
 	private int numNeurPorClasse;
 
 	/**
-	 * Taxa de aprendizado. A taxa sempre inicia em 1 e vai diminuindo Essa
-	 * variavel e para apenas armazenar o valor inicial de alfa
+	 * Taxa de aprendizado
 	 */
 	private double alfaInicial;
 
 	/**
-	 * Variavel para armazenar as mudancas da taxa de aprendizado Inicia em 1 e
-	 * vai diminuindo
+	 * Variavel para armazenar as mudancas da taxa de aprendizado 
 	 */
 	private double alfaRotativo;
 
 	/**
-	 * Vetor onde cada posicao representa o neuronio de mesma posicao da lista
-	 * de vetoresPrototipos, onde em cada posicao existe a quantidade de vezes
-	 * que aquele neurï¿½nio foi ativado
+	 * Vetor onde cada posicao representa o neuronio de mesma posicao da lista de vetoresPrototipos, 
+	 * onde em cada posicao existe a quantidade de vezes que aquele neurionio foi ativado
 	 **/
 	private int[] vetorNeuroniosAtivados;
 
+	/**
+	 * Variavel a qual recebera a matriz de confusao montada
+	 */
 	private int[][] matrizConfusao;
-
+	
+	/**
+	 * Quantidade de saidas/classes
+	 */
 	private int saidas;
 	
+	/**
+	 * Tipo de inicializacao dos vetores de peso, isso e, se for 0 vetores iniciarão zerados, se for 1 aleatoriamente
+	 */
 	private int tipoVetor;
 	
 	/**
@@ -191,17 +200,9 @@ public class LVQ {
 	 */
 	public void TreinTestVal(){
 		treinamentoLVQ(true);
-		valida();
+		teste();
 	}
 	
-	/**
-	 * Funcao para classificacao de uma entrada teste
-	 */
-	public double Classificador(double[] entradasTeste) {
-			double[] neuronioVencedor = pegaNeurVencedor(entradasTeste);
-			//retorna a classe, que esta na ultima posicao do vetor
-			return neuronioVencedor[neuronioVencedor.length-1];
-	}
 	/**
 	 * Inicializacao da vetor para conferencia dos neuronios ativados
 	 **/
@@ -238,8 +239,7 @@ public class LVQ {
 	
 	/**
 	 * Funcao para inicializacao da Matriz de Confusao
-	 * Linha e a classe esperada
-	 * Coluna e a classe resultante
+	 * Linha e a classe esperada - Coluna e a classe resultante
 	 */
 	public void inicializaMatrizConfusao() {
 		this.matrizConfusao = new int[this.saidas][this.saidas]; 				
@@ -276,7 +276,7 @@ public class LVQ {
 	/**
 	 * Funcao para treinamento da rede
 	 */
-	public void treinamentoLVQ(boolean temTeste) {
+	public void treinamentoLVQ(boolean temValidacao) {
 		 //Inicializando o conjunto de prototipos
 		criaVetorPrototipos(saidas, tipoVetor);
 		this.alfaRotativo = this.alfaInicial;
@@ -347,8 +347,9 @@ public class LVQ {
 			System.out.println("EPOCAS " + epocas);
 			//Chama funcao que calcula o erro
 			//calculo do erro sera usado porque dependendo do nivel do erro execucao sera parada
-			if (temTeste){
-				double erroAtual = Erro(entradasTeste, classesTeste);
+			if (temValidacao){
+				//calcula erro atual
+				double erroAtual = CalculaErro(entradasValidacao, classesValidacao);
 				System.out.println("Erro atual é: " + erroAtual);
 			}
 			this.epocas++;
@@ -377,8 +378,7 @@ public class LVQ {
 	}
 
 	/**
-	 * Funcao de soma de vetores que sera utilizada no treinamento dentro da
-	 * atualizacao dos pesos sinapticos - funcao auxiliar
+	 * Funcao de soma de vetores que sera utilizada no treinamento dentro da atualizacao dos pesos sinapticos - funcao auxiliar
 	 * @param vetor1
 	 * @param vetor2
 	 * @return
@@ -391,8 +391,7 @@ public class LVQ {
 	}
 
 	/**
-	 * Funcao de subtracao de vetores que sera utilizada no treinamento dentro
-	 * da atualizacao dos pesos sinapticos - funcao auxiliar
+	 * Funcao de subtracao de vetores que sera utilizada no treinamento dentro da atualizacao dos pesos sinapticos - funcao auxiliar
 	 * @param vetor1
 	 * @param vetor2
 	 * @return
@@ -405,9 +404,7 @@ public class LVQ {
 	}
 	
 	/**
-	 * Funcao de multiplicacao de alfa (taxa de aprendizado) por vetores que
-	 * sera utilizada no treinamento dentro da atualizacao dos pesos sinapticos
-	 * - funcao auxiliar
+	 * Funcao de multiplicacao de alfa (taxa de aprendizado) por vetores que sera utilizada no treinamento dentro da atualizacao dos pesos sinapticos - funcao auxiliar
 	 * @param vetor
 	 * @param alfa
 	 * @return
@@ -460,6 +457,7 @@ public class LVQ {
 		}
 		return neurVencedor;
 	}
+	
 	/**
 	 * Funcao que calcula o arg min retorna o vetor prototipo mais proximo do dado
 	 * @param j
@@ -504,7 +502,7 @@ public class LVQ {
 	}
 	
 	/**
-	 * Confere quais neuronios sao ativados
+	 * Funcao que confere quais neuronios sao ativados
 	 */
 	private void confereNeuroniosAtivados() {
 		for (int j = 0; j < this.entradasTreinamento.size(); j++) {
@@ -580,7 +578,7 @@ public class LVQ {
 	}
 
 	/**
-	 * Funcao para atualizar o alfa 
+	 * Funcao para atualizacao o alfa 
 	 */
 	public void atualizaAlfaSimples() {
 		this.alfaRotativo = this.alfaRotativo * 0.99; 
@@ -632,9 +630,19 @@ public class LVQ {
 	}
 	
 	/**
+	 * Funcao para classificacao de uma entrada 
+	 * funcao auxiliar da funcao CalculaErro
+	 */
+	public double Classificador(double[] entradas) {
+			double[] neuronioVencedor = pegaNeurVencedor(entradas);
+			//retorna a classe, que esta na ultima posicao do vetor
+			return neuronioVencedor[neuronioVencedor.length-1];
+	}
+	
+	/**
 	 * Funcao para o calculo do erro da LVQ
 	 */
-	public double Erro(ArrayList<double[]> entradas, ArrayList<Double> classes){
+	public double CalculaErro(ArrayList<double[]> entradas, ArrayList<Double> classes){
 		double tamanhoVal = entradas.size();
 		double numeroDeErros = 0, classeAtual = 0, classeGanhadora;
 		for(int i = 0; i < entradas.size(); i++){
@@ -647,8 +655,11 @@ public class LVQ {
 		return (numeroDeErros) / tamanhoVal;
 	}
 	
-	public void valida(){
-		double erroAtual = Erro(entradasValidacao, classesValidacao);
+	/**
+	 * Funcao resposavel pelo teste final da rede
+	 */
+	public void teste(){
+		double erroAtual = CalculaErro(entradasTeste, classesTeste);
 		if(erroAtual > erroMax){
 			System.out.println("Após treinamento, o erro final é maior que erro esperado no momento de validar: " + erroAtual );
 			System.out.println("O número total de épocas foi: " + max_epocas);
@@ -659,7 +670,5 @@ public class LVQ {
 			this.treinouDeNovo++;
 			treinamentoLVQ(true);
 		}
-			
 	}
-	
 }
