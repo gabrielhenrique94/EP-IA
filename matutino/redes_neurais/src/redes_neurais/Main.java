@@ -23,9 +23,9 @@ public class Main {
 		
 		boolean alphaEstatico = false; // Args tbm
 		
-		int maxT = 1000; // Args, maximo de epocas que se deve executar
+		int maxT = 500; // Args, maximo de epocas que se deve executar
 		
-		double erroAceitavel = 0.20; //(50% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
+		double erroAceitavel = 0.20; //(20% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
 		
 		int tipoVetor = 1; //variavel na qual usuario passara tipo de vetor a ser inicializado na lvq - 0 vetor zerado - 1 vetor random
 		

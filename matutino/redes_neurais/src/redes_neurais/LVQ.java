@@ -651,6 +651,7 @@ public class LVQ {
 		double erroAtual = Erro(entradasValidacao, classesValidacao);
 		if(erroAtual > erroMax){
 			System.out.println("Após treinamento, o erro final é maior que erro esperado no momento de validar: " + erroAtual );
+			System.out.println("O número total de épocas foi: " + max_epocas);
 		} else{
 			System.out.println("Após treinamento, o erro final é menor que erro esperado no momento de validar: " + erroAtual );
 			System.out.println("Já foi treinado " + treinouDeNovo + "vezes a mais após primeira validação. Treinando novamente.");
