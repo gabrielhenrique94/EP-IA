@@ -91,6 +91,11 @@ public class LVQ {
 	private int saidas;
 	
 	private int tipoVetor;
+	
+	/**
+	 * Variavel para verificar quantas vezes precisou treinar de novo 
+	 */
+	private int treinouDeNovo = 0;
 
 	/**
 	 * Construtor LVQ que utiliza Treinamento, Teste e Validacao
@@ -186,7 +191,7 @@ public class LVQ {
 	 */
 	public void TreinTestVal(){
 		treinamentoLVQ(true);
-		teste();
+		valida();
 	}
 	
 	/**
@@ -289,17 +294,6 @@ public class LVQ {
 		//(max_Epocas) ou valor minimo taxa de aprendizado(alfaRotativo)
 		while (this.epocas <= this.max_epocas || this.alfaRotativo >= 0.0001) {	
 			
-			//Chama funcao que calcula o erro
-			//calculo do erro sera usado porque dependendo do nivel do erro execucao sera parada
-			if (temTeste){
-				double erroAtual = Erro(entradasValidacao, classesValidacao);
-				if (erroAtual > this.erroMax) {
-					System.out.println("Ultrapassou o erro máximo esperado. Erro: " + erroAtual);
-					System.out.println("Época na qual parou: " + epocas);
-					break;
-				}
-			}
-			
 			for (int j = 0; j < this.entradasTreinamento.size(); j++) {
 				double[] vetorAuxiliar= new double [entradasTreinamento.get(j).length+1];
 				System.out.println();
@@ -351,6 +345,12 @@ public class LVQ {
 			//atualizaAlfaMonot(this.epocas, this.max_epocas);
 			System.out.println("VALOR ATUAL ALFA: " + alfaRotativo);
 			System.out.println("EPOCAS " + epocas);
+			//Chama funcao que calcula o erro
+			//calculo do erro sera usado porque dependendo do nivel do erro execucao sera parada
+			if (temTeste){
+				double erroAtual = Erro(entradasTeste, classesTeste);
+				System.out.println("Erro atual é: " + erroAtual);
+			}
 			this.epocas++;
 		}
 		inicializarVetorNeurAtivados();
@@ -634,12 +634,12 @@ public class LVQ {
 	/**
 	 * Funcao para o calculo do erro da LVQ
 	 */
-	public double Erro(ArrayList<double[]> entradasValidacao, ArrayList<Double> classesValidacao){
-		double tamanhoVal = entradasValidacao.size();
+	public double Erro(ArrayList<double[]> entradas, ArrayList<Double> classes){
+		double tamanhoVal = entradas.size();
 		double numeroDeErros = 0, classeAtual = 0, classeGanhadora;
-		for(int i = 0; i < entradasValidacao.size(); i++){
-			classeAtual = classesValidacao.get(i);
-			classeGanhadora = Classificador(entradasValidacao.get(i));
+		for(int i = 0; i < entradas.size(); i++){
+			classeAtual = classes.get(i);
+			classeGanhadora = Classificador(entradas.get(i));
 			if (classeAtual != classeGanhadora){
 				numeroDeErros++;
 			} 
@@ -647,8 +647,18 @@ public class LVQ {
 		return (numeroDeErros) / tamanhoVal;
 	}
 	
-	public void teste(){
-		System.out.println("Erro da lista de teste: " + Erro(entradasTeste, classesTeste));
+	public void valida(){
+		double erroAtual = Erro(entradasValidacao, classesValidacao);
+		if(erroAtual > erroMax){
+			System.out.println("Após treinamento, o erro final é maior que erro esperado no momento de validar: " + erroAtual );
+		} else{
+			System.out.println("Após treinamento, o erro final é menor que erro esperado no momento de validar: " + erroAtual );
+			System.out.println("Já foi treinado " + treinouDeNovo + "vezes a mais após primeira validação. Treinando novamente.");
+			this.max_epocas = this.epocas + 100;
+			this.treinouDeNovo++;
+			treinamentoLVQ(true);
+		}
+			
 	}
 	
 }
