@@ -27,14 +27,13 @@ public class Main {
 		
 		double erroAceitavel = 0.05; //(5% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
 		
+		int tipoVetor = 0; //variavel na qual usuario passara tipo de vetor a ser inicializado na lvq - 0 vetor erado - 1 vetor random
 		
 		/* Nome do arquivo do conjunto de dados de teste */
 		//String	dadosTeste = args[2];
 		
 		/* Taxa de aprendizado inicial */
 		//double taxaAprendizado = Double.parseDouble(args[3]);
-		
-		
 		
 		/* Numero de neuronios para cada classe (para a rede LVQ)*/
 		//int numNeuroniosClasseLVQ = Integer.parseInt(args[5]);
@@ -50,15 +49,6 @@ public class Main {
 		//String saida = args[7]; 
 		
 		NormalizarDados dadosNormalizados = new NormalizarDados(arquivoTreinamento, arquivoTeste, 0.95); //Pegar a taxa por arg[] mais para frente 
-		
-		//Chamada do Holdout
-		//Nao alterei nada das outras coisas
-		
-		Holdout hldt = new Holdout (dadosNormalizados.getMatrizesTreinamento(), dadosNormalizados.getClassesTreinamento(), dadosNormalizados.getMatrizesTeste(),
-			dadosNormalizados.getClassesTeste());
-		
-		hldt.AplicaHoldout();
-		
 		
 		ArrayList<double[]> x = dadosNormalizados.getMatrizesTeste();
 		double[] t = x.get(0);
@@ -116,23 +106,34 @@ public class Main {
 		//saidas = 10 sempre, numero de classes - 2 quando for xor
 		//neuSaidas = neuronios finais na saida por classe
 		
-		//LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT, 10, alpha, erroAceitavel, 10, 1, 2);
-		//teste.treinamentoLVQ();
-		
-		/*
-		//LVQ holdout
-		LVQ teste = new LVQ(hldt.getentradasFinaisTreinamento(),hldt.getclassesFinaisTreinamento(), 100, 10, alpha, erroAceitavel, 10, 0, 2);
-		teste.treinamentoLVQ();
-		*/
+		//LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT, 10, alpha, erroAceitavel, 10, tipoVetor, 2);
+		//teste.treinamentoLVQ(false);
 		
 		//Teste XOR - teste mais simples para verificar se a rede está convergindo
 		//Rede converge tanto com vetores iniciados em 0 como aleatoriamente
-		LVQ testeXOR = new LVQ(xorProblem, xorClazz, maxT, 50, alpha, erroAceitavel, 2, 0, 3); //neuronios finais na saida (3) por classe
-		testeXOR.treinamentoLVQ();
+		LVQ testeXOR = new LVQ(xorProblem, xorClazz, maxT, 50, alpha, erroAceitavel, 2, tipoVetor, 3); //neuronios finais na saida (3) por classe
+		testeXOR.treinamentoLVQ(false);
 		//xorProblem matrizes treinamento
-		for(int i = 0; i < xorProblem.size(); i++)
-		System.out.println(testeXOR.Classificador(xorProblem.get(i)));
-				
+	//	for(int i = 0; i < xorProblem.size(); i++)
+	//	System.out.println(testeXOR.Classificador(xorProblem.get(i)));
+		
+		
+		//Teste usando LVQ com teste e validacao e dados pegos do holdout
+		/**
+		 * LVQ teste completo usando holdout
+		 * ArrayList<double[]> entradasTreinamento, ArrayList<Double> classesTreinamento, 
+		 * ArrayList<double[]> entradasTeste, ArrayList<Double> classesTeste, 
+		 * ArrayList<double[]> entradasValidacao, ArrayList<Double> classesValidacao, 
+		 * int epoca, int numNeuronios, double alfa, double erro, int saidas, int tipoVetor, int neuSaidas
+		 */
+		
+		//Chamada do Holdout
+		Holdout hldt = new Holdout (dadosNormalizados.getMatrizesTreinamento(), dadosNormalizados.getClassesTreinamento(), dadosNormalizados.getMatrizesTeste(),
+					dadosNormalizados.getClassesTeste());
+		hldt.AplicaHoldout();
+		
+		LVQ lvq = new LVQ(hldt.getentradasFinaisTreinamento(), hldt.getclassesFinaisTreinamento(), hldt.getentradasFinaisTeste(), hldt.getclassesFinaisTeste(),
+				hldt.getentradasFinaisValidacao(), hldt.getclassesFinaisValidacao(), maxT, 50, alpha, erroAceitavel, 10, tipoVetor, 2);
+		 lvq.TreinTestVal();		
 	}
-
 }

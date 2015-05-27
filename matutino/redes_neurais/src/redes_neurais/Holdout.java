@@ -135,7 +135,6 @@ public class Holdout {
 		SeparaArrayListTreinamento();
 		SeparaArrayListTeste();
 		SeparaArrayListValidacao();
-		System.out.println("Holdout funcionou!");
 	}
 
 	/**
@@ -264,10 +263,6 @@ public class Holdout {
 			classesFinaisTreinamento.add(classe);
 			entradasFinaisTreinamento.add(auxiliar);
 		}
-		for(int i = 0; i < classesFinaisTreinamento.size(); i++){
-			//System.out.println(classesFinaisTreinamento.get(i));
-		}
-
 	}
 
 	/**
@@ -287,11 +282,6 @@ public class Holdout {
 			classesFinaisTeste.add(classe);
 			entradasFinaisTeste.add(auxiliar);
 		}
-		System.out.println("Classes Finais Teste");
-		for(int i = 0; i < classesFinaisTeste.size(); i++){
-		//	System.out.println(classesFinaisTeste.get(i));
-		}
-
 	}
 
 	/**

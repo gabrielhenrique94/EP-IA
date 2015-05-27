@@ -170,7 +170,7 @@ public class LVQ {
 			System.out.println(this.classesTreinamento.get(i));
 		}
 		System.out.println();
-		treinamentoLVQ();
+		treinamentoLVQ(false);
 		for (int i = 0; i < this.numNeur; i++) {
 			vet = this.vetorPrototipos.get(i);
 			System.out.print(i + " ");
@@ -179,6 +179,14 @@ public class LVQ {
 			}
 			System.out.println();
 		}
+	}
+	
+	/**
+	 * Funcao que chama treinamento com teste e validacao
+	 */
+	public void TreinTestVal(){
+		treinamentoLVQ(true);
+		validacao();
 	}
 	
 	/**
@@ -263,7 +271,7 @@ public class LVQ {
 	/**
 	 * Funcao para treinamento da rede
 	 */
-	public void treinamentoLVQ() {
+	public void treinamentoLVQ(boolean temTeste) {
 		 //Inicializando o conjunto de prototipos
 		criaVetorPrototipos(saidas, tipoVetor);
 		this.alfaRotativo = this.alfaInicial;
@@ -301,12 +309,14 @@ public class LVQ {
 				}
 				System.out.println();
 			
-				/*
+				
 				//Chama funcao que calcula o erro
 				//calculo do erro sera usado porque dependendo do nivel do erro execucao sera parada
+				if (temTeste){
 				double erroAtual = taxaErro(entradasTeste, classesTeste);
 				if (erroAtual < this.erroMax) break;
-				*/
+				}
+				
 				
 				if ((int) neuronioVencedor[neuronioVencedor.length - 1] == this.classesTreinamento.get(j)) { 
 					// Aproxima
@@ -639,8 +649,8 @@ public class LVQ {
 	/**
 	 * Validacao da LVQ
 	*/
-	public void validacao(ArrayList<double[]> entradasValidacao, ArrayList<Double> classesValidacao){
-		System.out.println("Erro da lista de validação: " + this.taxaErro(entradasValidacao, classesValidacao));
+	public void validacao(){
+		System.out.println("Erro da lista de validação: " + this.taxaErro(this.entradasValidacao, this.classesValidacao));
 	}
 	 
 	
