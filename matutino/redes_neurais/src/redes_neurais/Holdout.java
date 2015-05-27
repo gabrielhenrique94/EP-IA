@@ -1,8 +1,5 @@
 package redes_neurais;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -132,9 +129,26 @@ public class Holdout {
 		Juncao();
 		Random();
 		HoldoutEntradasClasses();
+		RandomCadaLista();
 		SeparaArrayListTreinamento();
 		SeparaArrayListTeste();
 		SeparaArrayListValidacao();
+		/*
+		System.out.println("Classes Finais Treinamento: ");
+		for(int i = 0; i < classesFinaisTreinamento.size(); i++){
+			System.out.println(classesFinaisTreinamento.get(i));
+		}
+		
+		System.out.println("Classes Finais Teste: ");
+		for(int i = 0; i < classesFinaisTeste.size(); i++){
+			System.out.println(classesFinaisTeste.get(i));
+		}
+		
+		System.out.println("Classes Finais Validacao: ");
+		for(int i = 0; i < classesFinaisValidacao.size(); i++){
+			System.out.println(classesFinaisValidacao.get(i));
+		}
+		*/
 	}
 
 	/**
@@ -247,6 +261,15 @@ public class Holdout {
 			}
 		}
 	}
+	
+	/**
+	 * Funcao para embaralhar ArrayList que contem entradas + classes
+	 */
+	public void RandomCadaLista() {
+		Collections.shuffle(entradasHoldoutTreinamento);
+		Collections.shuffle(entradasHoldoutTeste);
+		Collections.shuffle(entradasHoldoutValidacao);
+	}
 
 	/**
 	 * Funcao para separar entradas e classes em ArrayLists diferentes pois esta
@@ -254,8 +277,9 @@ public class Holdout {
 	 */
 	public void SeparaArrayListTreinamento() {
 		Double classe;
+		int tamanho = entradasHoldoutTreinamento.get(0).length - 1;
 		for (int j = 0; j < entradasHoldoutTreinamento.size(); j++) {
-			double[] auxiliar = new double[entradasHoldoutTreinamento.get(0).length - 1];
+			double[] auxiliar = new double[tamanho];
 			for (int i = 0; i < auxiliar.length; i++) {
 				auxiliar[i] = entradasHoldoutTreinamento.get(j)[i];
 			}
@@ -270,11 +294,10 @@ public class Holdout {
 	 * sendo utilizado assim na LVQ e MLP
 	 */
 	public void SeparaArrayListTeste() {
-
-		
 		Double classe;
+		int tamanho = entradasHoldoutTeste.get(0).length - 1;
 		for (int j = 0; j < entradasHoldoutTeste.size(); j++) {
-			double[] auxiliar = new double[entradasHoldoutTeste.get(0).length - 1];
+			double[] auxiliar = new double[tamanho];
 			for (int i = 0; i < auxiliar.length; i++) {
 				auxiliar[i] = entradasHoldoutTeste.get(j)[i];
 			}
@@ -289,10 +312,10 @@ public class Holdout {
 	 * sendo utilizado assim na LVQ e MLP
 	 */
 	public void SeparaArrayListValidacao() {
-
 		Double classe;
+		int tamanho = entradasHoldoutValidacao.get(0).length - 1;
 		for (int j = 0; j < entradasHoldoutValidacao.size(); j++) {
-			double[] auxiliar = new double[entradasHoldoutValidacao.get(0).length - 1];
+			double[] auxiliar = new double[tamanho];
 			for (int i = 0; i < auxiliar.length; i++) {
 				auxiliar[i] = entradasHoldoutValidacao.get(j)[i];
 			}

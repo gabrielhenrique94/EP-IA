@@ -23,7 +23,7 @@ public class Main {
 		
 		boolean alphaEstatico = false; // Args tbm
 		
-		int maxT = 100; // Args, maximo de epocas que se deve executar
+		int maxT = 5000; // Args, maximo de epocas que se deve executar
 		
 		double erroAceitavel = 0.05; //(5% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
 		
@@ -111,8 +111,8 @@ public class Main {
 		
 		//Teste XOR - teste mais simples para verificar se a rede está convergindo
 		//Rede converge tanto com vetores iniciados em 0 como aleatoriamente
-		LVQ testeXOR = new LVQ(xorProblem, xorClazz, maxT, 50, alpha, erroAceitavel, 2, tipoVetor, 3); //neuronios finais na saida (3) por classe
-		testeXOR.treinamentoLVQ(false);
+	//	LVQ testeXOR = new LVQ(xorProblem, xorClazz, maxT, 50, alpha, erroAceitavel, 2, tipoVetor, 3); //neuronios finais na saida (3) por classe
+	//	testeXOR.treinamentoLVQ(false);
 		//xorProblem matrizes treinamento
 	//	for(int i = 0; i < xorProblem.size(); i++)
 	//	System.out.println(testeXOR.Classificador(xorProblem.get(i)));
@@ -131,9 +131,17 @@ public class Main {
 		Holdout hldt = new Holdout (dadosNormalizados.getMatrizesTreinamento(), dadosNormalizados.getClassesTreinamento(), dadosNormalizados.getMatrizesTeste(),
 					dadosNormalizados.getClassesTeste());
 		hldt.AplicaHoldout();
+		/*
+		ArrayList<Double> a = hldt.getclassesFinaisTeste();
+		for(int i = 0; i < a.size(); i++){
+			System.out.println(a.get(i));
+		}
+		*/
 		
 		LVQ lvq = new LVQ(hldt.getentradasFinaisTreinamento(), hldt.getclassesFinaisTreinamento(), hldt.getentradasFinaisTeste(), hldt.getclassesFinaisTeste(),
 				hldt.getentradasFinaisValidacao(), hldt.getclassesFinaisValidacao(), maxT, 50, alpha, erroAceitavel, 10, tipoVetor, 2);
-		 lvq.TreinTestVal();		
+		 lvq.TreinTestVal();	
+		 
+		 
 	}
 }

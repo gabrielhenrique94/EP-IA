@@ -313,10 +313,12 @@ public class LVQ {
 				//Chama funcao que calcula o erro
 				//calculo do erro sera usado porque dependendo do nivel do erro execucao sera parada
 				if (temTeste){
-				double erroAtual = taxaErro(entradasTeste, classesTeste);
-				if (erroAtual < this.erroMax) break;
+					double erroAtual = taxaErro(entradasTeste, classesTeste);
+					if (erroAtual < this.erroMax) {
+						System.out.println("Ultrapassou o erro máximo esperado.");
+						break;
+					}
 				}
-				
 				
 				if ((int) neuronioVencedor[neuronioVencedor.length - 1] == this.classesTreinamento.get(j)) { 
 					// Aproxima
