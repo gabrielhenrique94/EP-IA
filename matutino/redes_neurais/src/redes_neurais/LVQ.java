@@ -355,10 +355,10 @@ public class LVQ {
 			this.epocas++;
 		}
 		inicializarVetorNeurAtivados();
-		confereNeuroniosAtivados();
+		confereNeuroniosAtivados(this.classesTeste, this.entradasTeste);
 		reduzNeuronios();
 		inicializaMatrizConfusao();
-		montaMatrizConfusao();
+		montaMatrizConfusao(this.classesTeste, this.entradasTeste);
 		for (int i = 0; i < this.vetorNeuroniosAtivados.length; i++) {
 			System.out.print(vetorNeuroniosAtivados[i] + " ");
 		}
@@ -421,15 +421,15 @@ public class LVQ {
 	 * Funcao para atualizar vetores dos neuronios vencedores
 	 * @param j
 	 */
-	public void atualizaVetorNeurVencedores(int j) {
+	public void atualizaVetorNeurVencedores(int j, ArrayList<double[]> entradas, ArrayList<Double> classes) {
 		
-		double[] neurVencedor = pegaNeurVencedorV2(j);
+		double[] neurVencedor = pegaNeurVencedorV2(j, entradas, classes);
 		int index = this.vetorPrototipos.indexOf(neurVencedor);
 		System.out.println("neu venc: "
 				+ this.vetorPrototipos.indexOf(neurVencedor) + " "
 				+ neurVencedor[0] + " " + neurVencedor[1] + " "
 				+ neurVencedor[2]);
-		if (neurVencedor[neurVencedor.length - 1] == this.classesTreinamento.get(j)) {
+		if (neurVencedor[neurVencedor.length - 1] == classes.get(j)) {
 			this.vetorNeuroniosAtivados[index] = this.vetorNeuroniosAtivados[index] + 1;
 		}
 	}
@@ -463,25 +463,22 @@ public class LVQ {
 	 * @param j
 	 * @return
 	 */
-	@SuppressWarnings("finally")
-	public double[] pegaNeurVencedorV2(int j) {
+
+	public double[] pegaNeurVencedorV2(int j , ArrayList<double[]> entradas,  ArrayList<Double> classes) {
 		double distMin = 999999999;
 		double dist = 0;
-		double neurVencedor[] = new double[this.entradasTreinamento.get(0).length];
-		try{
+		double neurVencedor[] = new double[entradas.get(0).length];
+		
 		for (int i = 0; i < this.vetorPrototipos.size(); i++) {
 			
-			dist = calculaDistEuclidiana(this.entradasTreinamento.get(j), this.vetorPrototipos.get(i));
+			dist = calculaDistEuclidiana(entradas.get(j), this.vetorPrototipos.get(i));
 			if (dist < distMin) {
 				distMin = dist;
 				neurVencedor = this.vetorPrototipos.get(i);
 			}
 		}
-		}
-		//catch (Doub e){}
-		finally{
-			return neurVencedor;
-		}
+		 return neurVencedor;
+
 	}
 	
 	/**
@@ -504,9 +501,9 @@ public class LVQ {
 	/**
 	 * Funcao que confere quais neuronios sao ativados
 	 */
-	private void confereNeuroniosAtivados() {
-		for (int j = 0; j < this.entradasTreinamento.size(); j++) {
-			atualizaVetorNeurVencedores(j);
+	private void confereNeuroniosAtivados(ArrayList<Double> classes, ArrayList<double[]> entradas) {
+		for (int j = 0; j < entradas.size(); j++) {
+			atualizaVetorNeurVencedores(j, entradas, classes);
 		}
 	}
 
@@ -535,12 +532,12 @@ public class LVQ {
 	/**
 	 * Funcao para montagem da matriz de confusao
 	 */
-	private void montaMatrizConfusao() {
+	private void montaMatrizConfusao(ArrayList<Double> classes, ArrayList<double[]> entradas) {
 
 		double[] neurVencedor;
-		for (int j = 0; j < this.entradasTreinamento.size(); j++) {
-			neurVencedor = pegaNeurVencedorReduzido(j);
-			int classe =(int)(double) classesTreinamento.get(j);
+		for (int j = 0; j < entradas.size(); j++) {
+			neurVencedor = pegaNeurVencedorReduzido(j, entradas, classes);
+			int classe =(int)(double) classes.get(j);
 			//linha e a classe esperada e coluna a que deu
 			this.matrizConfusao[(int) neurVencedor[neurVencedor.length - 1]][classe] += 1;
 		}
@@ -562,12 +559,12 @@ public class LVQ {
 	 * @param j
 	 * @return
 	 */
-	public double[] pegaNeurVencedorReduzido(int j) {
+	public double[] pegaNeurVencedorReduzido(int j, ArrayList<double[]> entradas, ArrayList<Double> classes) {
 		double distMin = 100000000;
 		double dist = 0;
-		double neurVencedor[] = new double[this.entradasTreinamento.get(0).length];
+		double neurVencedor[] = new double[entradas.get(0).length];
 		for (int i = 0; i < this.vetorPrototiposReduzido.size() ; i++) {
-			dist = calculaDistEuclidiana(this.entradasTreinamento.get(j),
+			dist = calculaDistEuclidiana(entradas.get(j),
 					this.vetorPrototiposReduzido.get(i));
 			if (dist <= distMin) {
 				distMin = dist;
