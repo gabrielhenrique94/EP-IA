@@ -376,6 +376,7 @@ public class LVQ {
 		inicializaMatrizConfusao();
 		montaMatrizConfusao(this.classesTeste, this.entradasTeste);
 		ImprimeErro();
+		teste();
 		for (int i = 0; i < this.vetorNeuroniosAtivados.length; i++) {
 			System.out.print(vetorNeuroniosAtivados[i] + " ");
 		}
