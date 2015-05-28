@@ -25,7 +25,7 @@ public class Main {
 		
 		int maxT = 50; // Args, maximo de epocas que se deve executar
 		
-		double erroAceitavel = 0.80; //(20% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
+		double erroAceitavel = 0.80; //(80% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
 		
 		int tipoVetor = 1; //variavel na qual usuario passara tipo de vetor a ser inicializado na lvq - 0 vetor zerado - 1 vetor random
 		
@@ -105,9 +105,10 @@ public class Main {
 		//tipoVetor = 0 vetores zerado - = 1 vetores aleatorios
 		//saidas = 10 sempre, numero de classes - 2 quando for xor
 		//neuSaidas = neuronios finais na saida por classe
-		
+		/*
 		LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT, 3, alpha, erroAceitavel, 10, tipoVetor, 2);
 		teste.treinamentoLVQ(false);
+		*/
 		
 		//Teste XOR - teste mais simples para verificar se a rede está convergindo
 		//Rede converge tanto com vetores iniciados em 0 como aleatoriamente
@@ -127,7 +128,7 @@ public class Main {
 		 * int epoca, int numNeuronios, double alfa, double erro, int saidas, int tipoVetor, int neuSaidas
 		 */
 		
-		/*
+		
 		//Chamada do Holdout
 		Holdout hldt = new Holdout (dadosNormalizados.getMatrizesTreinamento(), dadosNormalizados.getClassesTreinamento(), dadosNormalizados.getMatrizesTeste(),
 					dadosNormalizados.getClassesTeste());
@@ -136,7 +137,6 @@ public class Main {
 		LVQ lvq = new LVQ(hldt.getentradasFinaisTreinamento(), hldt.getclassesFinaisTreinamento(), hldt.getentradasFinaisTeste(), hldt.getclassesFinaisTeste(),
 				hldt.getentradasFinaisValidacao(), hldt.getclassesFinaisValidacao(), maxT, 5, alpha, erroAceitavel, 10, tipoVetor, 2);
 		 lvq.TreinTestVal();	
-		 */
  
 	}
 }

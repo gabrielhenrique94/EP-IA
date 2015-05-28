@@ -101,11 +101,18 @@ public class LVQ {
 	 */
 	private int tipoVetor;
 	
+	private double erroAtual = 0.0;
+	
 	/**
 	 * Variavel para verificar quantas vezes precisou treinar de novo 
 	 */
 	private int treinouDeNovo = 0;
-
+	
+	/**
+	 * 
+	 */
+	private ArrayList<Double> listaErro;
+	
 	/**
 	 * Construtor LVQ que utiliza Treinamento, Teste e Validacao
 	 * @param entradasTreinamento
@@ -292,7 +299,7 @@ public class LVQ {
 			
 		//Determinacacao de condicao de parada Numero Fixo de iteracoes
 		//(max_Epocas) ou valor minimo taxa de aprendizado(alfaRotativo)
-		while (this.epocas <= this.max_epocas || this.alfaRotativo >= 0.0001) {	
+		while (this.epocas <= this.max_epocas || this.alfaRotativo >= 0.0001 || this.erroAtual < erroMax) {	
 			
 			for (int j = 0; j < this.entradasTreinamento.size(); j++) {
 				double[] vetorAuxiliar= new double [entradasTreinamento.get(j).length+1];
@@ -349,7 +356,7 @@ public class LVQ {
 			//calculo do erro sera usado porque dependendo do nivel do erro execucao sera parada
 			if (temValidacao){
 				//calcula erro atual
-				double erroAtual = CalculaErro(entradasValidacao, classesValidacao);
+				erroAtual = CalculaErro(entradasValidacao, classesValidacao);
 				System.out.println("Erro atual é: " + erroAtual);
 			}
 			this.epocas++;
@@ -648,8 +655,10 @@ public class LVQ {
 			if (classeAtual != classeGanhadora){
 				numeroDeErros++;
 			} 
-		}			
-		return (numeroDeErros) / tamanhoVal;
+		}		
+		double resultado = (numeroDeErros) / tamanhoVal;
+		listaErro.add(resultado);
+		return resultado;
 	}
 	
 	/**
@@ -661,12 +670,14 @@ public class LVQ {
 		if(erroAtual < erroMax){
 			System.out.println("Após treinamento, o erro final é menor que erro esperado no momento de validar: " + erroAtual );
 			System.out.println("O número total de épocas foi: " + max_epocas);
-		} else{ //senao, testa mais
+		} /*else{ //senao, testa mais
 			System.out.println("Após treinamento, o erro final é maior que erro esperado no momento de validar: " + erroAtual );
 			System.out.println("Já foi treinado " + treinouDeNovo + "vezes a mais após primeira validação. Treinando novamente.");
 			this.max_epocas = this.epocas + 100;
 			this.treinouDeNovo++;
 			treinamentoLVQ(true);
 		}
+		*/
+		System.out.println("Após o treinamento, o erro final é maior que o esperado, mas já atingimos o máximo de épocas. Erro atual: " + erroAtual);
 	}
 }
