@@ -701,8 +701,8 @@ public class LVQ {
 		double erroAtual = CalculaErro(entradasTeste, classesTeste);
 		try {
 			FileWriter i = new FileWriter(new File("ImprimeErroFinal.txt"));
-			i.write("Erro Final" + erroAtual + "\n");
-			i.write("Parou na época" + epocas + "\n");
+			i.write("Erro Final" + this.erroAtual + "\n");
+			i.write("Parou na época" + this.epocas + "\n");
 			i.write("Máximo de épocas passada por parâmetro" + max_epocas);
 			i.close();
 		} catch (IOException e) {
@@ -711,9 +711,9 @@ public class LVQ {
 		}
 		//se o erro atual e menor que o erro maximo, ok, acabou programa
 		if(erroAtual < erroMax){
-			System.out.println("Após treinamento, o erro final é menor que erro esperado no momento de validar: " + erroAtual );
-			System.out.println("O número total de épocas foi: " + max_epocas);
+			System.out.println("Após treinamento, o erro final é menor que erro esperado no momento de validar: " + this.erroAtual );
+			System.out.println("O número total de épocas foi: " + this.epocas);
 		} 
-		System.out.println("Após o treinamento, o erro final é maior que o esperado, mas já atingimos o máximo de épocas. Erro atual: " + erroAtual);
+		System.out.println("Após o treinamento, o erro final é maior que o esperado, mas já atingimos o máximo de épocas. Erro atual: " + this.erroAtual);
 	}
 }
