@@ -137,6 +137,8 @@ public class Main {
 		LVQ lvq = new LVQ(hldt.getentradasFinaisTreinamento(), hldt.getclassesFinaisTreinamento(), hldt.getentradasFinaisTeste(), hldt.getclassesFinaisTeste(),
 				hldt.getentradasFinaisValidacao(), hldt.getclassesFinaisValidacao(), maxT, 5, alpha, erroAceitavel, 10, tipoVetor, 2);
 		 lvq.TreinTestVal();	
+		 //lvq.ImprimeErro();
+		 //ImprimeErro(); para imprimir lista com os erros
  
 	}
 }

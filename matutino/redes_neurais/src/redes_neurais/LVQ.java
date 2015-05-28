@@ -109,7 +109,7 @@ public class LVQ {
 	private int treinouDeNovo = 0;
 	
 	/**
-	 * 
+	 * Lista que tem os erros de 0 a 1
 	 */
 	private ArrayList<Double> listaErro;
 	
@@ -207,7 +207,16 @@ public class LVQ {
 	 */
 	public void TreinTestVal(){
 		treinamentoLVQ(true);
-		teste();
+		//teste();
+	}
+	
+	/**
+	 * Imprime lista que contem erros
+	 */
+	public void ImprimeErro(){
+		for(int i = 0; i < listaErro.size(); i++){
+			listaErro.get(i);
+		}
 	}
 	
 	/**
@@ -362,10 +371,11 @@ public class LVQ {
 			this.epocas++;
 		}
 		inicializarVetorNeurAtivados();
-		confereNeuroniosAtivados(this.classesTeste, this.entradasTeste);
+		confereNeuroniosAtivados(this.classesTreinamento, this.entradasTreinamento);
 		reduzNeuronios();
 		inicializaMatrizConfusao();
 		montaMatrizConfusao(this.classesTeste, this.entradasTeste);
+		ImprimeErro();
 		for (int i = 0; i < this.vetorNeuroniosAtivados.length; i++) {
 			System.out.print(vetorNeuroniosAtivados[i] + " ");
 		}
@@ -670,14 +680,7 @@ public class LVQ {
 		if(erroAtual < erroMax){
 			System.out.println("Após treinamento, o erro final é menor que erro esperado no momento de validar: " + erroAtual );
 			System.out.println("O número total de épocas foi: " + max_epocas);
-		} /*else{ //senao, testa mais
-			System.out.println("Após treinamento, o erro final é maior que erro esperado no momento de validar: " + erroAtual );
-			System.out.println("Já foi treinado " + treinouDeNovo + "vezes a mais após primeira validação. Treinando novamente.");
-			this.max_epocas = this.epocas + 100;
-			this.treinouDeNovo++;
-			treinamentoLVQ(true);
-		}
-		*/
+		} 
 		System.out.println("Após o treinamento, o erro final é maior que o esperado, mas já atingimos o máximo de épocas. Erro atual: " + erroAtual);
 	}
 }
