@@ -139,7 +139,7 @@ public class LVQ {
 	public LVQ(ArrayList<double[]> entradasTreinamento, ArrayList<Double> classesTreinamento, 
 			ArrayList<double[]> entradasTeste, ArrayList<Double> classesTeste, 
 			ArrayList<double[]> entradasValidacao, ArrayList<Double> classesValidacao, 
-			int epoca, int numNeuronios, double alfa, double erro, int saidas, int tipoVetor, int neuSaidas) {
+			int epoca, int numNeuronios, double alfa, double erro, int saidas, int tipoVetor) {
 		this.entradasTreinamento = entradasTreinamento;
 		this.entradasTeste = entradasTeste;
 		this.classesTeste = classesTeste;
@@ -152,7 +152,7 @@ public class LVQ {
 		this.classesTreinamento = classesTreinamento;
 		this.saidas = saidas;
 		this.tipoVetor = tipoVetor;
-		this.neuSaidas = neuSaidas;
+
 	}
 	
 	/**
@@ -450,6 +450,7 @@ public class LVQ {
 		}
 		erro= (total-acertos)/total;
 		
+		System.out.println("Total teste: " + total);
 		return erro;
 	}
 

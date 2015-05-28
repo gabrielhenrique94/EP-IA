@@ -41,8 +41,9 @@ public class MainEntregavel {
 			taxa = 0.95;
 		}
 		
-		/* Numero de neuronios na camada saída (para a rede MLP) */
-		int numNeuroniosSaidaLVQ = Integer.parseInt(args[9]);
+		
+		/*Numero de neuronios por classe para LVQ*/
+		int numNeuroniosClasse = Integer.parseInt(args[9]);
 		
 		NormalizarDados dadosNormalizados = new NormalizarDados(arquivoTreinamento, arquivoTeste, taxa); 
 		
@@ -63,25 +64,9 @@ public class MainEntregavel {
 		redeMLP.treinar();
 		
 		
-		//tipoVetor = 0 vetores zerado - = 1 vetores aleatorios
-		//LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT, 50, alpha, erroAceitavel, numNeuroniosSaidaLVQ, 0);
-		//teste.treinamentoLVQ();
-		
-		
-		/*
-		//LVQ holdout
-		LVQ teste = new LVQ(hldt.getentradasFinaisTreinamento(),hldt.getclassesFinaisTreinamento(), maxT, 10, alpha, erroAceitavel, 10, 0);
-		teste.treinamentoLVQ();
-		*/
-		/*
-		//saidas = 2
-		//tipoVetor = 0 vetores zerado - = 1 vetores aleatorios
-		LVQ testeXOR = new LVQ(xorProblem, xorClazz, maxT, 50, alpha, erroAceitavel, 2, 1);
-		testeXOR.treinamentoLVQ();
-		//xorProblem matrizes treinamento
-		for(int i = 0; i < xorProblem.size(); i++)
-		System.out.println(testeXOR.Classificador(xorProblem.get(i)));
-		*/
+		LVQ lvq = new LVQ(hldt.getentradasFinaisTreinamento(), hldt.getclassesFinaisTreinamento(), hldt.getentradasFinaisTeste(), hldt.getclassesFinaisTeste(),
+				hldt.getentradasFinaisValidacao(), hldt.getclassesFinaisValidacao(), maxT, numNeuroniosClasse, alpha, erroAceitavel, 10, peso);
+		 lvq.TreinTestVal();	
 		
 	}
 
