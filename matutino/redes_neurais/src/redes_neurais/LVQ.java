@@ -384,13 +384,14 @@ public class LVQ {
 		reduzNeuronios();
 		
 		montaMatrizConfusao(this.classesTeste, this.entradasTeste);
+		double erroFinal= calculaErroFinal();
 		try {
 			ImprimeErro();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		teste();
+		imprimeErroFinal(erroFinal);
 		for (int i = 0; i < this.vetorNeuroniosAtivados.length; i++) {
 			System.out.print(vetorNeuroniosAtivados[i] + " ");
 		}
@@ -426,6 +427,25 @@ public class LVQ {
 		for (int l=0; l<matrizConfusaoAuxiliar.length;l++){
 			for (int m=0; m<matrizConfusaoAuxiliar[0].length;m++){
 			total= total+matrizConfusaoAuxiliar[l][m];
+			}
+		}
+		erro= (total-acertos)/total;
+		
+		return erro;
+	}
+	
+	public double calculaErroFinal(){
+		double erro=0;
+		double acertos=0;
+		double total=0;
+		
+				
+		for (int i=0; i<matrizConfusao.length;i++){
+			acertos= acertos+ matrizConfusao[i][i];
+		}
+		for (int l=0; l<matrizConfusao.length;l++){
+			for (int m=0; m<matrizConfusao[0].length;m++){
+			total= total+matrizConfusao[l][m];
 			}
 		}
 		erro= (total-acertos)/total;
@@ -725,11 +745,11 @@ public class LVQ {
 	/**
 	 * Funcao resposavel pelo teste final da rede
 	 */
-	public void teste(){
-		double erroAtual = CalculaErro(entradasTeste, classesTeste);
+	public void imprimeErroFinal(double erroFinal){
+		
 		try {
 			FileWriter i = new FileWriter(new File("ImprimeErroFinal.txt"));
-			i.write("Erro Final" + this.erroAtual + "\n");
+			i.write("Erro Final" + erroFinal + "\n");
 			i.write("Parou na epoca" + (this.epocas-1) + "\n");
 			i.write("Maximo de epocas passada por parametro" + max_epocas);
 			i.close();
@@ -738,11 +758,11 @@ public class LVQ {
 			e.printStackTrace();
 		}
 		//se o erro atual e menor que o erro maximo, ok, acabou programa
-		if(erroAtual <= erroMax){
-			System.out.println("Apos treinamento, o erro final eh menor que erro esperado no momento de validar: " + this.erroAtual );
+		if(erroFinal <= this.erroMax){
+			System.out.println("Apos treinamento, o erro final eh menor que erro esperado no momento de validar: " + erroFinal );
 			System.out.println("O numero total de epocas foi: " + (this.epocas-1));
 		} else{
-			System.out.println("Apos o treinamento, o erro final eh maior que o esperado, mas ja atingimos o maximo de apocas. Erro atual: " + this.erroAtual);
+			System.out.println("Apos o treinamento, o erro final eh maior que o esperado, mas ja atingimos o maximo de apocas. Erro atual: " + erroFinal);
 		}
 	}
 }
