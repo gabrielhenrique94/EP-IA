@@ -1,5 +1,8 @@
 package redes_neurais;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -212,10 +215,19 @@ public class LVQ {
 	
 	/**
 	 * Imprime lista que contem erros
+	 * @throws IOException 
 	 */
-	public void ImprimeErro(){
-		for(int i = 0; i < listaErro.size(); i++){
-			System.out.println(listaErro.get(i));
+	public void ImprimeErro() throws IOException{
+		try {
+			FileWriter f = new FileWriter(new File("ImprimeListaDeErros.txt"));
+			for(int i = 0; i < listaErro.size(); i++){
+				f.write(listaErro.get(i) + "\n");
+				System.out.println(listaErro.get(i));
+			}
+			f.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -375,7 +387,12 @@ public class LVQ {
 		reduzNeuronios();
 		inicializaMatrizConfusao();
 		montaMatrizConfusao(this.classesTeste, this.entradasTeste);
-		ImprimeErro();
+		try {
+			ImprimeErro();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		teste();
 		for (int i = 0; i < this.vetorNeuroniosAtivados.length; i++) {
 			System.out.print(vetorNeuroniosAtivados[i] + " ");
@@ -562,9 +579,15 @@ public class LVQ {
 		System.out.print("Matriz Confusão: ");
 		System.out.println();
 		for (int k=0; k<matrizConfusao[0].length;k++){
-
-			for (int m=0; m<matrizConfusao[0].length;m++){
-				System.out.print( matrizConfusao[k][m]+ " ");
+			try {
+				FileWriter l = new FileWriter(new File("MatrizDeConfusao.txt"));
+				for (int m=0; m<matrizConfusao[0].length;m++){
+					l.write(matrizConfusao[k][m]+ " ");
+					System.out.print( matrizConfusao[k][m]+ " ");
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			System.out.println();
 		}
@@ -676,6 +699,16 @@ public class LVQ {
 	 */
 	public void teste(){
 		double erroAtual = CalculaErro(entradasTeste, classesTeste);
+		try {
+			FileWriter i = new FileWriter(new File("ImprimeErroFinal.txt"));
+			i.write("Erro Final" + erroAtual + "\n");
+			i.write("Parou na época" + epocas + "\n");
+			i.write("Máximo de épocas passada por parâmetro" + max_epocas);
+			i.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//se o erro atual e menor que o erro maximo, ok, acabou programa
 		if(erroAtual < erroMax){
 			System.out.println("Após treinamento, o erro final é menor que erro esperado no momento de validar: " + erroAtual );
