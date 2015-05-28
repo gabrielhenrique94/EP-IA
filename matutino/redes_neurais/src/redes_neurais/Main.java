@@ -112,8 +112,8 @@ public class Main {
 		
 		//Teste XOR - teste mais simples para verificar se a rede está convergindo
 		//Rede converge tanto com vetores iniciados em 0 como aleatoriamente
-		LVQ testeXOR = new LVQ(xorProblem, xorClazz, maxT, 50, alpha, erroAceitavel, 2, tipoVetor, 3); //neuronios finais na saida (3) por classe
-		testeXOR.treinamentoLVQ(false);
+		//LVQ testeXOR = new LVQ(xorProblem, xorClazz, maxT, 50, alpha, erroAceitavel, 2, tipoVetor, 3); //neuronios finais na saida (3) por classe
+		//testeXOR.treinamentoLVQ(false);
 		//xorProblem matrizes treinamento
 	//	for(int i = 0; i < xorProblem.size(); i++)
 	//	System.out.println(testeXOR.Classificador(xorProblem.get(i)));
@@ -131,7 +131,6 @@ public class Main {
 		 * int epoca, int numNeuronios, double alfa, double erro, int saidas, int tipoVetor, int neuSaidas
 		 */
 		
-		/*
 		//Chamada do Holdout
 		Holdout hldt = new Holdout (dadosNormalizados.getMatrizesTreinamento(), dadosNormalizados.getClassesTreinamento(), dadosNormalizados.getMatrizesTeste(),
 					dadosNormalizados.getClassesTeste());
@@ -140,7 +139,7 @@ public class Main {
 		LVQ lvq = new LVQ(hldt.getentradasFinaisTreinamento(), hldt.getclassesFinaisTreinamento(), hldt.getentradasFinaisTeste(), hldt.getclassesFinaisTeste(),
 				hldt.getentradasFinaisValidacao(), hldt.getclassesFinaisValidacao(), maxT, 5, alpha, erroAceitavel, 10, tipoVetor, 2);
 		 lvq.TreinTestVal();	
-		 */
+		 
 		 //lvq.ImprimeErro();
 		 //ImprimeErro(); para imprimir lista com os erros
 		  
