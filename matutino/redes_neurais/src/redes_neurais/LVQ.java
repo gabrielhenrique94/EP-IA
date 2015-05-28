@@ -377,7 +377,7 @@ public class LVQ {
 			//calculo do erro sera usado porque dependendo do nivel do erro execucao sera parada
 			if (temValidacao){
 				//calcula erro atual
-				erroAtual = CalculaErro(entradasValidacao, classesValidacao);
+				this.erroAtual = CalculaErro(entradasValidacao, classesValidacao);
 				System.out.println("Erro atual é: " + erroAtual);
 			}
 			this.epocas++;
