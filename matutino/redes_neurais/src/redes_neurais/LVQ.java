@@ -215,7 +215,7 @@ public class LVQ {
 	 */
 	public void ImprimeErro(){
 		for(int i = 0; i < listaErro.size(); i++){
-			listaErro.get(i);
+			System.out.println(listaErro.get(i));
 		}
 	}
 	
@@ -308,7 +308,7 @@ public class LVQ {
 			
 		//Determinacacao de condicao de parada Numero Fixo de iteracoes
 		//(max_Epocas) ou valor minimo taxa de aprendizado(alfaRotativo)
-		while (this.epocas <= this.max_epocas || this.alfaRotativo >= 0.0001 || this.erroAtual < erroMax) {	
+		while (this.epocas <= this.max_epocas || this.erroAtual < this.erroMax) {	
 			
 			for (int j = 0; j < this.entradasTreinamento.size(); j++) {
 				double[] vetorAuxiliar= new double [entradasTreinamento.get(j).length+1];
