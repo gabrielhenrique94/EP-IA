@@ -19,15 +19,15 @@ public class Main {
 		
 		int numNeuroniosSaida = 1; // DEPOIS VEMOS O QUE FAZER COM ISSO
 		
-		double alpha = 0.1; //Recer por arg depois - valor que tava escrito como normal
+		double alpha = 0.05; //Recer por arg depois - valor que tava escrito como normal
 		
 		boolean alphaEstatico = false; // Args tbm
 		
-		int maxT = 50; // Args, maximo de epocas que se deve executar
+		int maxT = 100; // Args, maximo de epocas que se deve executar
 		
 		double erroAceitavel = 0.20; //(25% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
 		
-		int tipoVetor = 0; //variavel na qual usuario passara tipo de vetor a ser inicializado na lvq - 0 vetor zerado - 1 vetor random
+		int tipoVetor = 1; //variavel na qual usuario passara tipo de vetor a ser inicializado na lvq - 0 vetor zerado - 1 vetor random
 		
 		/* Nome do arquivo do conjunto de dados de teste */
 		//String	dadosTeste = args[2];
@@ -137,8 +137,8 @@ public class Main {
 		hldt.AplicaHoldout();
 		
 		LVQ lvq = new LVQ(hldt.getentradasFinaisTreinamento(), hldt.getclassesFinaisTreinamento(), hldt.getentradasFinaisTeste(), hldt.getclassesFinaisTeste(),
-				hldt.getentradasFinaisValidacao(), hldt.getclassesFinaisValidacao(), maxT, 20, alpha, erroAceitavel, 10, tipoVetor);
-		 lvq.TreinTestVal();	
+				hldt.getentradasFinaisValidacao(), hldt.getclassesFinaisValidacao(), maxT, 50, alpha, erroAceitavel, 10, tipoVetor);
+		 lvq.treinamentoLVQ();	
 		 
 	}
 }

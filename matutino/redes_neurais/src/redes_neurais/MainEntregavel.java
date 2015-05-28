@@ -66,7 +66,7 @@ public class MainEntregavel {
 		
 		LVQ lvq = new LVQ(hldt.getentradasFinaisTreinamento(), hldt.getclassesFinaisTreinamento(), hldt.getentradasFinaisTeste(), hldt.getclassesFinaisTeste(),
 				hldt.getentradasFinaisValidacao(), hldt.getclassesFinaisValidacao(), maxT, numNeuroniosClasse, alpha, erroAceitavel, 10, peso);
-		 lvq.TreinTestVal();	
+		 lvq.treinamentoLVQ();	
 		
 	}
 
