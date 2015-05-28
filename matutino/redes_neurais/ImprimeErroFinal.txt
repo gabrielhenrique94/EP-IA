@@ -1,0 +1,3 @@
+Erro Final0.31316725978647686
+Parou na epoca0
+Maximo de epocas passada por parametro2

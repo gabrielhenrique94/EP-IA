@@ -23,9 +23,9 @@ public class Main {
 		
 		boolean alphaEstatico = false; // Args tbm
 		
-		int maxT = 500; // Args, maximo de epocas que se deve executar
+		int maxT = 50; // Args, maximo de epocas que se deve executar
 		
-		double erroAceitavel = 0.25; //(25% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
+		double erroAceitavel = 0.20; //(25% de tolerancia) - pegar por args tbm, que tem que fazer grafico.
 		
 		int tipoVetor = 0; //variavel na qual usuario passara tipo de vetor a ser inicializado na lvq - 0 vetor zerado - 1 vetor random
 		
@@ -137,7 +137,7 @@ public class Main {
 		hldt.AplicaHoldout();
 		
 		LVQ lvq = new LVQ(hldt.getentradasFinaisTreinamento(), hldt.getclassesFinaisTreinamento(), hldt.getentradasFinaisTeste(), hldt.getclassesFinaisTeste(),
-				hldt.getentradasFinaisValidacao(), hldt.getclassesFinaisValidacao(), maxT, 5, alpha, erroAceitavel, 10, tipoVetor, 2);
+				hldt.getentradasFinaisValidacao(), hldt.getclassesFinaisValidacao(), maxT, 10, alpha, erroAceitavel, 10, tipoVetor, 2);
 		 lvq.TreinTestVal();	
 		 
 	}
