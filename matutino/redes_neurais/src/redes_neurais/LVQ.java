@@ -576,22 +576,23 @@ public class LVQ {
 			this.matrizConfusao[(int) neurVencedor[neurVencedor.length - 1]][classe] += 1;
 		}
 		System.out.println();
-		System.out.print("Matriz Confusão: ");
-		System.out.println();
-		for (int k=0; k<matrizConfusao[0].length;k++){
 			try {
 				FileWriter l = new FileWriter(new File("MatrizDeConfusao.txt"));
-				for (int m=0; m<matrizConfusao[0].length;m++){
-					l.write(matrizConfusao[k][m]+ " ");
-					System.out.print( matrizConfusao[k][m]+ " ");
+				System.out.print("Matriz Confusão: ");
+				System.out.println();
+				for (int k=0; k<matrizConfusao[0].length;k++){
+					for (int m=0; m<matrizConfusao[0].length;m++){
+						l.write(matrizConfusao[k][m]+ " " + "\n");
+						System.out.print( matrizConfusao[k][m]+ " ");
+					}
+					
+				} l.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				l.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			System.out.println();
-		}
+		
 		System.out.println();
 	}
 
