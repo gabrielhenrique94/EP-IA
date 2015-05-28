@@ -118,6 +118,9 @@ public class Main {
 	//	for(int i = 0; i < xorProblem.size(); i++)
 	//	System.out.println(testeXOR.Classificador(xorProblem.get(i)));
 		
+		//Teste XOR para ver o erro
+		//LVQ testeXOR = new LVQ(xorProblem, xorClazz, xorProblem, xorClazz, xorProblem, xorClazz, maxT, 50, alpha, erroAceitavel, 2, tipoVetor, 3); //neuronios finais na saida (3) por classe
+		//testeXOR.treinamentoLVQ(true);
 		
 		//Teste usando LVQ com teste e validacao e dados pegos do holdout
 		/**
@@ -139,6 +142,7 @@ public class Main {
 		 lvq.TreinTestVal();	
 		 //lvq.ImprimeErro();
 		 //ImprimeErro(); para imprimir lista com os erros
+		  
  
 	}
 }

@@ -111,7 +111,7 @@ public class LVQ {
 	/**
 	 * Lista que tem os erros de 0 a 1
 	 */
-	private ArrayList<Double> listaErro;
+	private ArrayList<Double> listaErro = new ArrayList<Double>();
 	
 	/**
 	 * Construtor LVQ que utiliza Treinamento, Teste e Validacao
@@ -380,7 +380,6 @@ public class LVQ {
 		for (int i = 0; i < this.vetorNeuroniosAtivados.length; i++) {
 			System.out.print(vetorNeuroniosAtivados[i] + " ");
 		}
-
 	}
 	
 	/**
