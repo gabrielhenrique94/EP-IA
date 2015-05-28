@@ -585,14 +585,12 @@ public class LVQ {
 						l.write(matrizConfusao[k][m]+ " " + "\n");
 						System.out.print( matrizConfusao[k][m]+ " ");
 					}
-					
+					System.out.println();
 				} l.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			System.out.println();
-		
 		System.out.println();
 	}
 
