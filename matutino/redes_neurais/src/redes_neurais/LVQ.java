@@ -100,7 +100,7 @@ public class LVQ {
 	private int saidas;
 	
 	/**
-	 * Tipo de inicializacao dos vetores de peso, isso e, se for 0 vetores iniciarão zerados, se for 1 aleatoriamente
+	 * Tipo de inicializacao dos vetores de peso, isso e, se for 0 vetores iniciarï¿½o zerados, se for 1 aleatoriamente
 	 */
 	private int tipoVetor;
 	
@@ -219,14 +219,21 @@ public class LVQ {
 	 */
 	public void ImprimeErro() throws IOException{
 		try {
-			FileWriter f = new FileWriter(new File("ImprimeListaDeErros.txt"));
-			for(int i = 0; i < listaErro.size(); i++){
-				f.write(listaErro.get(i) + "\n");
-				System.out.println(listaErro.get(i));
+			File arquivo = new File("ImprimeListaDeErros.txt");
+			arquivo.createNewFile();
+			FileWriter f = new FileWriter(arquivo);
+			
+			f.write("Epoca Erro \n");
+			
+			for (int i = 0; i < this.listaErro.size(); i++){
+				int epoca = i+1;
+				f.write(epoca + " " + listaErro.get(i) + "\n");
+				
 			}
+			
+			f.flush();
 			f.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -378,7 +385,7 @@ public class LVQ {
 			if (temValidacao){
 				//calcula erro atual
 				this.erroAtual = CalculaErro(entradasValidacao, classesValidacao);
-				System.out.println("Erro atual é: " + erroAtual);
+				System.out.println("Erro atual ï¿½: " + erroAtual);
 			}
 			this.epocas++;
 		}
@@ -575,23 +582,29 @@ public class LVQ {
 			//linha e a classe esperada e coluna a que deu
 			this.matrizConfusao[(int) neurVencedor[neurVencedor.length - 1]][classe] += 1;
 		}
-		System.out.println();
-			try {
-				FileWriter l = new FileWriter(new File("MatrizDeConfusao.txt"));
-				System.out.print("Matriz Confusão: ");
-				System.out.println();
-				for (int k=0; k<matrizConfusao[0].length;k++){
-					for (int m=0; m<matrizConfusao[0].length;m++){
-						l.write(matrizConfusao[k][m]+ " " + "\n");
-						System.out.print( matrizConfusao[k][m]+ " ");
-					}
-					System.out.println();
-				} l.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+		
+		try {
+			File arquivo = new File("MatrizDeConfusao.txt");
+			arquivo.createNewFile();
+			FileWriter l = new FileWriter(arquivo);
+	
+			for (int k = 0; k < this.matrizConfusao.length; k++) {
+				int[] linha = this.matrizConfusao[k];
+				
+				for (int m = 0; m < linha.length; m++) {
+					l.write(this.matrizConfusao[k][m] + " ");
 				}
-		System.out.println();
+
+				l.write("\n");
+
+			} 
+			
+			l.flush();
+			l.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+			
 	}
 
 	/**
@@ -702,8 +715,8 @@ public class LVQ {
 		try {
 			FileWriter i = new FileWriter(new File("ImprimeErroFinal.txt"));
 			i.write("Erro Final" + this.erroAtual + "\n");
-			i.write("Parou na época" + this.epocas + "\n");
-			i.write("Máximo de épocas passada por parâmetro" + max_epocas);
+			i.write("Parou na ï¿½poca" + this.epocas + "\n");
+			i.write("Mï¿½ximo de ï¿½pocas passada por parï¿½metro" + max_epocas);
 			i.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -711,9 +724,9 @@ public class LVQ {
 		}
 		//se o erro atual e menor que o erro maximo, ok, acabou programa
 		if(erroAtual < erroMax){
-			System.out.println("Após treinamento, o erro final é menor que erro esperado no momento de validar: " + this.erroAtual );
-			System.out.println("O número total de épocas foi: " + this.epocas);
+			System.out.println("Apï¿½s treinamento, o erro final ï¿½ menor que erro esperado no momento de validar: " + this.erroAtual );
+			System.out.println("O nï¿½mero total de ï¿½pocas foi: " + this.epocas);
 		} 
-		System.out.println("Após o treinamento, o erro final é maior que o esperado, mas já atingimos o máximo de épocas. Erro atual: " + this.erroAtual);
+		System.out.println("Apï¿½s o treinamento, o erro final ï¿½ maior que o esperado, mas jï¿½ atingimos o mï¿½ximo de ï¿½pocas. Erro atual: " + this.erroAtual);
 	}
 }
