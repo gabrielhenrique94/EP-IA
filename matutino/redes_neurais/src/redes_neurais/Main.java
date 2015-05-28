@@ -106,8 +106,8 @@ public class Main {
 		//saidas = 10 sempre, numero de classes - 2 quando for xor
 		//neuSaidas = neuronios finais na saida por classe
 		
-		//LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT, 10, alpha, erroAceitavel, 10, tipoVetor, 2);
-		//teste.treinamentoLVQ(false);
+		LVQ teste = new LVQ(dadosNormalizados.getMatrizesTreinamento(),dadosNormalizados.getClassesTreinamento(), maxT, 3, alpha, erroAceitavel, 10, tipoVetor, 2);
+		teste.treinamentoLVQ(false);
 		
 		//Teste XOR - teste mais simples para verificar se a rede está convergindo
 		//Rede converge tanto com vetores iniciados em 0 como aleatoriamente
@@ -127,6 +127,7 @@ public class Main {
 		 * int epoca, int numNeuronios, double alfa, double erro, int saidas, int tipoVetor, int neuSaidas
 		 */
 		
+		/*
 		//Chamada do Holdout
 		Holdout hldt = new Holdout (dadosNormalizados.getMatrizesTreinamento(), dadosNormalizados.getClassesTreinamento(), dadosNormalizados.getMatrizesTeste(),
 					dadosNormalizados.getClassesTeste());
@@ -135,6 +136,7 @@ public class Main {
 		LVQ lvq = new LVQ(hldt.getentradasFinaisTreinamento(), hldt.getclassesFinaisTreinamento(), hldt.getentradasFinaisTeste(), hldt.getclassesFinaisTeste(),
 				hldt.getentradasFinaisValidacao(), hldt.getclassesFinaisValidacao(), maxT, 5, alpha, erroAceitavel, 10, tipoVetor, 2);
 		 lvq.TreinTestVal();	
+		 */
  
 	}
 }
