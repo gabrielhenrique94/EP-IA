@@ -163,7 +163,7 @@ public class LVQ {
 	 */
 	public void ImprimeErro() throws IOException{
 		try {
-			File arquivo = new File("ImprimeListaDeErros.txt");
+			File arquivo = new File("src/dados/ImprimeListaDeErros.txt");
 			arquivo.createNewFile();
 			FileWriter f = new FileWriter(arquivo);
 			
@@ -543,7 +543,7 @@ public class LVQ {
 		}
 		
 		try {
-			File arquivo = new File("MatrizDeConfusao.txt");
+			File arquivo = new File("src/dados/MatrizDeConfusao.txt");
 			arquivo.createNewFile();
 			FileWriter l = new FileWriter(arquivo);
 	
@@ -655,7 +655,7 @@ public class LVQ {
 	public void imprimeErroFinal(double erroFinal){
 		
 		try {
-			FileWriter i = new FileWriter(new File("ImprimeErroFinal.txt"));
+			FileWriter i = new FileWriter(new File("src/dados/ImprimeErroFinal.txt"));
 			i.write("Erro Final" + erroFinal + "\n");
 			i.write("Parou na epoca" + (this.epocas-1) + "\n");
 			i.write("Maximo de epocas passada por parametro" + max_epocas);
