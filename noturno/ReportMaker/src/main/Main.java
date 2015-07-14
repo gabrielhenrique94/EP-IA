@@ -1,18 +1,13 @@
 package main;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import core.data_treatment.DataTreatment;
 import core.io.ReadInputFiles;
 import core.neural_network.interfaces.Classifier;
 import core.neural_network.lvq.LVQ;
-import core.neural_network.lvq.vector;
 import core.neural_network.mlp.MLP;
 import core.neural_network.objects.Entry;
 import core.preprocessing.Preprocessing;
@@ -34,8 +29,8 @@ public class Main {
 	/**
 	 * MÃ©todo de inicializaÃ§Ã£o da aplicaÃ§Ã£o chamada: Main <training_file>
 	 * <rede a ser utilizada:(MLP|LVQ)> <test_file> <random:(True|False)>
-	 * <learningRate> <numero_neuronios> <decaimento da taxa de aprendizado em
-	 * %> <embaralhar entrada>
+	 * <learningRate> <numero_neuronios> <decaimento da taxa de aprendizado> 
+	 * <Taxa em %> <Numero de Epocas> <Aplica ou nao Holdout>
 	 * 
 	 * @param args
 	 *            - Recebe os parï¿½metros de inicializaï¿½ï¿½o do programa,
@@ -47,14 +42,17 @@ public class Main {
 
 		
 		/*
-		 * depois do treinamento é bom voce eliminar os neuronios q nunca
-		 * são ativados ou q são pouco ativados em comparação aos outros
+		 * depois do treinamento ï¿½ bom voce eliminar os neuronios q nunca
+		 * sï¿½o ativados ou q sï¿½o pouco ativados em comparaï¿½ï¿½o aos outros
 		 */
 		// Criando o set de dados (Soma dos arquivos de treinamento e teste
 		List<double[]> set = ReadInputFiles.sumBothFiles(args[1], args[2]);
 
 		DataTreatment tr = new DataTreatment(set);
-		tr.applyHoldout();
+		
+		// Verifico se aplicarei ou nao o holdout
+		if(Boolean.parseBoolean(args[9]))
+			tr.applyHoldout();
 
 		List<Entry> training_entries = tr.getTrainingEntries();
 		List<Entry> test_entries = tr.getTestEntries();
@@ -75,8 +73,10 @@ public class Main {
 			// Taxa de decaimento da taxa de aprendizado (em %)
 			double decreaseRate = Double.parseDouble(args[6]);
 
+			boolean isPercentage = Boolean.parseBoolean(args[7]);
+			
 			// Embaralhar a entrada
-			int numEpochs = Integer.parseInt(args[7]);
+			int numEpochs = Integer.parseInt(args[8]);
 
 			int[] neuronsByClass = new int[10];
 
@@ -89,18 +89,16 @@ public class Main {
 			}
 
 			Classifier lvq = new LVQ(learningRate, neuronsByClass, random,
-					decreaseRate, numEpochs);
+					decreaseRate, isPercentage, numEpochs);
 			lvq.training(training_entries, test_entries);
 			lvq.validation(validation_entries);
-		} else {
-			
+		} else {	
 			Preprocessing.cleanAtributes(training_entries);
 			Preprocessing.minMaxMethod(training_entries);
 			
-			Classifier mlp = new MLP(Integer.parseInt(args[3]), Integer.parseInt(args[4]), Double.parseDouble(args[5])); // TODO: Gordinho <3
+			Classifier mlp = new MLP(Integer.parseInt(args[3]), Integer.parseInt(args[4]), Double.parseDouble(args[5]));
 			mlp.training(training_entries, validation_entries);
 			mlp.validation(test_entries);
 		}
-
 	}
 }

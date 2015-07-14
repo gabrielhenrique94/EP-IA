@@ -29,14 +29,16 @@ public class LVQ implements Classifier, DecreaseRate {
 	private boolean isRandom;
 	private List<Neuron> neurons;
 	private double decreaseRate;
+	private boolean isPercentage;
 
 	public LVQ(double learningRate, int[] nNeurons, boolean isRandom,
-			double decreaseRate, int max_epoch) {
+			double decreaseRate, boolean isPercentage, int max_epoch) {
 		this.learningRate = learningRate;
 		this.nNeurons = nNeurons;
 		this.isRandom = isRandom;
 		this.decreaseRate = decreaseRate;
 		this.max_epoch = max_epoch;
+		this.isPercentage = isPercentage;
 	}
 
 	@Override
@@ -53,7 +55,7 @@ public class LVQ implements Classifier, DecreaseRate {
 			System.out.println("Epoca: " + epoca + ", Learning Rate: "
 					+ learningRate + ", Error rate: " + errorRate);
 			
-			// Se a taxa de erro atinge um nivel ruim, breca a execução
+			// Se a taxa de erro atinge um nivel ruim, breca a execuï¿½ï¿½o
 			if(breakByErrorRate())
 				break;
 
@@ -63,7 +65,7 @@ public class LVQ implements Classifier, DecreaseRate {
 				Neuron t = findMinDistance(entry, neurons);
 
 				// Caso este t seja nulo, a distancia minima estourou o limite
-				// do double, entao este neuronio esta miot longe do attr
+				// do double, entao este neuronio esta muito longe do attr
 				if (t == null)
 					continue;
 				// Passo 4 - Altera os pesos
@@ -178,7 +180,9 @@ public class LVQ implements Classifier, DecreaseRate {
 	// http://seer.ufrgs.br/index.php/rita/article/view/rita_v19_n1_p120/18115
 	@Override
 	public double calcLearningRate(double rate, int epoca) {
-		return rate - ((rate * decreaseRate) / 100);
+		if(this.isPercentage)
+			return rate - ((rate * decreaseRate) / 100);
+		return rate - decreaseRate;
 	}
 
 	@Override
@@ -200,7 +204,7 @@ public class LVQ implements Classifier, DecreaseRate {
 
 	@Override
 	public void validation(List<Entry> validationList) {
-		System.out.println("Erro da lista de validação: "
+		System.out.println("Erro da lista de validaï¿½ï¿½o: "
 				+ this.errorRate(validationList));
 	}
 }
