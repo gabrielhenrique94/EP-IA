@@ -27,8 +27,8 @@ public class Main {
 	private static FileWriter wri;
 
 	/**
-	 * Método de inicialização da aplicação chamada: Main <training_file>
-	 * <rede a ser utilizada:(MLP|LVQ)> <test_file> <random:(True|False)>
+	 * Método de inicialização da aplicação chamada: Main 
+	 * <rede a ser utilizada:(MLP|LVQ)> <training_file> <random:(True|False)>
 	 * <learningRate> <numero_neuronios> <decaimento da taxa de aprendizado> 
 	 * <Taxa em %> <Numero de Epocas> <Aplica ou nao Holdout>
 	 * 
@@ -46,12 +46,12 @@ public class Main {
 		 * s�o ativados ou q s�o pouco ativados em compara��o aos outros
 		 */
 		// Criando o set de dados (Soma dos arquivos de treinamento e teste
-		List<double[]> set = ReadInputFiles.sumBothFiles(args[1], args[2]);
+		List<double[]> set = ReadInputFiles.readFile(args[1]);
 
 		DataTreatment tr = new DataTreatment(set);
 		
 		// Verifico se aplicarei ou nao o holdout
-		if(Boolean.parseBoolean(args[9]))
+		if(Boolean.parseBoolean(args[8]))
 			tr.applyHoldout();
 
 		List<Entry> training_entries = tr.getTrainingEntries();
@@ -61,28 +61,28 @@ public class Main {
 		// escolhendo a rede a ser utilizada
 		if (args[0].equalsIgnoreCase("lvq")) {
 			
-			boolean random = Boolean.parseBoolean(args[3]);
+			boolean random = Boolean.parseBoolean(args[2]);
 
-			double learningRate = Double.parseDouble(args[4]);
+			double learningRate = Double.parseDouble(args[3]);
 
 			// criando vetor que indica que todas as classes tem o mesmo numero
 			// de
 			// neuronios
-			int nNeurons = Integer.parseInt(args[5]);
+			int nNeurons = Integer.parseInt(args[4]);
 
 			// Taxa de decaimento da taxa de aprendizado (em %)
-			double decreaseRate = Double.parseDouble(args[6]);
+			double decreaseRate = Double.parseDouble(args[5]);
 
-			boolean isPercentage = Boolean.parseBoolean(args[7]);
+			boolean isPercentage = Boolean.parseBoolean(args[6]);
 			
-			// Embaralhar a entrada
-			int numEpochs = Integer.parseInt(args[8]);
+			int numEpochs = Integer.parseInt(args[7]);
 
 			int[] neuronsByClass = new int[10];
 
 			// Preprocessando os dados
 			Preprocessing.cleanAtributes(training_entries);
-			Preprocessing.minMaxMethod(training_entries);
+			// Nao precisamos mais do minMax pq os dados ja estao entre 1 e -1
+			//Preprocessing.minMaxMethod(training_entries);
 
 			for (int i = 0; i < neuronsByClass.length; i++) {
 				neuronsByClass[i] = nNeurons;

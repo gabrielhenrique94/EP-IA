@@ -8,9 +8,9 @@ import core.neural_network.objects.Entry;
 
 public class Preprocessing {
 	
-	/* --------------------------- Metodos estáticos --------------------------------------*/
+	/* --------------------------- Metodos estï¿½ticos --------------------------------------*/
 
-	// Normalização basica, que mantem os numeros entre 0 e 1, mas nao trata da relevância de cada atributo em relação ao todo.
+	// Normalizaï¿½ï¿½o basica, que mantem os numeros entre 0 e 1, mas nao trata da relevï¿½ncia de cada atributo em relaï¿½ï¿½o ao todo.
 	// [Nao utilizada no codigo final]
 	public static void normalize(List<Entry> entries) {
 		for (Entry entry : entries) {
@@ -58,13 +58,13 @@ public class Preprocessing {
 	 * Utilizando o vetor binario de quais colunas sao ou nao utilizadas, retira as colunas escolhidas.
 	 * */
 	public static void cleanAtributes(List<Entry> entries) {
-		int[] result = usedColumns(entries);
+		/*int[] result = usedColumns(entries);
 		for (int i = 0; i < result.length; i++) {
 			if (result[i] == 0) {
 				for (Entry e : entries)
 					e.clearCol(i);
 			}
-		}
+		}*/
 	}
 
 	/**
