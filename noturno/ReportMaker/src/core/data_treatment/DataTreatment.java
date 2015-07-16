@@ -99,6 +99,61 @@ public class DataTreatment {
 			Collections.shuffle(this.trainingEntries);
 		}
 	}
+	
+	public void withoutHoldout(){
+		List<Entry> setCopy = new ArrayList<Entry>(allSet);
+
+		// Lista contendo todas as entradas separadas por classe
+		List<List<Entry>> separatedList = PrepareSeparatedList(setCopy);
+
+		// Numero de ocorrecias por classe
+		int[] numberOfOccurrences = new int[10];
+
+		for (int i = 0; i < 10; i++) {
+			numberOfOccurrences[i] = separatedList.get(i).size();
+		}
+
+		// Variavesi utilizadas dentro do laco
+		int occurrences = 0, occurrencesInTraining = 0, occurrencesInTest = 0, occurrencesInValidation = 0, leftPart = 0;
+		// Preenchendo as listas de acordo com as porcentagens definidas na definicao do problema (60% para treinamento e 20% para validacao e teste)
+		for (int i = 0; i < 10; i++) {
+			occurrences = numberOfOccurrences[i];
+			occurrencesInTraining = (occurrences * 6)/10;
+			occurrencesInTest = occurrencesInValidation = (occurrences * 2)/10;
+			
+			//Caso tenha sobrado dados, adiciono igualmente entre as listas
+			leftPart = occurrences - occurrencesInTraining - occurrencesInTest - occurrencesInValidation;
+			for(int j = leftPart; j > 0;){
+				occurrencesInTraining++;
+				j--;
+				if(j > 0){
+					occurrencesInTest++;
+					j--;
+				}
+					
+				if(j > 0){
+					occurrencesInValidation++;
+					j--;
+				}
+			}
+			
+			// Agora finalmente preencho as listas
+			for(int j = 0; j < occurrencesInTraining; j++) {
+				this.trainingEntries.add(separatedList.get(i).get(0));
+				separatedList.get(i).remove(0);
+			}
+			
+			for(int j = 0; j < occurrencesInTest; j++) {
+				this.testEntries.add(separatedList.get(i).get(0));
+				separatedList.get(i).remove(0);
+			}
+			
+			// Nao removo da lista aqui, pois eh uma operacao a mais, e inutil
+			for(int j = 0; j < occurrencesInValidation; j++) {
+				this.validationEntries.add(separatedList.get(i).get(j));
+			}
+		}
+	}
 
 	/**
 	 * Separa todas as classes em uma lista

@@ -45,40 +45,23 @@ public class Main {
 
 		String networkType,
 				trainingFile,
-				learningRate,
-				nroNeuronios,
-				decreaseRate,
-				isPercentage,
-				nroEpocas,
-				applyHoldout,
-				inicializationType;
+				applyHoldout;
+		Wini ini = null;
+		boolean readIni = false;
 		
 		// Vou ler os dados do arquivo ini passado no path
 		if(args[0].equalsIgnoreCase("ini")){
 			String path = args[1];
-			
-			Wini ini = new Wini(new File(path));
+			readIni = true;
+			ini = new Wini(new File(path));
 
 			networkType = ini.get("Startup", "networkType");
 			trainingFile = ini.get("Startup", "trainingFile");
-			learningRate = ini.get("Startup", "learningRate");
-			nroNeuronios = ini.get("Startup", "nroNeuronios");
-			decreaseRate = ini.get("Startup", "decreaseRate");
-			isPercentage = ini.get("Startup", "isPercentage");
-			nroEpocas = ini.get("Startup", "nroEpocas");
 			applyHoldout = ini.get("Startup", "applyHoldout");
-			inicializationType = ini.get("Startup", "inicializationType");
-			
 		}
 		else {
 			networkType = args[0];
 			trainingFile = args[1];
-			inicializationType = args[2];
-			learningRate = args[3];
-			nroNeuronios = args[4];
-			decreaseRate = args[5];
-			isPercentage = args[6];
-			nroEpocas = args[7];
 			applyHoldout = args[8];
 		}
 		
@@ -94,6 +77,9 @@ public class Main {
 		// Verifico se aplicarei ou nao o holdout
 		if(Boolean.parseBoolean(applyHoldout))
 			tr.applyHoldout();
+		else
+			tr.withoutHoldout();
+			
 
 		List<Entry> training_entries = tr.getTrainingEntries();
 		List<Entry> test_entries = tr.getTestEntries();
@@ -102,6 +88,32 @@ public class Main {
 		// escolhendo a rede a ser utilizada
 		if (networkType.trim().equalsIgnoreCase("lvq")) {
 
+			String learningRate,
+			nroNeuronios,
+			decreaseRate,
+			isPercentage,
+			nroEpocas,
+			inicializationType,
+			distanceCalculationMode = null;
+			
+			if(readIni){
+				learningRate = ini.get("LVQ", "learningRate");
+				nroNeuronios = ini.get("LVQ", "nroNeuronios");
+				decreaseRate = ini.get("LVQ", "decreaseRate");
+				isPercentage = ini.get("LVQ", "isPercentage");
+				nroEpocas = ini.get("LVQ", "nroEpocas");
+				inicializationType = ini.get("LVQ", "inicializationType");
+				distanceCalculationMode = ini.get("LVQ", "distanceCalculationMode");
+			} else{
+				inicializationType = args[2];
+				learningRate = args[3];
+				nroNeuronios = args[4];
+				decreaseRate = args[5];
+				isPercentage = args[6];
+				nroEpocas = args[7];
+				
+			}
+			
 			double learningRate_db = Double.parseDouble(learningRate);
 
 			// criando vetor que indica que todas as classes tem o mesmo numero
@@ -116,7 +128,7 @@ public class Main {
 			
 			int numEpochs = Integer.parseInt(nroEpocas);
 
-			int[] neuronsByClass = new int[10];
+			int[] neuronsByClass = new int[2];
 
 			// Preprocessando os dados
 			Preprocessing.cleanAtributes(training_entries);
@@ -128,7 +140,7 @@ public class Main {
 			}
 
 			Classifier lvq = new LVQ(learningRate_db, neuronsByClass, inicializationType,
-					decreaseRate_db, isPercentage_bool, numEpochs);
+					decreaseRate_db, isPercentage_bool, numEpochs, distanceCalculationMode);
 			lvq.training(training_entries, test_entries);
 			lvq.validation(validation_entries);
 		} else {	

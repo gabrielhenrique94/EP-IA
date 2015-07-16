@@ -36,10 +36,25 @@ public class vector {
 		System.out.print(v[v.length - 1]+"]\n");
 	}
 	
-	public static double distance(double[] neu1, double[] neu2) {
+	public static double euclidianDistance(double[] neu1, double[] neu2) {
 		double sum = 0;
 		for(int i = 0 ; i < neu1.length; i++ )
-			sum += Math.pow(neu1[i] - neu2[i], 2);
+			sum += Math.pow(Math.abs(neu1[i] - neu2[i]), 2);
 		return Math.sqrt(sum);
 	}
+	
+	public static double manhattanDistance(double[] neu1, double[] neu2) {
+		double sum = 0;
+		for(int i = 0 ; i < neu1.length; i++ )
+			sum += Math.abs(neu1[i] - neu2[i]);
+		return Math.sqrt(sum);
+	}
+	
+	public static double maxDistance(double[] neu1, double[] neu2) {
+		double sum = 0;
+		for(int i = 0 ; i < neu1.length; i++ )
+			sum += Math.max(neu1[i] , neu2[i]);
+		return sum;
+	}
+	
 }

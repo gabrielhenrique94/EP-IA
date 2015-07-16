@@ -30,21 +30,26 @@ public class LVQ implements Classifier, DecreaseRate {
 	private List<Neuron> neurons;
 	private double decreaseRate;
 	private boolean isPercentage;
+	private String distanceMode;
+	
+	private List<Entry> trainingList;
 
 	public LVQ(double learningRate, int[] nNeurons, String typeInicialization,
-			double decreaseRate, boolean isPercentage, int max_epoch) {
+			double decreaseRate, boolean isPercentage, int max_epoch, String distanceMode) {
 		this.learningRate = learningRate;
 		this.nNeurons = nNeurons;
 		this.inicializationType = typeInicialization;
 		this.decreaseRate = decreaseRate;
 		this.max_epoch = max_epoch;
 		this.isPercentage = isPercentage;
+		this.distanceMode = distanceMode;
 	}
 
 	@Override
 	public void training(List<Entry> trainingList, List<Entry> tes) {
 		// Passo 1 - Inicializa os Pesos
-		initializeWeigths(trainingList.get(0).getAttr().length);
+		this.trainingList = trainingList;
+		initializeWeigths(trainingList.get(0).getAttr().length, trainingList);
 		double learningRate = this.learningRate;
 		int epoca = 1;
 
@@ -126,7 +131,13 @@ public class LVQ implements Classifier, DecreaseRate {
 		double min = Double.MAX_VALUE, distance = 0.0;
 		Neuron nMin = null;
 		for (Neuron n : neurons) {
-			distance = distance(n.getAttr(), entry.getAttr());
+			if(this.distanceMode.equalsIgnoreCase("manhattan"))
+				distance = manhattanDistance(n.getAttr(), entry.getAttr());
+			if(this.distanceMode.equalsIgnoreCase("euclidian"))
+				distance = euclidianDistance(n.getAttr(), entry.getAttr());
+			if(this.distanceMode.equalsIgnoreCase("max"))
+				distance = maxDistance(n.getAttr(), entry.getAttr());
+			
 			if (distance < min) {
 				min = distance;
 				nMin = n;
@@ -139,7 +150,7 @@ public class LVQ implements Classifier, DecreaseRate {
 		return epoca != max_epoch;
 	}
 
-	private void initializeWeigths(int dimensions) {
+	private void initializeWeigths(int dimensions, List<Entry> trainingList) {
 		// Criando neuronios
 		neurons = new ArrayList<Neuron>();
 		// pega a dimensão do primeiro neuronio
@@ -157,8 +168,19 @@ public class LVQ implements Classifier, DecreaseRate {
 		else if(inicializationType.trim().equalsIgnoreCase("zero"))
 			for (Neuron n : neurons)
 				n.initZero();
-		
-		//TODO: Mais duas inicializações here
+		else if(inicializationType.trim().equalsIgnoreCase("first_entry"))
+			for (Neuron n : neurons)
+				initFirst(n);
+		//TODO: Mais uma inicializacao here
+	}
+
+	private void initFirst(Neuron n) {
+		for(Entry e : trainingList){
+			if(e.getClazz() == n.getClazz()){
+				n.setAttr(e.getAttr().clone());
+				return;
+			}
+		}
 	}
 
 	@Override

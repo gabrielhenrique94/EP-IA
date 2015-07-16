@@ -50,4 +50,6 @@ public class Neuron extends Entry {
 		return "[Neuron: {Dimensions: " + this.dimensions + ", "
 				+ super.toString() + "} ]";
 	}
+
+	
 }
