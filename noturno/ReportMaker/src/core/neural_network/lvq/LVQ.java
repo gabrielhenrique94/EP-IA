@@ -26,16 +26,16 @@ public class LVQ implements Classifier, DecreaseRate {
 	private int max_epoch;
 	private double learningRate;
 	private int[] nNeurons;
-	private boolean isRandom;
+	private String inicializationType;
 	private List<Neuron> neurons;
 	private double decreaseRate;
 	private boolean isPercentage;
 
-	public LVQ(double learningRate, int[] nNeurons, boolean isRandom,
+	public LVQ(double learningRate, int[] nNeurons, String typeInicialization,
 			double decreaseRate, boolean isPercentage, int max_epoch) {
 		this.learningRate = learningRate;
 		this.nNeurons = nNeurons;
-		this.isRandom = isRandom;
+		this.inicializationType = typeInicialization;
 		this.decreaseRate = decreaseRate;
 		this.max_epoch = max_epoch;
 		this.isPercentage = isPercentage;
@@ -151,12 +151,14 @@ public class LVQ implements Classifier, DecreaseRate {
 			}
 		}
 		// inicializando os neuronios
-		if (isRandom)
+		if (inicializationType.trim().equalsIgnoreCase("random"))
 			for (Neuron n : neurons)
 				n.initRandom();
-		else
+		else if(inicializationType.trim().equalsIgnoreCase("zero"))
 			for (Neuron n : neurons)
 				n.initZero();
+		
+		//TODO: Mais duas inicializações here
 	}
 
 	@Override

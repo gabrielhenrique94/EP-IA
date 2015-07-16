@@ -1,8 +1,11 @@
 package main;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+
+import org.ini4j.Wini;
 
 import core.data_treatment.DataTreatment;
 import core.io.ReadInputFiles;
@@ -40,18 +43,56 @@ public class Main {
 	 * */
 	public static void main(String[] args) throws IOException {
 
+		String networkType,
+				trainingFile,
+				learningRate,
+				nroNeuronios,
+				decreaseRate,
+				isPercentage,
+				nroEpocas,
+				applyHoldout,
+				inicializationType;
+		
+		// Vou ler os dados do arquivo ini passado no path
+		if(args[0].equalsIgnoreCase("ini")){
+			String path = args[1];
+			
+			Wini ini = new Wini(new File(path));
+
+			networkType = ini.get("Startup", "networkType");
+			trainingFile = ini.get("Startup", "trainingFile");
+			learningRate = ini.get("Startup", "learningRate");
+			nroNeuronios = ini.get("Startup", "nroNeuronios");
+			decreaseRate = ini.get("Startup", "decreaseRate");
+			isPercentage = ini.get("Startup", "isPercentage");
+			nroEpocas = ini.get("Startup", "nroEpocas");
+			applyHoldout = ini.get("Startup", "applyHoldout");
+			inicializationType = ini.get("Startup", "inicializationType");
+			
+		}
+		else {
+			networkType = args[0];
+			trainingFile = args[1];
+			inicializationType = args[2];
+			learningRate = args[3];
+			nroNeuronios = args[4];
+			decreaseRate = args[5];
+			isPercentage = args[6];
+			nroEpocas = args[7];
+			applyHoldout = args[8];
+		}
 		
 		/*
 		 * depois do treinamento � bom voce eliminar os neuronios q nunca
 		 * s�o ativados ou q s�o pouco ativados em compara��o aos outros
 		 */
 		// Criando o set de dados (Soma dos arquivos de treinamento e teste
-		List<double[]> set = ReadInputFiles.readFile(args[1]);
+		List<double[]> set = ReadInputFiles.readFile(trainingFile);
 
 		DataTreatment tr = new DataTreatment(set);
 		
 		// Verifico se aplicarei ou nao o holdout
-		if(Boolean.parseBoolean(args[8]))
+		if(Boolean.parseBoolean(applyHoldout))
 			tr.applyHoldout();
 
 		List<Entry> training_entries = tr.getTrainingEntries();
@@ -59,23 +100,21 @@ public class Main {
 		List<Entry> validation_entries = tr.getValidationEntries();
 
 		// escolhendo a rede a ser utilizada
-		if (args[0].equalsIgnoreCase("lvq")) {
-			
-			boolean random = Boolean.parseBoolean(args[2]);
+		if (networkType.trim().equalsIgnoreCase("lvq")) {
 
-			double learningRate = Double.parseDouble(args[3]);
+			double learningRate_db = Double.parseDouble(learningRate);
 
 			// criando vetor que indica que todas as classes tem o mesmo numero
 			// de
 			// neuronios
-			int nNeurons = Integer.parseInt(args[4]);
+			int nNeurons = Integer.parseInt(nroNeuronios);
 
 			// Taxa de decaimento da taxa de aprendizado (em %)
-			double decreaseRate = Double.parseDouble(args[5]);
+			double decreaseRate_db = Double.parseDouble(decreaseRate);
 
-			boolean isPercentage = Boolean.parseBoolean(args[6]);
+			boolean isPercentage_bool = Boolean.parseBoolean(isPercentage);
 			
-			int numEpochs = Integer.parseInt(args[7]);
+			int numEpochs = Integer.parseInt(nroEpocas);
 
 			int[] neuronsByClass = new int[10];
 
@@ -88,8 +127,8 @@ public class Main {
 				neuronsByClass[i] = nNeurons;
 			}
 
-			Classifier lvq = new LVQ(learningRate, neuronsByClass, random,
-					decreaseRate, isPercentage, numEpochs);
+			Classifier lvq = new LVQ(learningRate_db, neuronsByClass, inicializationType,
+					decreaseRate_db, isPercentage_bool, numEpochs);
 			lvq.training(training_entries, test_entries);
 			lvq.validation(validation_entries);
 		} else {	
