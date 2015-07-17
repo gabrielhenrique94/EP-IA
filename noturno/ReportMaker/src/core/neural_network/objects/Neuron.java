@@ -4,6 +4,10 @@ public class Neuron extends Entry {
 	private int dimensions;
 	private int activated;
 	
+	 public Neuron(){
+		 
+	 }
+	
 	public Neuron(int dimensions) {
 		super();
 		this.dimensions = dimensions;
@@ -44,6 +48,18 @@ public class Neuron extends Entry {
 	public int getActivated() {
 		return activated;
 	}
+	
+	public int getDimensions() {
+		return dimensions;
+	}
+	
+	public void setActivated(int activated) {
+		this.activated = activated;
+	}
+	
+	public void setDimensions(int dimensions) {
+		this.dimensions = dimensions;
+	}
 
 	@Override
 	public String toString() {
@@ -51,5 +67,34 @@ public class Neuron extends Entry {
 				+ super.toString() + "} ]";
 	}
 
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		Neuron ret = new Neuron();
+		double [] newAttrs = new double[getAttr().length];
+		
+		for(int i = 0; i < getAttr().length; i++){
+			newAttrs[i] = getAttr()[i];
+		}
+		
+		ret.setClazz(this.getClazz());
+		ret.setAttr(newAttrs);
+		
+		return ret;
+	}
+	
+	public static Neuron makeClone(Neuron n){
+		Neuron newNeuron = new Neuron();
+		try {
+			newNeuron = (Neuron)n.clone();
+			newNeuron.setActivated(n.getActivated());
+			newNeuron.setDimensions(n.getDimensions());
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return newNeuron;
+	}
 	
 }

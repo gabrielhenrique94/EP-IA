@@ -7,6 +7,7 @@ public class Entry {
 		
 	}
 	
+	
 	public Entry(double[] attr, int clazz){
 		this.attr = attr;
 		this.clazz = clazz;

@@ -32,7 +32,16 @@ public class LVQ implements Classifier, DecreaseRate {
 	private boolean isPercentage;
 	private String distanceMode;
 	
+	// Para podermos salvar a melhor rede de neuronios encontrada
+	private double minErrorRate;
+	private List<Neuron> bestNeurons;
+	private int bestEpocs;
+	// ----------------------------------------------------------
+	
+	
+	
 	private List<Entry> trainingList;
+	private List<Entry> testList;
 
 	public LVQ(double learningRate, int[] nNeurons, String typeInicialization,
 			double decreaseRate, boolean isPercentage, int max_epoch, String distanceMode) {
@@ -43,12 +52,16 @@ public class LVQ implements Classifier, DecreaseRate {
 		this.max_epoch = max_epoch;
 		this.isPercentage = isPercentage;
 		this.distanceMode = distanceMode;
+		
+		minErrorRate = Double.MAX_VALUE;
+		bestNeurons = new ArrayList<Neuron>();
 	}
 
 	@Override
 	public void training(List<Entry> trainingList, List<Entry> tes) {
 		// Passo 1 - Inicializa os Pesos
 		this.trainingList = trainingList;
+		this.testList = tes;
 		initializeWeigths(trainingList.get(0).getAttr().length, trainingList);
 		double learningRate = this.learningRate;
 		int epoca = 1;
@@ -57,6 +70,9 @@ public class LVQ implements Classifier, DecreaseRate {
 
 			double errorRate = errorRate(tes);
 
+			// Guardo a melhor rede possível
+			saveBestResult(errorRate, epoca);
+			
 			System.out.println("Epoca: " + epoca + ", Learning Rate: "
 					+ learningRate + ", Error rate: " + errorRate);
 			
@@ -133,9 +149,9 @@ public class LVQ implements Classifier, DecreaseRate {
 		for (Neuron n : neurons) {
 			if(this.distanceMode.equalsIgnoreCase("manhattan"))
 				distance = manhattanDistance(n.getAttr(), entry.getAttr());
-			if(this.distanceMode.equalsIgnoreCase("euclidian"))
+			else if(this.distanceMode.equalsIgnoreCase("euclidian"))
 				distance = euclidianDistance(n.getAttr(), entry.getAttr());
-			if(this.distanceMode.equalsIgnoreCase("max"))
+			else if(this.distanceMode.equalsIgnoreCase("max"))
 				distance = maxDistance(n.getAttr(), entry.getAttr());
 			
 			if (distance < min) {
@@ -182,13 +198,29 @@ public class LVQ implements Classifier, DecreaseRate {
 			}
 		}
 	}
+	
+	public void saveBestResult(double newErrorRate, int epoc){
+		if(minErrorRate > newErrorRate){
+			minErrorRate = newErrorRate;
+			this.bestNeurons.clear();
+			for(Neuron n : neurons){
+				this.bestNeurons.add(Neuron.makeClone(n));	
+			}
+			this.bestEpocs = epoc;
+		}
+	}
 
+	public int classificationBestNetwork(Entry v){
+		Neuron t = findMinDistance(v, bestNeurons);
+		return t.getClazz();
+	}
+	
 	@Override
 	public int classification(Entry v) {
 		Neuron t = findMinDistance(v, neurons);
 		return t.getClazz();
 	}
-
+	
 	@Override
 	public void saveNetwork(File output) {
 		// TODO Auto-generated method stub
@@ -207,6 +239,23 @@ public class LVQ implements Classifier, DecreaseRate {
 		if(this.isPercentage)
 			return rate - ((rate * decreaseRate) / 100);
 		return rate - decreaseRate;
+	}
+	
+	public double errorRateBestNetwork(List<Entry> tes){
+		double numOfTests = tes.size();
+		double numOfErrors = 0, numOfHits = 0, currClass = 0;
+
+		for (Entry e : tes) {
+			currClass = classificationBestNetwork(e);
+			if (currClass == e.getClazz()) {
+				numOfHits++;
+			} else {
+				numOfErrors++;
+			}
+		}
+
+		return (numOfErrors * 100) / numOfTests;
+		
 	}
 
 	@Override
@@ -228,7 +277,12 @@ public class LVQ implements Classifier, DecreaseRate {
 
 	@Override
 	public void validation(List<Entry> validationList) {
-		System.out.println("Erro da lista de valida��o: "
+		System.out.println("Erro da lista de validacao: "
 				+ this.errorRate(validationList));
+		System.out.println("Erro da lista de validaçao na melhor lista de neuronios: "
+				+ this.errorRateBestNetwork(validationList));
+		System.out.println("Erro da lista de validaçao na melhor lista de neuronios(Lista de teste): "
+				+ this.errorRateBestNetwork(testList));
+		System.out.println("Melhor lista de neurônio foi obtida na epoca: " + this.bestEpocs);
 	}
 }
