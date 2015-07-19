@@ -47,16 +47,16 @@ public class DataTreatment {
 		List<List<Entry>> separatedList = PrepareSeparatedList(setCopy);
 
 		// Numero de ocorrecias por classe
-		int[] numberOfOccurrences = new int[10];
+		int[] numberOfOccurrences = new int[2];
 
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 2; i++) {
 			numberOfOccurrences[i] = separatedList.get(i).size();
 		}
 
 		// Variavesi utilizadas dentro do laco
 		int occurrences = 0, occurrencesInTraining = 0, occurrencesInTest = 0, occurrencesInValidation = 0, leftPart = 0;
 		// Preenchendo as listas de acordo com as porcentagens definidas na definicao do problema (60% para treinamento e 20% para validacao e teste)
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 2; i++) {
 			occurrences = numberOfOccurrences[i];
 			occurrencesInTraining = (occurrences * 6)/10;
 			occurrencesInTest = occurrencesInValidation = (occurrences * 2)/10;
@@ -107,16 +107,16 @@ public class DataTreatment {
 		List<List<Entry>> separatedList = PrepareSeparatedList(setCopy);
 
 		// Numero de ocorrecias por classe
-		int[] numberOfOccurrences = new int[10];
+		int[] numberOfOccurrences = new int[2];
 
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 2; i++) {
 			numberOfOccurrences[i] = separatedList.get(i).size();
 		}
 
 		// Variavesi utilizadas dentro do laco
 		int occurrences = 0, occurrencesInTraining = 0, occurrencesInTest = 0, occurrencesInValidation = 0, leftPart = 0;
 		// Preenchendo as listas de acordo com as porcentagens definidas na definicao do problema (60% para treinamento e 20% para validacao e teste)
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 2; i++) {
 			occurrences = numberOfOccurrences[i];
 			occurrencesInTraining = (occurrences * 6)/10;
 			occurrencesInTest = occurrencesInValidation = (occurrences * 2)/10;
@@ -171,7 +171,7 @@ public class DataTreatment {
 
 	// Inicia a lista apenas para poder inserir mais facilmente depois
 	private void initializeList(List<List<Entry>> myList) {
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 2; i++) {
 			myList.add(new ArrayList<Entry>());
 		}
 	}

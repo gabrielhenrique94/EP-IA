@@ -7,6 +7,7 @@ import java.util.List;
 
 import core.neural_network.interfaces.Classifier;
 import core.neural_network.objects.Entry;
+import draw.GraphicDrawer;
 
 /**
  * @author Bruno Murozaki
@@ -23,6 +24,7 @@ public class MLP2 implements Classifier {
 	private double learningRate;
 	private int max_epoch;
 	private double decreaseRate;
+	private GraphicDrawer drawer;
 
 	@Override
 	public void training(List<Entry> tra, List<Entry> tes) {
@@ -68,7 +70,7 @@ public class MLP2 implements Classifier {
 						correcao[i][j] = correcao_bias[i] * camadaSaida[i].getWeigth(j);
 				}
 		
-				//Passo 7 -lembrar a professora que o slide está errado
+				//Passo 7 -lembrar a professora que o slide estï¿½ errado
 				double[] delta_in = new double[nCamadaEscondida];
 			 	double[][] delta_hide = new double[nCamadaEscondida][tra.get(0).getAttr().length];
 			 	double[] delta_bias_hide = new double[nCamadaEscondida];
@@ -129,6 +131,11 @@ public class MLP2 implements Classifier {
 	public void validation(List<Entry> validationList) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	@Override
+	public void setDrawer(GraphicDrawer drawer) {
+		this.drawer = drawer;
 	}
 
 }

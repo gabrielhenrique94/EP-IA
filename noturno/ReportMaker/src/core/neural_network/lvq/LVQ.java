@@ -13,6 +13,7 @@ import core.neural_network.interfaces.DecreaseRate;
 import core.neural_network.interfaces.Metrics;
 import core.neural_network.objects.Entry;
 import core.neural_network.objects.Neuron;
+import draw.GraphicDrawer;
 import static core.neural_network.lvq.vector.*;
 
 /**
@@ -38,6 +39,8 @@ public class LVQ implements Classifier, DecreaseRate {
 	private int bestEpocs;
 	// ----------------------------------------------------------
 	
+	// Drawer automático de gráficos
+	private GraphicDrawer drawer;
 	
 	
 	private List<Entry> trainingList;
@@ -284,5 +287,10 @@ public class LVQ implements Classifier, DecreaseRate {
 		System.out.println("Erro da lista de validaçao na melhor lista de neuronios(Lista de teste): "
 				+ this.errorRateBestNetwork(testList));
 		System.out.println("Melhor lista de neurônio foi obtida na epoca: " + this.bestEpocs);
+	}
+	
+	@Override
+	public void setDrawer(GraphicDrawer drawer) {
+		this.drawer = drawer;
 	}
 }

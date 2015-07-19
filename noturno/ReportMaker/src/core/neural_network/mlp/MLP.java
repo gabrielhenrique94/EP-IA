@@ -6,6 +6,7 @@ import java.util.List;
 
 import core.neural_network.interfaces.Classifier;
 import core.neural_network.objects.Entry;
+import draw.GraphicDrawer;
 
 /**
  * @author Bruno Murozaki
@@ -25,6 +26,8 @@ public class MLP implements Classifier{
 	private double learningRate;
 	
 	private int maxEpocas = 150;
+	
+	private GraphicDrawer drawer;
 	
 	
 	public MLP(int externalNeurons, int nCamadaEscondida, double learningRate) {
@@ -163,7 +166,12 @@ public class MLP implements Classifier{
 
 	@Override
 	public void validation(List<Entry> validationList) {
-		System.out.println("Erro da lista de validação: "
+		System.out.println("Erro da lista de validaï¿½ï¿½o: "
 				+ this.errorRate(validationList));
+	}
+	
+	@Override
+	public void setDrawer(GraphicDrawer drawer) {
+		this.drawer = drawer;
 	}
 }
