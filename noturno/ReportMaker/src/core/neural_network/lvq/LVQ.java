@@ -1,20 +1,22 @@
 package core.neural_network.lvq;
 
+import static core.neural_network.lvq.vector.euclidianDistance;
+import static core.neural_network.lvq.vector.manhattanDistance;
+import static core.neural_network.lvq.vector.maxDistance;
+import static core.neural_network.lvq.vector.multiplyByConstant;
+import static core.neural_network.lvq.vector.subVector;
+import static core.neural_network.lvq.vector.sumVector;
+
 import java.io.File;
-import java.lang.reflect.Array;
+import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import main.Main;
-import core.io.ReadInputFiles;
+import core.io.WriteCSV;
 import core.neural_network.interfaces.Classifier;
 import core.neural_network.interfaces.DecreaseRate;
-import core.neural_network.interfaces.Metrics;
 import core.neural_network.objects.Entry;
 import core.neural_network.objects.Neuron;
-import draw.GraphicDrawer;
-import static core.neural_network.lvq.vector.*;
 
 /**
  * @author Bruno Murozaki
@@ -24,7 +26,7 @@ import static core.neural_network.lvq.vector.*;
  * */
 
 public class LVQ implements Classifier, DecreaseRate {
-	private int max_epoch;
+	private int max_loss;
 	private double learningRate;
 	private int[] nNeurons;
 	private String inicializationType;
@@ -32,32 +34,39 @@ public class LVQ implements Classifier, DecreaseRate {
 	private double decreaseRate;
 	private boolean isPercentage;
 	private String distanceMode;
-	
+
 	// Para podermos salvar a melhor rede de neuronios encontrada
 	private double minErrorRate;
 	private List<Neuron> bestNeurons;
 	private int bestEpocs;
 	// ----------------------------------------------------------
-	
-	// Drawer automático de gráficos
-	private GraphicDrawer drawer;
-	
-	
+
 	private List<Entry> trainingList;
 	private List<Entry> testList;
 
+	// Writer do CSV
+	private WriteCSV writer;
+
+	// Variavel para comparar com o erro corrente (condicao de parada)00
+	private double lastErrorRate;
+	private int countLoss;
+
 	public LVQ(double learningRate, int[] nNeurons, String typeInicialization,
-			double decreaseRate, boolean isPercentage, int max_epoch, String distanceMode) {
+			double decreaseRate, boolean isPercentage, int max_loss,
+			String distanceMode, WriteCSV writer) {
 		this.learningRate = learningRate;
 		this.nNeurons = nNeurons;
 		this.inicializationType = typeInicialization;
 		this.decreaseRate = decreaseRate;
-		this.max_epoch = max_epoch;
+		this.max_loss = max_loss;
 		this.isPercentage = isPercentage;
 		this.distanceMode = distanceMode;
-		
+
 		minErrorRate = Double.MAX_VALUE;
+		lastErrorRate = Double.MAX_VALUE;
 		bestNeurons = new ArrayList<Neuron>();
+		countLoss = 0;
+		this.writer = writer;
 	}
 
 	@Override
@@ -69,18 +78,20 @@ public class LVQ implements Classifier, DecreaseRate {
 		double learningRate = this.learningRate;
 		int epoca = 1;
 
+		writer.start();
+
 		do {
-
 			double errorRate = errorRate(tes);
-
-			// Guardo a melhor rede possível
 			saveBestResult(errorRate, epoca);
-			
+
 			System.out.println("Epoca: " + epoca + ", Learning Rate: "
 					+ learningRate + ", Error rate: " + errorRate);
-			
-			// Se a taxa de erro atinge um nivel ruim, breca a execu��o
-			if(breakByErrorRate())
+
+			String[] data = { String.valueOf(epoca), String.valueOf(errorRate) };
+			writer.write(data);
+
+			// Verifico se houve uma piora e se o numero de pioras foi igualado
+			if (breakByErrorRate(errorRate))
 				break;
 
 			// Passo 2 - Para cada vetor de entrada executa os passos 3-4
@@ -111,16 +122,28 @@ public class LVQ implements Classifier, DecreaseRate {
 			// Passo 5 - Reduz taxa de aprendizado
 			learningRate = calcLearningRate(learningRate, ++epoca);
 			// Passo 6 - verifica condição de Parada
-		} while (willStop(epoca));
+		} while (true);
 
 		// Descartando os neuronios pouco usados.
 		DiscardUselessNeurons();
+		writer.end();
 	}
 
-	private boolean breakByErrorRate(){
+	private boolean breakByErrorRate(double errorRate) {
+
+		if (errorRate <= lastErrorRate) {
+			lastErrorRate = errorRate;
+			return false;
+		} else {
+			countLoss++;
+			if (countLoss == max_loss)
+				return true;
+			lastErrorRate = errorRate;
+		}
+
 		return false;
 	}
-	
+
 	/**
 	 * Apos o treinamento, retiramos os neuronios que nao foram ativados nenhuma
 	 * vez, ou abaixo de uma taxa de 5% da media (Mesmo padrao utilizado na
@@ -150,13 +173,13 @@ public class LVQ implements Classifier, DecreaseRate {
 		double min = Double.MAX_VALUE, distance = 0.0;
 		Neuron nMin = null;
 		for (Neuron n : neurons) {
-			if(this.distanceMode.equalsIgnoreCase("manhattan"))
+			if (this.distanceMode.equalsIgnoreCase("manhattan"))
 				distance = manhattanDistance(n.getAttr(), entry.getAttr());
-			else if(this.distanceMode.equalsIgnoreCase("euclidian"))
+			else if (this.distanceMode.equalsIgnoreCase("euclidian"))
 				distance = euclidianDistance(n.getAttr(), entry.getAttr());
-			else if(this.distanceMode.equalsIgnoreCase("max"))
+			else if (this.distanceMode.equalsIgnoreCase("max"))
 				distance = maxDistance(n.getAttr(), entry.getAttr());
-			
+
 			if (distance < min) {
 				min = distance;
 				nMin = n;
@@ -166,7 +189,7 @@ public class LVQ implements Classifier, DecreaseRate {
 	}
 
 	private boolean willStop(int epoca) {
-		return epoca != max_epoch;
+		return epoca != max_loss;
 	}
 
 	private void initializeWeigths(int dimensions, List<Entry> trainingList) {
@@ -184,46 +207,46 @@ public class LVQ implements Classifier, DecreaseRate {
 		if (inicializationType.trim().equalsIgnoreCase("random"))
 			for (Neuron n : neurons)
 				n.initRandom();
-		else if(inicializationType.trim().equalsIgnoreCase("zero"))
+		else if (inicializationType.trim().equalsIgnoreCase("zero"))
 			for (Neuron n : neurons)
 				n.initZero();
-		else if(inicializationType.trim().equalsIgnoreCase("first_entry"))
+		else if (inicializationType.trim().equalsIgnoreCase("first_entry"))
 			for (Neuron n : neurons)
 				initFirst(n);
-		//TODO: Mais uma inicializacao here
+		// TODO: Mais uma inicializacao here
 	}
 
 	private void initFirst(Neuron n) {
-		for(Entry e : trainingList){
-			if(e.getClazz() == n.getClazz()){
+		for (Entry e : trainingList) {
+			if (e.getClazz() == n.getClazz()) {
 				n.setAttr(e.getAttr().clone());
 				return;
 			}
 		}
 	}
-	
-	public void saveBestResult(double newErrorRate, int epoc){
-		if(minErrorRate > newErrorRate){
+
+	public void saveBestResult(double newErrorRate, int epoc) {
+		if (minErrorRate > newErrorRate) {
 			minErrorRate = newErrorRate;
 			this.bestNeurons.clear();
-			for(Neuron n : neurons){
-				this.bestNeurons.add(Neuron.makeClone(n));	
+			for (Neuron n : neurons) {
+				this.bestNeurons.add(Neuron.makeClone(n));
 			}
 			this.bestEpocs = epoc;
 		}
 	}
 
-	public int classificationBestNetwork(Entry v){
+	public int classificationBestNetwork(Entry v) {
 		Neuron t = findMinDistance(v, bestNeurons);
 		return t.getClazz();
 	}
-	
+
 	@Override
 	public int classification(Entry v) {
 		Neuron t = findMinDistance(v, neurons);
 		return t.getClazz();
 	}
-	
+
 	@Override
 	public void saveNetwork(File output) {
 		// TODO Auto-generated method stub
@@ -239,12 +262,12 @@ public class LVQ implements Classifier, DecreaseRate {
 	// http://seer.ufrgs.br/index.php/rita/article/view/rita_v19_n1_p120/18115
 	@Override
 	public double calcLearningRate(double rate, int epoca) {
-		if(this.isPercentage)
+		if (this.isPercentage)
 			return rate - ((rate * decreaseRate) / 100);
 		return rate - decreaseRate;
 	}
-	
-	public double errorRateBestNetwork(List<Entry> tes){
+
+	public double errorRateBestNetwork(List<Entry> tes) {
 		double numOfTests = tes.size();
 		double numOfErrors = 0, numOfHits = 0, currClass = 0;
 
@@ -258,7 +281,7 @@ public class LVQ implements Classifier, DecreaseRate {
 		}
 
 		return (numOfErrors * 100) / numOfTests;
-		
+
 	}
 
 	@Override
@@ -275,22 +298,22 @@ public class LVQ implements Classifier, DecreaseRate {
 			}
 		}
 
-		return (numOfErrors * 100) / numOfTests;
+		double rate = (numOfErrors * 100) / numOfTests;
+
+		return rate;
 	}
 
 	@Override
 	public void validation(List<Entry> validationList) {
 		System.out.println("Erro da lista de validacao: "
 				+ this.errorRate(validationList));
-		System.out.println("Erro da lista de validaçao na melhor lista de neuronios: "
-				+ this.errorRateBestNetwork(validationList));
-		System.out.println("Erro da lista de validaçao na melhor lista de neuronios(Lista de teste): "
-				+ this.errorRateBestNetwork(testList));
-		System.out.println("Melhor lista de neurônio foi obtida na epoca: " + this.bestEpocs);
-	}
-	
-	@Override
-	public void setDrawer(GraphicDrawer drawer) {
-		this.drawer = drawer;
+		System.out
+				.println("Erro da lista de validaçao na melhor lista de neuronios: "
+						+ this.errorRateBestNetwork(validationList));
+		System.out
+				.println("Erro da lista de validaçao na melhor lista de neuronios(Lista de teste): "
+						+ this.errorRateBestNetwork(testList));
+		System.out.println("Melhor lista de neurônio foi obtida na epoca: "
+				+ this.bestEpocs);
 	}
 }

@@ -3,7 +3,7 @@ import java.io.File;
 import java.util.List;
 
 import core.neural_network.objects.Entry;
-import draw.GraphicDrawer;
+import exceptions.InvalidStateException;
 
 /**
  * @author Bruno Murozaki
@@ -46,6 +46,4 @@ public interface Classifier {
 	public void loadNetwork(File input);
 	
 	public double errorRate(List<Entry> tes);
-	
-	public void setDrawer(GraphicDrawer drawer);
 }

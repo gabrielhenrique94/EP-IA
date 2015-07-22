@@ -9,13 +9,12 @@ import org.ini4j.Wini;
 
 import core.data_treatment.DataTreatment;
 import core.io.ReadInputFiles;
+import core.io.WriteCSV;
 import core.neural_network.interfaces.Classifier;
 import core.neural_network.lvq.LVQ;
 import core.neural_network.mlp.MLP;
 import core.neural_network.objects.Entry;
 import core.preprocessing.Preprocessing;
-import draw.GraphicDrawer;
-import draw.GraphicType;
 
 /**
  * @author Bruno Murozaki
@@ -45,9 +44,9 @@ public class Main {
 	 * */
 	public static void main(String[] args) throws IOException {
 
-		String networkType, trainingFile, applyHoldout;
+		String networkType, trainingFile, applyHoldout, outFile;
 		Wini ini = null;
-		boolean readIni = false, drawGraphics = false;
+		boolean readIni = false;
 
 		// Vou ler os dados do arquivo ini passado no path
 		if (args[0].equalsIgnoreCase("ini")) {
@@ -58,13 +57,15 @@ public class Main {
 			networkType = ini.get("Startup", "networkType");
 			trainingFile = ini.get("Startup", "trainingFile");
 			applyHoldout = ini.get("Startup", "applyHoldout");
-
-			drawGraphics = Boolean
-					.parseBoolean(ini.get("GRAPHICS", "autoDraw"));
+			
+			outFile = ini.get("OUT", "fileName");
+			
 		} else {
 			networkType = args[0];
 			trainingFile = args[1];
 			applyHoldout = args[8];
+			
+			outFile = "lalala.csv";
 		}
 
 		/*
@@ -89,14 +90,14 @@ public class Main {
 		// escolhendo a rede a ser utilizada
 		if (networkType.trim().equalsIgnoreCase("lvq")) {
 
-			String learningRate, nroNeuronios, decreaseRate, isPercentage, nroEpocas, inicializationType, distanceCalculationMode = null;
+			String learningRate, nroNeuronios, decreaseRate, isPercentage, nrMaxLoss, inicializationType, distanceCalculationMode = null;
 
 			if (readIni) {
 				learningRate = ini.get("LVQ", "learningRate");
 				nroNeuronios = ini.get("LVQ", "nroNeuronios");
 				decreaseRate = ini.get("LVQ", "decreaseRate");
 				isPercentage = ini.get("LVQ", "isPercentage");
-				nroEpocas = ini.get("LVQ", "nroEpocas");
+				nrMaxLoss = ini.get("LVQ", "maxLoss");
 				inicializationType = ini.get("LVQ", "inicializationType");
 				distanceCalculationMode = ini.get("LVQ",
 						"distanceCalculationMode");
@@ -106,7 +107,7 @@ public class Main {
 				nroNeuronios = args[4];
 				decreaseRate = args[5];
 				isPercentage = args[6];
-				nroEpocas = args[7];
+				nrMaxLoss = args[7];
 
 			}
 
@@ -122,7 +123,7 @@ public class Main {
 
 			boolean isPercentage_bool = Boolean.parseBoolean(isPercentage);
 
-			int numEpochs = Integer.parseInt(nroEpocas);
+			int maxLossData = Integer.parseInt(nrMaxLoss);
 
 			int[] neuronsByClass = new int[2];
 
@@ -135,27 +136,10 @@ public class Main {
 				neuronsByClass[i] = nNeurons;
 			}
 
+			WriteCSV csv = new WriteCSV(outFile);
 			Classifier lvq = new LVQ(learningRate_db, neuronsByClass,
 					inicializationType, decreaseRate_db, isPercentage_bool,
-					numEpochs, distanceCalculationMode);
-
-			if (drawGraphics) {
-				String type = ini.get("GRAPHICS", "type"), 
-						imagePath = ini.get("GRAPHICS", "path");
-
-				int imageWidth = Integer.parseInt(ini.get("GRAPHICS", "width")), 
-						imageHeight = Integer.parseInt(ini.get("GRAPHICS", "height"));
-				
-				GraphicType tp = null;
-				if(type.equalsIgnoreCase("Lines"))
-					tp = GraphicType.LINES;
-				else if(type.equalsIgnoreCase("Only_Dots"))
-					tp = GraphicType.ONLY_DOT;
-				else if(type.equalsIgnoreCase("Bars"))
-					tp = GraphicType.BARS;
-				
-				GraphicDrawer drawer = new GraphicDrawer(tp, imageWidth, imageHeight, imagePath);
-			}
+					maxLossData, distanceCalculationMode, csv);
 
 			lvq.training(training_entries, test_entries);
 			lvq.validation(validation_entries);

@@ -1,13 +1,12 @@
 package core.neural_network.mlp;
 
-import static core.neural_network.mlp.utils.*;
+import static core.neural_network.mlp.utils.range;
 
 import java.io.File;
 import java.util.List;
 
 import core.neural_network.interfaces.Classifier;
 import core.neural_network.objects.Entry;
-import draw.GraphicDrawer;
 
 /**
  * @author Bruno Murozaki
@@ -24,7 +23,6 @@ public class MLP2 implements Classifier {
 	private double learningRate;
 	private int max_epoch;
 	private double decreaseRate;
-	private GraphicDrawer drawer;
 
 	@Override
 	public void training(List<Entry> tra, List<Entry> tes) {
@@ -132,10 +130,4 @@ public class MLP2 implements Classifier {
 		// TODO Auto-generated method stub
 
 	}
-	
-	@Override
-	public void setDrawer(GraphicDrawer drawer) {
-		this.drawer = drawer;
-	}
-
 }
