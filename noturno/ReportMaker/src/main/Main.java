@@ -147,8 +147,8 @@ public class Main {
 			Preprocessing.cleanAtributes(training_entries);
 			Preprocessing.minMaxMethod(training_entries);
 
-			Classifier mlp = new MLP(Integer.parseInt(args[3]),
-					Integer.parseInt(args[4]), Double.parseDouble(args[5]));
+			Classifier mlp = new MLP(Integer.parseInt(args[2]),
+					Integer.parseInt(args[3]), Double.parseDouble(args[4]));
 			mlp.training(training_entries, validation_entries);
 			mlp.validation(test_entries);
 		}

@@ -13,7 +13,7 @@ public class utils {
 					private int actual = 0;
 					@Override
 					public boolean hasNext() {
-						return actual < nMax;
+						return actual < nMax && nMax > 0;
 					}
 
 					@Override
