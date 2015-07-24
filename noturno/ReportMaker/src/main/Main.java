@@ -147,6 +147,9 @@ public class Main {
 
 			lvq.training(training_entries, test_entries);
 			lvq.validation(validation_entries);
+			
+			lvq.geraMatrizConfusao(validation_entries);
+			
 		} else {
 			// Preprocessando os dados
 			Preprocessing.cleanAtributes(training_entries);

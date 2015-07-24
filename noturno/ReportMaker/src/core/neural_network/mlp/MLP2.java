@@ -130,4 +130,10 @@ public class MLP2 implements Classifier {
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public void geraMatrizConfusao(List<Entry> tes) {
+		// TODO Auto-generated method stub
+		
+	}
 }

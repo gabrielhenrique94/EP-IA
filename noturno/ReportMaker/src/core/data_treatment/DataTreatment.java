@@ -92,12 +92,11 @@ public class DataTreatment {
 			for(int j = 0; j < occurrencesInValidation; j++) {
 				this.validationEntries.add(separatedList.get(i).get(j));
 			}
-			
-			// Dou novamente o shuffle para nao manter a ordem da adicao
-			Collections.shuffle(this.validationEntries);
-			Collections.shuffle(this.testEntries);
-			Collections.shuffle(this.trainingEntries);
 		}
+		// Dou novamente o shuffle para nao manter a ordem da adicao
+		Collections.shuffle(this.validationEntries);
+		Collections.shuffle(this.testEntries);
+		Collections.shuffle(this.trainingEntries);
 	}
 	
 	public void withoutHoldout(){

@@ -167,8 +167,15 @@ public class MLP implements Classifier{
 
 	@Override
 	public void validation(List<Entry> validationList) {
-		System.out.println("Erro da lista de validacção: "
+		System.out.println("Erro da lista de validacï¿½ï¿½o: "
 				+ this.errorRate(validationList));
+	}
+
+
+	@Override
+	public void geraMatrizConfusao(List<Entry> tes) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

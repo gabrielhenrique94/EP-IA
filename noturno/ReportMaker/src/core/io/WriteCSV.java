@@ -63,4 +63,23 @@ public class WriteCSV {
 			e.printStackTrace();
 		}
 	}
+	
+	public void writeConfusao(int[][] matriz){
+		try {
+			this.writter = new FileWriter(new File("out/confusao_" + this.fileName));
+			
+			for(int i = 0; i < matriz.length; i++){
+				for(int j = 0; j < matriz.length; j++){
+					this.writter.write(matriz[i][j] + ";");
+				}
+				this.writter.write("\n");
+			}
+			
+			this.writter.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 }

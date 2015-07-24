@@ -46,4 +46,6 @@ public interface Classifier {
 	public void loadNetwork(File input);
 	
 	public double errorRate(List<Entry> tes);
+	
+	public void geraMatrizConfusao(List<Entry> tes);
 }

@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import core.io.WriteCSV;
 import core.neural_network.interfaces.Classifier;
@@ -137,7 +139,10 @@ public class LVQ implements Classifier, DecreaseRate {
 		if(errorRate == lastErrorRate){
 			countEquals++;
 			if(countEquals == MAX_EQUALS)
+			{
 				return true;
+			}
+				
 			return false;
 		}else if (errorRate < lastErrorRate) {
 			lastErrorRate = errorRate;
@@ -147,7 +152,9 @@ public class LVQ implements Classifier, DecreaseRate {
 		} else {
 			countLoss++;
 			if (countLoss == max_loss)
+			{
 				return true;
+			}
 			lastErrorRate = errorRate;
 		}
 
@@ -325,5 +332,17 @@ public class LVQ implements Classifier, DecreaseRate {
 						+ this.errorRateBestNetwork(testList));
 		System.out.println("Melhor lista de neurônio foi obtida na epoca: "
 				+ this.bestEpocs);
+	}
+
+	@Override
+	public void geraMatrizConfusao(List<Entry> validationList) {
+		int[][] matriz = new int[nNeurons.length][nNeurons.length];
+		int classification = 0;
+		for(Entry e : validationList){
+			classification = classification(e);
+			matriz[classification][e.getClazz()]++;
+		}
+		
+		this.writer.writeConfusao(matriz);
 	}
 }
