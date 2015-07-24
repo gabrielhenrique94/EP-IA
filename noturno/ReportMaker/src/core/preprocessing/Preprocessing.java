@@ -23,7 +23,8 @@ public class Preprocessing {
 	}
 
 	/**
-	 * Metodo de min-max que calcula o minimo e o maximo de cada atributo, e altera para um range entre 0 e 1
+	 * Metodo de min-max que calcula o minimo e o maximo de cada atributo, e altera para um range entre -1 e 1
+	 * vNovo = (v - minColuna)/(maxColuna - minColuna) * (novoMax - novoMin) + novoMin
 	 * */
 	public static void minMaxMethod(List<Entry> entries) {
 		Entry first = entries.get(0);
@@ -44,7 +45,7 @@ public class Preprocessing {
 			// Com os valores de maximo e minimo, ja coloco o novo valor na coluna
 			for (Entry e : entries) {
 				curr = e.getAttr()[i];
-				newVal = (curr - min) / ((max - min));
+				newVal = (curr - min) / ((max - min)) * (max - min) + min;
 				// Para casos em que o maximo e o minimo sao iguais, a divisao se da por 0
 				if (Double.isNaN(newVal))
 					newVal = 0;

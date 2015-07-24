@@ -50,6 +50,8 @@ public class LVQ implements Classifier, DecreaseRate {
 	// Variavel para comparar com o erro corrente (condicao de parada)00
 	private double lastErrorRate;
 	private int countLoss;
+	private int countEquals;
+	private static final int MAX_EQUALS = 1000; //Maximo de vezes que podemos ter uma taxa de erro igual.
 
 	public LVQ(double learningRate, int[] nNeurons, String typeInicialization,
 			double decreaseRate, boolean isPercentage, int max_loss,
@@ -67,6 +69,7 @@ public class LVQ implements Classifier, DecreaseRate {
 		bestNeurons = new ArrayList<Neuron>();
 		countLoss = 0;
 		this.writer = writer;
+		countEquals = 0;
 	}
 
 	@Override
@@ -122,7 +125,7 @@ public class LVQ implements Classifier, DecreaseRate {
 			// Passo 5 - Reduz taxa de aprendizado
 			learningRate = calcLearningRate(learningRate, ++epoca);
 			// Passo 6 - verifica condição de Parada
-		} while (true);
+		} while (learningRate > 0);
 
 		// Descartando os neuronios pouco usados.
 		DiscardUselessNeurons();
@@ -130,9 +133,16 @@ public class LVQ implements Classifier, DecreaseRate {
 	}
 
 	private boolean breakByErrorRate(double errorRate) {
-
-		if (errorRate <= lastErrorRate) {
+		
+		if(errorRate == lastErrorRate){
+			countEquals++;
+			if(countEquals == MAX_EQUALS)
+				return true;
+			return false;
+		}else if (errorRate < lastErrorRate) {
 			lastErrorRate = errorRate;
+			countLoss = 0;
+			countEquals = 0;
 			return false;
 		} else {
 			countLoss++;

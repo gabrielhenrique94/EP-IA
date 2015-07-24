@@ -57,14 +57,14 @@ public class Main {
 			networkType = ini.get("Startup", "networkType");
 			trainingFile = ini.get("Startup", "trainingFile");
 			applyHoldout = ini.get("Startup", "applyHoldout");
-			
+
 			outFile = ini.get("OUT", "fileName");
-			
+
 		} else {
 			networkType = args[0];
 			trainingFile = args[1];
 			applyHoldout = args[8];
-			
+
 			outFile = "lalala.csv";
 		}
 
@@ -129,8 +129,12 @@ public class Main {
 
 			// Preprocessando os dados
 			Preprocessing.cleanAtributes(training_entries);
-			// Nao precisamos mais do minMax pq os dados ja estao entre 1 e -1
-			// Preprocessing.minMaxMethod(training_entries);
+			Preprocessing.cleanAtributes(test_entries);
+			Preprocessing.cleanAtributes(validation_entries);
+			
+			Preprocessing.minMaxMethod(training_entries);
+			Preprocessing.minMaxMethod(test_entries);
+			Preprocessing.minMaxMethod(validation_entries);
 
 			for (int i = 0; i < neuronsByClass.length; i++) {
 				neuronsByClass[i] = nNeurons;
@@ -144,8 +148,14 @@ public class Main {
 			lvq.training(training_entries, test_entries);
 			lvq.validation(validation_entries);
 		} else {
+			// Preprocessando os dados
 			Preprocessing.cleanAtributes(training_entries);
+			Preprocessing.cleanAtributes(test_entries);
+			Preprocessing.cleanAtributes(validation_entries);
+			
 			Preprocessing.minMaxMethod(training_entries);
+			Preprocessing.minMaxMethod(test_entries);
+			Preprocessing.minMaxMethod(validation_entries);
 
 			Classifier mlp = new MLP(Integer.parseInt(args[2]),
 					Integer.parseInt(args[3]), Double.parseDouble(args[4]));
