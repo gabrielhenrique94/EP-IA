@@ -38,6 +38,12 @@ public class Perceptron {
 		return sum;
 	}
 	
+	public void initNullWeights(int dimensions){
+		weigths = new double[dimensions];
+		for (int i = 0; i < weigths.length; i++)
+			weigths[i] = 0;
+	}
+	
 	public void initWeights(int dimensions){
 		weigths = new double[dimensions];
 		for (int i = 0; i < weigths.length; i++)

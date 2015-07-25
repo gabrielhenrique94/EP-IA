@@ -160,10 +160,32 @@ public class Main {
 			Preprocessing.minMaxMethod(test_entries);
 			Preprocessing.minMaxMethod(validation_entries);
 
-			Classifier mlp = new MLP(Integer.parseInt(args[2]),
-					Integer.parseInt(args[3]), Double.parseDouble(args[4]));
-			mlp.training(training_entries, validation_entries);
-			mlp.validation(test_entries);
+			double learningRate, decreaseRate;
+			int nCamadaEscondida, externalNeurons;
+			boolean linearDecrease;
+		
+			if (readIni) {
+				learningRate = Double.parseDouble(ini.get("MLP", "learningRate"));
+				externalNeurons = Integer.parseInt(ini.get("MLP", "externalNeurons"));
+				nCamadaEscondida = Integer.parseInt(ini.get("MLP", "nCamadaEscondida"));
+				decreaseRate = Double.parseDouble(ini.get("MLP", "decreaseRate"));
+				linearDecrease = Boolean.parseBoolean(ini.get("MLP", "linearDecrease"));
+				
+			} else {
+				learningRate = Double.parseDouble(args[4]);
+				externalNeurons = Integer.parseInt(args[2]);
+				nCamadaEscondida = Integer.parseInt(args[3]);
+				decreaseRate = Double.parseDouble(args[5]);
+				linearDecrease = Boolean.parseBoolean(args[6]);
+			}
+			WriteCSV csv = new WriteCSV(outFile);
+			Classifier mlp = new MLP(externalNeurons,
+					nCamadaEscondida, learningRate, decreaseRate, linearDecrease, csv);
+			
+			mlp.training(training_entries, test_entries);
+			mlp.validation(validation_entries);
+			
+			mlp.geraMatrizConfusao(validation_entries);
 		}
 	}
 }

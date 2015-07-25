@@ -40,7 +40,7 @@ public class ReadInputFiles {
 			for(int i = 0; i < aux.length-1; i++){
 				lineInt[i] = Double.parseDouble(aux[i]);
 			}
-			System.out.println(aux[aux.length - 1].charAt(0) == 'b');
+			
 			if(aux[aux.length - 1].charAt(0) == 'b')
 				lineInt[aux.length - 1] = 0;
 			else
